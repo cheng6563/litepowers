@@ -45,9 +45,11 @@ claude --plugin-dir ./litepowers
 **原生安装（推荐）**——用 GitHub CLI 的跨 agent skill 安装器，会注入来源元数据，之后 `gh skill update` 可更新：
 
 ```shell
-# 按 skill 名装到用户级（全局可用）；--agent 填目标工具：codex / claude-code / cursor ...
+# --agent 填目标工具：codex / claude-code / cursor ...
 gh skill install cheng6563/litepowers align --agent codex --scope user
 ```
+
+> **务必带 `--scope user`**：`gh skill install` 默认是 `--scope project`，只在当前 repo 生效。litepowers 是通用方法论，全局装一次、所有项目可用才合理。
 
 一次装一个（按 skill 名，9 个名见上表）。Codex 会话内也可用 `$skill-installer`。
 
