@@ -1,0 +1,10 @@
+# 隔离工作区
+.worktrees/
+worktrees/
+
+# OS / 编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
