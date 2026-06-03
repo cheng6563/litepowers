@@ -1,6 +1,6 @@
 ---
 name: doc-or-not
-description: 判断某块业务知识该不该写进文档、或文档可能和代码不同步时。TRIGGER：这块该不该写文档 / 文档是不是重复了 / 文档和代码对不上 / 整理文档 / 文档漂移 / 这段要不要记。
+description: "判断某块业务知识该不该写进文档、或文档可能和代码不同步时。Use when deciding if knowledge belongs in docs, or checking doc/code drift. TRIGGER: 该不该写文档 / 是不是重复了 / 文档和代码对不上 / 整理文档 / 文档漂移 / should this be documented / is this redundant / docs out of sync / doc drift."
 ---
 
 # 文档该不该写

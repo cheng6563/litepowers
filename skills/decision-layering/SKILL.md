@@ -1,6 +1,6 @@
 ---
 name: decision-layering
-description: 要固化一条持久规则、防止 AI 反复犯同一个错、或纠结某约定该写成 ADR / lint-hook / 测试 / skill / 文档时。TRIGGER：加个规则 / 守门 / 防止再犯 / 这个不能再犯 / 怎么让 AI 别又错 / 写个 hook / 写个 ADR / 形成规范 / 约束一下 AI。
+description: "要固化一条持久规则、防止 AI 反复犯同一个错、或纠结某约定该写成 ADR / hook / 测试 / skill / 文档时。Use when codifying a durable rule or choosing a governance layer. TRIGGER: 加个规则 / 守门 / 防止再犯 / 写个 hook / 写个 ADR / 形成规范 / 约束 AI / add a rule / enforce / guard / prevent recurrence / where should this rule live."
 ---
 
 # 决策分层：新规则该落哪一层

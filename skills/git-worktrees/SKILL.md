@@ -1,6 +1,6 @@
 ---
 name: git-worktrees
-description: 开始需要和当前工作区隔离的功能开发时，建一个隔离工作区。TRIGGER：开个 worktree / 隔离工作区 / 不想弄脏当前分支 / 并行开发。Use before isolated feature work.
+description: "开始需要和当前工作区隔离的功能开发时建隔离工作区。Use before isolated feature work. TRIGGER: 开个 worktree / 隔离工作区 / 不想弄脏当前分支 / 并行开发 / create a worktree / isolated workspace / don't touch current branch / parallel work."
 ---
 
 # 使用 Git Worktrees
@@ -20,12 +20,12 @@ GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
 git rev-parse --show-superproject-working-tree 2>/dev/null
 ```
 
-- `GIT_DIR != GIT_COMMON` 且非 submodule → 已在 worktree 里，**别再建**，直接去步骤 3。
-- 相等（或在 submodule）→ 普通检出。用户没预先表态过偏好的话，先问："要不要建隔离 worktree？保护当前分支不被改动。" 用户拒绝就原地干，跳步骤 3。
+- `GIT_DIR != GIT_COMMON` 且非 submodule → 已在 worktree 里，**别再建**，直接去步骤 2。
+- 相等（或在 submodule）→ 普通检出。用户没预先表态过偏好的话，先问："要不要建隔离 worktree？保护当前分支不被改动。" 用户拒绝就原地干，跳步骤 2。
 
 ## 步骤 1：建隔离工作区
 
-**1a. 原生工具优先** — 有没有 `EnterWorktree` / `WorktreeCreate` / `/worktree` 命令 / `--worktree` 标志之类的？有就用它，跳步骤 3。原生工具自动处理目录、建分支、清理。有原生工具还手敲 `git worktree add` 会制造 harness 看不见的幽灵状态。
+**1a. 原生工具优先** — 有没有 `EnterWorktree` / `WorktreeCreate` / `/worktree` 命令 / `--worktree` 标志之类的？有就用它，跳步骤 2。原生工具自动处理目录、建分支、清理。有原生工具还手敲 `git worktree add` 会制造 harness 看不见的幽灵状态。
 
 **1b. git 退路（仅当无原生工具）**
 
@@ -44,11 +44,11 @@ cd ".worktrees/$BRANCH"
 
 权限错误（沙箱拦截）→ 告诉用户沙箱挡了 worktree 创建，改为原地工作，原地跑 setup 和基线测试。
 
-## 步骤 3：项目 setup
+## 步骤 2：项目 setup
 
 自动探测并装依赖（有哪个装哪个）：`package.json`→装包 / `Cargo.toml`→build / `requirements.txt`/`pyproject.toml`→装 / `go.mod`→download / `pom.xml`→依赖解析 等。
 
-## 步骤 4：验证干净基线
+## 步骤 3：验证干净基线
 
 跑项目对应的测试命令。失败 → 报告并问是否继续（区分新 bug 和既有问题）。通过 → 报告就绪。
 

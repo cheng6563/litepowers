@@ -1,6 +1,6 @@
 ---
 name: systematic-debugging
-description: 遇到任何 bug、测试失败、非预期行为时，先定位根因再提修法。TRIGGER：报错 / 测试挂了 / 这为什么不工作 / 修一下这个 bug / 行为不对 / 试了几次还没好。
+description: "遇到任何 bug、测试失败、非预期行为时，先定位根因再提修法。Use before proposing any fix. TRIGGER: 报错 / 测试挂了 / 为什么不工作 / 修个 bug / 行为不对 / error / test failing / why doesn't this work / fix this bug / stack trace."
 ---
 
 # 系统化调试

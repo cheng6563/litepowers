@@ -1,6 +1,6 @@
 ---
 name: align
-description: 动手前先对齐需求和方案。Use before any creative work——新功能 / 加组件 / 改行为 / 重构方向 / 建项目脚手架之前，先澄清意图再写代码。TRIGGER：我想做个 X / 帮我加个 Y / 重新设计 Z / 这块怎么搞。
+description: "动手前先对齐需求和方案，批准后再写代码。Use before any creative work: clarify intent before building a feature/component/refactor/scaffold. TRIGGER: 我想做个X / 帮我加个Y / 重新设计Z / 做个功能 / I want to build X / add a feature / create a component / design Y / implement Z."
 ---
 
 # Align：动手前对齐

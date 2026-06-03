@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: 完成任务 / 实现重要功能 / 合并前自审代码，以及接收 review 反馈时理性评估。TRIGGER：review 一下 / 帮我审审 / 这段代码行不行 / 准备合并 / 收到了评审意见 / reviewer 说……。
+description: "完成功能 / 合并前自审代码，以及接收 review 反馈时理性评估（不表演式同意）。Use when completing work, before merge, or receiving review feedback. TRIGGER: review 一下 / 帮我审审 / 准备合并 / 收到评审意见 / reviewer 说 / review this / code review / before merge / got review feedback / address comments."
 ---
 
 # 代码评审

@@ -1,6 +1,6 @@
 ---
 name: writing-skills
-description: 创建新 skill、修改已有 skill、或判断某条经验该不该做成 skill 时。TRIGGER：写个 skill / 加个 skill / 改 skill / 这个固化成 skill / 把这套流程做成 skill。
+description: "创建新 skill、修改已有 skill、或判断某条经验该不该做成 skill 时。Use when authoring or editing a skill. TRIGGER: 写个 skill / 加个 skill / 改 skill / 固化成 skill / write a skill / create a skill / edit this skill / turn this into a skill."
 ---
 
 # 写 Skill

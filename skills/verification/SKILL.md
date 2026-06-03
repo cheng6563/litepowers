@@ -1,6 +1,6 @@
 ---
 name: verification
-description: 宣称"完成 / 修好了 / 测试通过"之前，先跑验证命令拿到证据。Use before claiming work is complete, before commit/PR. TRIGGER：搞定了 / 应该好了 / 测试过了 / 准备提交 / 准备合并。
+description: "宣称\"完成 / 修好了 / 测试通过\"之前，先跑验证命令拿到证据。Use before claiming work complete, before commit/PR. TRIGGER: 搞定了 / 应该好了 / 测试过了 / 准备提交 / 准备合并 / it's done / should work now / tests pass / ready to commit / ready to merge."
 ---
 
 # 完成前验证

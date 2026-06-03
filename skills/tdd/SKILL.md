@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: 实现任何功能或 bugfix 前，先写测试。TRIGGER：实现一个功能 / 加个方法 / 修 bug / 写实现代码之前。Use before writing implementation code.
+description: "实现任何功能或 bugfix 前，先写失败测试。Use before writing implementation code. TRIGGER: 实现一个功能 / 加个方法 / 修 bug / 写实现之前 / implement a feature / add a function / fix the bug / build this."
 ---
 
 # TDD：先写测试

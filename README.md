@@ -23,7 +23,7 @@
 | `decision-layering` | 自动 | 一条规则该落哪层（ADR / lint-hook / skill / 文档），含基建环境探测 |
 | `doc-or-not` | 自动 | 文档该不该写：删掉这段读代码能不能推断出来 |
 
-## 安装
+## 安装（Claude Code）
 
 ```shell
 /plugin marketplace add cheng6563/litepowers
@@ -37,6 +37,25 @@ claude --plugin-dir ./litepowers
 ```
 
 改完用 `/reload-plugins` 热加载。
+
+## 在 Codex / 其他 agent 中使用
+
+`SKILL.md` 是开放标准，`.agents/skills` 是 Codex、Cursor、Copilot、Gemini CLI、Amp 等**共用**的 skill 目录，所以本仓 skill **一字不用改**即可跨 agent 通用。
+
+**原生安装（推荐）**——用 GitHub CLI 的跨 agent skill 安装器，会注入来源元数据，之后 `gh skill update` 可更新：
+
+```shell
+# 按 skill 名装到用户级（全局可用）；--agent 填目标工具：codex / claude-code / cursor ...
+gh skill install cheng6563/litepowers align --agent codex --scope user
+```
+
+一次装一个（按 skill 名，9 个名见上表）。Codex 会话内也可用 `$skill-installer`。
+
+**手动兜底（无 gh CLI 时）**——把整个 `skills/` 软链成共享目录，一份内容多 agent 共用：
+
+```shell
+ln -s /abs/path/to/litepowers/skills ~/.agents/skills
+```
 
 ## License
 
