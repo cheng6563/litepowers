@@ -59,6 +59,12 @@ gh skill install cheng6563/litepowers align --agent codex --scope user
 ln -s /abs/path/to/litepowers/skills ~/.agents/skills
 ```
 
+## 与上游 superpowers 的关系
+
+本仓是基于 superpowers **5.1.0** 的一次观点鲜明的**重写**（去项目化 / 砍 SessionStart 强制门 / 砍 plan+subagent 重型流程 / 瘦身 / brainstorming 改名 align / 加原创治理 skill），**不是 fork，无 git 血缘**。
+
+上游更新**不机械合并**——把它当灵感源按需吸收：偶尔扫一眼 changelog，遇到值得的方法论洞察就手动提炼进对应 skill、保持精简；遇到"更多流程 / 功能 / 强制门"则忽略（那正是本仓要砍的）。基线锁在 5.1.0，将来只 diff `5.1.0 → 新版` 看增量，成本极低。两者持续分叉是预期,不是落后。
+
 ## License
 
 MIT
