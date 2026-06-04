@@ -1,0 +1,50 @@
+name: auto-version
+
+# 每次 push 到 main：把 .claude-plugin/plugin.json 的 patch 版本 +1，
+# 回写、打 tag vX.Y.Z、建 GitHub Release。
+# 回写的 commit 带 [skip ci]，避免自己触发自己（死循环）。
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-version
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    # 双保险：回写 commit 含 [skip ci] 时不再跑（GitHub 原生也会跳过）
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bump patch version in plugin.json
+        id: bump
+        run: |
+          file=.claude-plugin/plugin.json
+          cur=$(jq -r .version "$file")
+          IFS=. read -r major minor patch <<< "$cur"
+          new="${major}.${minor}.$((patch + 1))"
+          tmp=$(mktemp)
+          jq --arg v "$new" '.version = $v' "$file" > "$tmp" && mv "$tmp" "$file"
+          echo "new=$new" >> "$GITHUB_OUTPUT"
+          echo "版本 $cur → $new"
+
+      - name: Commit, tag, push, release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          new="${{ steps.bump.outputs.new }}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .claude-plugin/plugin.json
+          git commit -m "chore(release): v${new} [skip ci]"
+          git tag "v${new}"
+          git push origin HEAD:main
+          git push origin "v${new}"
+          gh release create "v${new}" --title "v${new}" --generate-notes
