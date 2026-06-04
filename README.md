@@ -28,8 +28,9 @@
 ## 安装（Claude Code）
 
 ```shell
-/plugin marketplace add cheng6563/litepowers
+/plugin marketplace add https://github.com/cheng6563/litepowers.git
 /plugin install litepowers@litepowers
+/reload-plugins
 ```
 
 本地开发测试：
