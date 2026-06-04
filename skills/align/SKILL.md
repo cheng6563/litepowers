@@ -1,6 +1,6 @@
 ---
 name: align
-description: "动手前先对齐需求和方案，批准后再写代码。Use before any creative work: clarify intent before building a feature/component/refactor/scaffold. TRIGGER: 我想做个X / 帮我加个Y / 重新设计Z / 做个功能 / I want to build X / add a feature / create a component / design Y / implement Z."
+description: "动手前先对齐需求和方案，批准后再写代码。Use before any creative work: clarify intent before building a feature/component/refactor/scaffold. TRIGGER: 我想做个X / 帮我加个Y / 重新设计Z / 做个功能 / ADR / 模块边界 / 语义边界 / I want to build X / add a feature / create a component / design Y / implement Z / architectural constraints."
 ---
 
 # Align：动手前对齐
@@ -42,7 +42,7 @@ AskUserQuestion({ questions: [{
     { label: "队列解耦 (推荐)", description: "削峰、可重试；多一个组件",
       preview: "producer → queue → worker → db" },
     { label: "同步直连",       description: "最简单；高峰会阻塞",
-      preview: "request → handler → db" },
+      preview: "request → service → db" },
   ],
 }]})
 ```
@@ -72,10 +72,10 @@ digraph align {
 
 ## 步骤
 
-1. **探索上下文** — 先看现有文件、文档、最近 commit，别在真空里问。
+1. **探索上下文** — 先看现有文件、文档、ADR、模块文档、入口规则、真实调用方、最近 commit；没有规范就从代码事实还原隐性契约，别在真空里问。
 2. **范围检查** — 如果需求是几个独立子系统（"做个带聊天、存储、计费、分析的平台"），先喊停拆解，别急着抠某个子系统的细节。每个子项目各走一轮对齐。
 3. **逐个澄清** — 走 `AskUserQuestion`，一轮一个决策、尽量给选项（多选题比开放题好答）。聚焦：目的、约束、成功标准。抛完即停，等用户点选再问下一个。
-4. **抛候选方案** — 走 `AskUserQuestion`，把 2–3 个候选放进选项、推荐项置顶、用 `preview` 并排展示取舍。**不要把方案写成正文一次倒完。**
+4. **抛候选方案** — 走 `AskUserQuestion`，把 2–3 个候选放进选项、推荐项置顶、用 `preview` 并排展示取舍。**不要把方案写成正文一次倒完。** 每个候选都标注：符合哪些既有 ADR / 模块文档 / 入口规则；哪些约束未知；是否跨过语义边界或扩大影响面。
 5. **选定后再展开** — 用户选中某方案后，复杂细节（结构、数据流、错误处理、测试方式）再分段逐项确认，每段问"这样对吗"。
 6. **选定即动手** — 直接实现。
 
@@ -86,7 +86,7 @@ digraph align {
 - **YAGNI** — 从每个方案里砍掉不必要的功能。
 - **有替代项** — 定方案前先摆 2–3 个候选，别只给一条路。
 - **增量确认** — 每个决策点获认可再往下。
-- **改既有代码** — 先摸清现有结构、跟随现有风格；顺手修正阻碍当前工作的问题，但别夹带无关重构。
+- **改既有代码** — 先摸清现有结构、ADR、模块文档、入口规则和真实调用方；跟随现有风格。涉及对外行为或跨模块调用时，先判断业务语义和影响面，别把语义绑定行为误归入无差别复用路径。顺手修正阻碍当前工作的问题，但别夹带无关重构。
 
 ## 不做什么
 

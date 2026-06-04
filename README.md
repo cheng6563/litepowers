@@ -17,12 +17,12 @@
 |-------|----------|------|
 | `align` | `/litepowers:align` 或自动 | 动手前澄清需求 + 2-3 方案对齐，批准后再写代码 |
 | `systematic-debugging` | 自动 | 遇 bug 先定位根因再改 |
-| `tdd` | 自动 | 先写失败测试再写实现 |
-| `verification` | 自动 | 宣称"完成/通过"前先跑验证拿证据 |
-| `code-review` | `/litepowers:code-review` 或自动 | 完成/合并前自审，理性接收反馈 |
+| `tdd` | 自动 | 先拿到失败证据，再写实现 |
+| `verification` | 自动 | 宣称"完成/通过"前先跑验证拿证据；重大改动别只验功能 |
+| `code-review` | `/litepowers:code-review` 或自动 | 完成/合并前自审，交叉检查 ADR / 模块边界，理性接收反馈 |
 | `git-worktrees` | 自动 | 隔离工作区，优先用原生 worktree 工具 |
 | `writing-skills` | 自动 | 写/改 skill——核心是**克制**，能靠记忆/CLAUDE.md 承载的别塞 skill |
-| `decision-layering` | 自动 | 一条规则该落哪层（ADR / lint-hook / skill / 文档），含基建环境探测 |
+| `decision-layering` | 自动 | 一条规则该落哪层（ADR / lint-hook / skill / 文档），含语义不变量与机械守门分层 |
 | `doc-or-not` | 自动 | 文档该不该写：删掉这段读代码能不能推断出来 |
 
 ## 安装（Claude Code）

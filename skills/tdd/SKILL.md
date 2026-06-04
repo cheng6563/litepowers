@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: "实现任何功能或 bugfix 前，先写失败测试。Use before writing implementation code. TRIGGER: 实现一个功能 / 加个方法 / 修 bug / 写实现之前 / implement a feature / add a function / fix the bug / build this."
+description: "实现任何功能或 bugfix 前，先写失败测试；项目没有单测框架时也要先拿到可失败证据。Use before writing implementation code. TRIGGER: 实现一个功能 / 加个方法 / 修 bug / 写实现之前 / 无单测框架 / 失败证据 / implement a feature / add a function / fix the bug / build this."
 ---
 
 # TDD：先写测试
@@ -16,6 +16,15 @@ description: "实现任何功能或 bugfix 前，先写失败测试。Use before
 ```
 
 先写了实现才补测试？删掉重来。不留作"参考"、不"改改用"、不看它——删就是删，从测试重新实现。
+
+## 老项目没有单测框架时
+
+TDD 的核心是“先有可失败证据”，不是“必须单元测试”：
+
+- 优先用项目已有验证入口：集成测试、CLI、脚本、页面冒烟、录制回放、最小复现命令。
+- 没有测试框架 → 写最小 characterization / regression 脚本，或用现有运行方式构造可重复失败步骤。
+- 框架太旧/太重跑不了 → 先保留手动复现步骤 + 期望输出 + 实际失败证据，再做最小实现；同时标注“无自动覆盖”的原因。
+- 别为了 TDD 大改测试基建；测试基建本身是独立工作，需要用户同意。
 
 ## 红-绿-重构
 
@@ -57,6 +66,7 @@ digraph tdd {
 - 先写实现后补测试
 - 测试一写就过
 - 说不清测试为什么失败
+- 为了一个小改动先大改测试基建
 - "已经手动测过了"
 - "测后面再补"
 - "这次不一样，因为……"
