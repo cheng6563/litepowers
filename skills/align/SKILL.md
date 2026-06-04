@@ -20,10 +20,10 @@ description: "动手前先对齐需求和方案，批准后再写代码。Use be
 
 ## 怎么逼出交互（重点）
 
-两层，缺一不可——**行为规则是地基（所有 agent 通用），结构化选择器是 Claude Code 上的增强**：
+两层：**行为规则是地基（所有 agent 通用），结构化选择器是 Claude Code 上的增强；有选择器就用选择器，没有就严格执行行为规则。**
 
-1. **行为规则（地基，跨 agent）** — 一条消息只放一个决策点，抛完就停、等用户回。这是保底：Codex 等没有提问工具的 agent 全靠它（Codex 仅 Plan Mode 内置会问，normal mode 默认不主动问）。光这一条就能挡住大部分倾倒。
-2. **`AskUserQuestion` 选择器（Claude Code 增强）** — 在 Claude Code 上，澄清和选方案走这个原生工具：它真正结束这一轮、弹出选择器、逼用户逐项点选，从机制上堵死"想一次说清"的倾倒本能。`AskUserQuestion` 是 Anthropic 专有工具，换到无此工具的 agent → 自动退回第 1 条，效果略弱但不破。
+1. **行为规则（地基，跨 agent）** — 一条消息只放一个决策点，抛完就停、等用户回。没有结构化提问工具的 agent 全靠它。
+2. **`AskUserQuestion` 选择器（Claude Code 增强）** — 在 Claude Code 上，澄清和选方案走这个原生工具：它真正结束这一轮、弹出选择器、逼用户逐项点选，从机制上堵死"想一次说清"的倾倒本能。`AskUserQuestion` 是 Anthropic 专有工具；换到无此工具的 agent → 不提工具名，直接按第 1 条执行。
 
 `AskUserQuestion` 用法约束（Claude Code）：
 
@@ -92,5 +92,5 @@ digraph align {
 
 - 不在一条消息里倾倒多个方案、或连问多个澄清。
 - 不画浏览器可视化 mockup（要看图直接终端 ASCII，或塞进选项的 `preview`）。
-- 不写独立 design 文档、不转重型 plan 流程——对齐结论直接落到代码 / 项目自己的文档体系（ADR / 模块文档等）。
+- 不写独立 design 文档、不另起重型规划编排（独立规划文档 + 子代理那种）——对齐结论直接落到代码 / 项目自己的文档体系（ADR / 模块文档等）。
 - 不在选定方案前就开建。
