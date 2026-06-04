@@ -31,9 +31,10 @@ git rev-parse --show-superproject-working-tree 2>/dev/null
 
 目录选择优先级：用户声明的偏好 > 已存在的 `.worktrees/`（优先）或 `worktrees/` > 默认 `.worktrees/`。
 
-项目内目录**必须先确认被 ignore**：
+项目内隔离目录**必须先确认被 ignore**；原生工具爱建哪建哪，但只要落在项目内，就提示用户把对应目录加进 `.gitignore`：
 ```bash
 git check-ignore -q .worktrees 2>/dev/null || echo "未 ignore：先加进 .gitignore 并 commit"
+# 如果原生工具建在 .claude/worktrees/，同理确认 .claude/worktrees/ 被 ignore
 ```
 
 建：
