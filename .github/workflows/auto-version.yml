@@ -1,8 +1,9 @@
 name: auto-version
 
-# 每次 push 到 main：把 .claude-plugin/plugin.json 的 patch 版本 +1，
-# 回写、打 tag vX.Y.Z、建 GitHub Release。
-# 回写的 commit 带 [skip ci]，避免自己触发自己（死循环）。
+# main 有尚未发布的变更时递增 patch，并创建 tag 和 GitHub Release。
+# 连续 push 按顺序排队；先执行的 run 会在最新 main 上合并发布未发布变更，
+# 后续 run 若发现最新 main 已是 release commit 则安全退出。
+# 回写 commit 带 [skip ci]，避免自己触发自己（死循环）。
 
 on:
   push:
@@ -14,16 +15,55 @@ permissions:
 concurrency:
   group: auto-version
   cancel-in-progress: false
+  queue: max
 
 jobs:
-  bump:
-    # 双保险：回写 commit 含 [skip ci] 时不再跑（GitHub 原生也会跳过）
+  validate:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install validator dependencies
+        run: python3 -m pip install --disable-pip-version-check --quiet PyYAML==6.0.2
+      - name: Validate manifests, skills, README, and fixtures
+        run: python3 scripts/validate.py
 
-      - name: Bump patch version in plugin.json
+  release:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Fast-forward and revalidate latest main
+        id: prepare
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git fetch origin main --tags
+          git reset --hard origin/main
+          python3 -m pip install --disable-pip-version-check --quiet PyYAML==6.0.2
+          python3 scripts/validate.py
+
+          cur=$(jq -r .version .claude-plugin/plugin.json)
+          tag="v${cur}"
+          if git log -1 --format=%s | grep -Fq '[skip ci]'; then
+            if git rev-parse -q --verify "refs/tags/${tag}" >/dev/null && ! gh release view "$tag" >/dev/null 2>&1; then
+              echo "action=recover" >> "$GITHUB_OUTPUT"
+              echo "tag=$tag" >> "$GITHUB_OUTPUT"
+            else
+              echo "action=none" >> "$GITHUB_OUTPUT"
+              echo "最新 main 已发布，无需重复递增版本。"
+            fi
+          else
+            echo "action=publish" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump patch version
+        if: steps.prepare.outputs.action == 'publish'
         id: bump
         run: |
           file=.claude-plugin/plugin.json
@@ -32,19 +72,27 @@ jobs:
           new="${major}.${minor}.$((patch + 1))"
           tmp=$(mktemp)
           jq --arg v "$new" '.version = $v' "$file" > "$tmp" && mv "$tmp" "$file"
-          echo "new=$new" >> "$GITHUB_OUTPUT"
+          echo "tag=v${new}" >> "$GITHUB_OUTPUT"
           echo "版本 $cur → $new"
 
-      - name: Commit, tag, push, release
+      - name: Commit and atomically push branch with tag
+        if: steps.prepare.outputs.action == 'publish'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.bump.outputs.tag }}
         run: |
-          new="${{ steps.bump.outputs.new }}"
-          git config user.name  "github-actions[bot]"
+          git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .claude-plugin/plugin.json
-          git commit -m "chore(release): v${new} [skip ci]"
-          git tag "v${new}"
-          git push origin HEAD:main
-          git push origin "v${new}"
-          gh release create "v${new}" --title "v${new}" --generate-notes
+          git commit -m "chore(release): ${TAG} [skip ci]"
+          git tag "$TAG"
+          git push --atomic origin HEAD:main "refs/tags/${TAG}"
+
+      - name: Create or recover GitHub Release
+        if: steps.prepare.outputs.action == 'publish' || steps.prepare.outputs.action == 'recover'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_TAG: ${{ steps.bump.outputs.tag }}
+          RECOVER_TAG: ${{ steps.prepare.outputs.tag }}
+        run: |
+          tag="${PUBLISH_TAG:-$RECOVER_TAG}"
+          gh release view "$tag" >/dev/null 2>&1 || gh release create "$tag" --title "$tag" --generate-notes

@@ -1,6 +1,6 @@
 ---
 name: git-worktrees
-description: "开始需要和当前工作区隔离的功能开发时建隔离工作区。Use before isolated feature work. TRIGGER: 开个 worktree / 隔离工作区 / 不想弄脏当前分支 / 并行开发 / create a worktree / isolated workspace / don't touch current branch / parallel work."
+description: "安全创建、锚定和回收 Git worktree 隔离工作区。Use when the user explicitly requests a worktree or project instructions require isolated work; first detect whether the current session is already inside one."
 ---
 
 # 使用 Git Worktrees

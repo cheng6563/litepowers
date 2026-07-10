@@ -1,0 +1,102 @@
+{
+  "schema_version": 2,
+  "purpose": "Initial routing and multi-stage sequence expectations. Run prompts in a clean context and record measured outcomes separately; this file defines expectations, not measured behavior.",
+  "cases": [
+    {
+      "id": "align-before-tdd-for-ambiguous-feature",
+      "prompt": "给结算系统加一个优惠功能，具体规则你帮我设计并实现。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-review", "verification"],
+      "expected_sequence": ["align", "tdd", "code-review", "verification"],
+      "assertions": ["先澄清业务目标与完成标准", "关键需求未确定前不写生产代码", "方案确定后允许进入实现和验证阶段"]
+    },
+    {
+      "id": "skip-align-for-explicit-small-change",
+      "prompt": "把 README 安装命令中的旧仓库 URL 改成 https://example.com/new.git，只改这一处并检查链接文本。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["align", "tdd", "code-review"],
+      "expected_sequence": ["verification"],
+      "assertions": ["明确低风险任务直接修改", "完成前检查目标文本"]
+    },
+    {
+      "id": "debug-before-tdd-when-cause-unknown",
+      "prompt": "登录测试在 CI 偶发超时，本地正常，帮我修掉。",
+      "expected_initial_skills": ["systematic-debugging"],
+      "forbidden_initial_skills": ["tdd", "align", "verification"],
+      "expected_sequence": ["systematic-debugging", "tdd", "verification"],
+      "assertions": ["先收集 CI 与本地差异证据", "根因未知时不猜修法", "根因明确后允许进入 TDD"]
+    },
+    {
+      "id": "tdd-after-root-cause-known",
+      "prompt": "根因已确认：parseAmount 遇到全角小数点返回 NaN。请修复并防回归。",
+      "expected_initial_skills": ["tdd"],
+      "forbidden_initial_skills": ["systematic-debugging", "align", "verification"],
+      "expected_sequence": ["tdd", "verification"],
+      "assertions": ["先建立全角小数点的失败证据", "再做最小实现并验证回归"]
+    },
+    {
+      "id": "review-before-verification",
+      "prompt": "实现已经在当前 diff 里了。先审查是否满足需求和代码质量，暂时不要修改。",
+      "expected_initial_skills": ["code-review"],
+      "forbidden_initial_skills": ["verification", "align", "tdd"],
+      "expected_sequence": ["code-review"],
+      "assertions": ["输出 requirement verdict 与 quality verdict", "reviewer 保持只读", "无法从 diff 判断的事项明确标注"]
+    },
+    {
+      "id": "verification-after-review-fixes",
+      "prompt": "评审问题都处理完了，确认现在能不能说测试通过并准备合并。",
+      "expected_initial_skills": ["verification"],
+      "forbidden_initial_skills": ["code-review", "align", "tdd"],
+      "expected_sequence": ["verification"],
+      "assertions": ["运行新鲜且完整的验证命令", "证据与完成声明逐项匹配"]
+    },
+    {
+      "id": "decision-layering-for-durable-rule",
+      "prompt": "我们已经决定所有跨租户查询必须显式传 tenantId。这条长期规则该放 ADR、模块文档、测试还是 hook？",
+      "expected_initial_skills": ["decision-layering"],
+      "forbidden_initial_skills": ["align", "doc-or-not", "writing-skills"],
+      "expected_sequence": ["decision-layering"],
+      "assertions": ["选择最小必要承载层", "机械部分优先测试或 CI", "不默认要求 ADR"]
+    },
+    {
+      "id": "doc-drift-only",
+      "prompt": "对照代码检查这篇接口文档有没有旧字段、重复 schema 和失效链接。",
+      "expected_initial_skills": ["doc-or-not"],
+      "forbidden_initial_skills": ["decision-layering", "writing-skills", "align"],
+      "expected_sequence": ["doc-or-not"],
+      "assertions": ["只处理文档范围和漂移", "不借机扩写无关内容"]
+    },
+    {
+      "id": "author-skill-only",
+      "prompt": "已经确定交付 Skill：把这套根因追踪方法写成新的 SKILL.md。",
+      "expected_initial_skills": ["writing-skills"],
+      "forbidden_initial_skills": ["decision-layering", "doc-or-not", "align"],
+      "expected_sequence": ["writing-skills", "verification"],
+      "assertions": ["description 同时说明 what 与 when", "验证相邻 Skill 的触发边界"]
+    },
+    {
+      "id": "explain-adr-without-governance-flow",
+      "prompt": "简单解释一下 ADR 是什么，以及为什么 Agent 时代还有用。不要修改任何文件。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["decision-layering", "doc-or-not", "align", "tdd"],
+      "expected_sequence": [],
+      "assertions": ["只做概念解释", "不要求建立 ADR 目录或治理机制"]
+    },
+    {
+      "id": "docs-change-does-not-force-unit-test",
+      "prompt": "修正 README 中两个拼写错误并检查 Markdown 结构。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["tdd", "align", "code-review"],
+      "expected_sequence": ["verification"],
+      "assertions": ["不强造单元测试", "使用适合文档的轻量验证"]
+    },
+    {
+      "id": "existing-worktree-no-nesting",
+      "prompt": "我已经在原生 worktree 会话里，请在这里继续实现，不要再创建 worktree。",
+      "expected_initial_skills": ["git-worktrees"],
+      "forbidden_initial_skills": ["align"],
+      "expected_sequence": ["git-worktrees"],
+      "assertions": ["检测到现有隔离后不再创建", "锚定当前 worktree 路径"]
+    }
+  ]
+}

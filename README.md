@@ -15,15 +15,15 @@
 
 | Skill | 触发方式 | 作用 |
 |-------|----------|------|
-| `align` | `/litepowers:align` 或自动 | 动手前澄清需求 + 2-3 方案对齐，批准后再写代码 |
-| `systematic-debugging` | 自动 | 遇 bug 先定位根因再改 |
-| `tdd` | 自动 | 先拿到失败证据，再写实现 |
-| `verification` | 自动 | 宣称"完成/通过"前先跑验证拿证据；重大改动别只验功能 |
-| `code-review` | `/litepowers:code-review` 或自动 | 完成/合并前自审，交叉检查 ADR / 模块边界，理性接收反馈 |
-| `git-worktrees` | 自动 | 隔离工作区，优先用原生 worktree 工具 |
-| `writing-skills` | 自动 | 写/改 skill——核心是**克制**，能靠记忆/CLAUDE.md 承载的别塞 skill |
-| `decision-layering` | 自动 | 一条规则该落哪层（ADR / lint-hook / skill / 文档），含语义不变量与机械守门分层 |
-| `doc-or-not` | 自动 | 文档该不该写：删掉这段读代码能不能推断出来 |
+| `align` | `/litepowers:align` 或自动 | 高不确定性或高影响任务动手前，收敛目标、边界、方案与完成标准 |
+| `systematic-debugging` | 自动 | 根因未知的故障先复现、取证、定位，再进入修复 |
+| `tdd` | 自动 | 预期行为已知、准备改生产行为时，先取得失败或可比较证据 |
+| `verification` | 自动 | 处理完实现与评审问题后，用新鲜证据判断能否声明完成 |
+| `code-review` | `/litepowers:code-review` 或自动 | 对已有 diff 做需求符合性与质量双审查，并理性处理反馈 |
+| `git-worktrees` | 自动 | 明确要求隔离工作区时，安全创建、锚定和回收 worktree |
+| `writing-skills` | 自动 | 创建或修改可复用 Skill，保持克制并验证触发边界 |
+| `decision-layering` | 自动 | 已有候选持久规则时，选择 ADR、文档、测试、lint、hook 或 CI |
+| `doc-or-not` | 自动 | 专门判断文档范围、重复内容和 doc/code 漂移 |
 
 ## 安装（Claude Code）
 
@@ -43,7 +43,7 @@ claude --plugin-dir ./litepowers
 
 ## 在 Codex / 其他 agent 中使用
 
-`SKILL.md` 是开放标准，`.agents/skills` 是 Codex、Cursor、Copilot、Gemini CLI、Amp 等**共用**的 skill 目录，所以本仓 skill **一字不用改**即可跨 agent 通用。
+`SKILL.md` 采用开放的 Agent Skills 结构，可被多种 Agent 读取。不同平台的工具调用、审批、自动触发、安装目录和 UI 能力并不相同；平台专有增强应按能力降级，并在目标 Agent 上分别验证。
 
 **原生安装（推荐）**——用 GitHub CLI 的跨 agent skill 安装器，会注入来源元数据，之后 `gh skill update` 可更新：
 
@@ -66,7 +66,22 @@ ln -s /abs/path/to/litepowers/skills ~/.agents/skills
 
 本仓是基于 superpowers **5.1.0** 的一次观点鲜明的**重写**（去项目化 / 砍 SessionStart 强制门 / 砍 plan+subagent 重型流程 / 瘦身 / brainstorming 改名 align / 加原创治理 skill），**不是 fork，无 git 血缘**。
 
-上游更新**不机械合并**——把它当灵感源按需吸收：偶尔扫一眼 changelog，遇到值得的方法论洞察就手动提炼进对应 skill、保持精简；遇到"更多流程 / 功能 / 强制门"则忽略（那正是本仓要砍的）。基线锁在 5.1.0，将来只 diff `5.1.0 → 新版` 看增量，成本极低。两者持续分叉是预期,不是落后。
+上游更新**不机械合并**——把它当灵感源按需吸收：偶尔扫一眼 changelog，遇到值得的方法论洞察就手动提炼进对应 skill、保持精简；遇到“更多流程 / 功能 / 强制门”则忽略（那正是本仓要砍的）。基线锁在 5.1.0，将来只 diff `5.1.0 → 新版` 看增量。两者持续分叉是预期，不是落后。
+
+### Skill 来源映射
+
+| litepowers | 上游来源 |
+|---|---|
+| `align` | `brainstorming` |
+| `systematic-debugging` | 同名 |
+| `tdd` | `test-driven-development` |
+| `verification` | `verification-before-completion` |
+| `git-worktrees` | `using-git-worktrees` |
+| `code-review` | `requesting-code-review` + `receiving-code-review` |
+| `writing-skills` | 同名 |
+| `decision-layering`、`doc-or-not` | litepowers 原创 |
+
+本仓按方法价值选择性吸收 Superpowers 6.x 的轻量改进，例如 reviewer 只读、需求/质量双 verdict 和任务接口；不会恢复完整 SDD 或 SessionStart 强制门。
 
 ## License
 
