@@ -4,11 +4,27 @@
   "cases": [
     {
       "id": "align-before-tdd-for-ambiguous-feature",
-      "prompt": "给结算系统加一个优惠功能，具体规则你帮我设计并实现。",
+      "prompt": "给结算系统加一个优惠功能，具体规则你帮我设计并实现。当前是 Git 仓库，origin 已配置且可推送，也能确定项目默认分支；项目有测试命令，但没有测试或生产部署方案。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-review", "verification"],
       "expected_sequence": ["align", "tdd", "code-review", "verification"],
-      "assertions": ["先澄清业务目标与完成标准", "关键需求未确定前不写生产代码", "方案确定后允许进入实现和验证阶段"]
+      "assertions": ["先澄清业务目标与完成标准", "关键需求未确定前不写生产代码", "方案确定后允许进入实现和验证阶段", "询问本次做到实现并验证成功、提交、推送当前分支或合并默认分支并推送", "没有部署方案时不提供测试或生产部署选项"]
+    },
+    {
+      "id": "align-delivery-target-by-project-capability",
+      "prompt": "帮我设计并实现一个高影响功能。对齐交付终点时请分别说明：非 Git 且无部署方案；Git 无远端；Git 有可推送远端但默认分支未知；以及 Git、默认分支、测试部署和生产部署流程都已确认时，各自提供哪些选项。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-review", "verification"],
+      "expected_sequence": ["align", "tdd", "code-review", "verification"],
+      "assertions": ["非 Git 项目不提供提交推送合并选项", "Git 无远端时可提供提交但不提供推送", "默认分支未知时不提供合并且不猜 main 或 master", "测试与生产部署能力分别判断", "所有层级都可用时完整列出且高层说明必要前置步骤"]
+    },
+    {
+      "id": "align-respects-explicit-delivery-target",
+      "prompt": "帮我设计并实现一个跨模块功能，做到本地验证成功就停，不要提交、推送或部署。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-review", "verification"],
+      "expected_sequence": ["align", "tdd", "code-review", "verification"],
+      "assertions": ["复述本地验证成功这一交付终点", "不重复询问交付终点", "不执行提交推送合并或部署"]
     },
     {
       "id": "skip-align-for-explicit-small-change",
