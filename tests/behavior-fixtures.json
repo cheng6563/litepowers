@@ -113,6 +113,30 @@
       "forbidden_initial_skills": ["align"],
       "expected_sequence": ["git-worktrees"],
       "assertions": ["检测到现有隔离后不再创建", "锚定当前 worktree 路径"]
+    },
+    {
+      "id": "worktree-ignore-before-create",
+      "prompt": "请在仓库内的 .worktrees/ 下新建一个 worktree，再开始实现功能。当前项目还没有忽略这个目录。",
+      "expected_initial_skills": ["git-worktrees"],
+      "forbidden_initial_skills": ["align"],
+      "expected_sequence": ["git-worktrees"],
+      "assertions": ["创建前识别会观察目标路径的宿主 Git 仓库", "在宿主仓库建立并复验忽略规则后才创建"]
+    },
+    {
+      "id": "external-worktree-no-ignore-change",
+      "prompt": "请把 worktree 建到当前项目外的 D:/workspace/worktrees/demo；D:/workspace 本身是另一个 Git 仓库，不要让它跟踪新 worktree。",
+      "expected_initial_skills": ["git-worktrees"],
+      "forbidden_initial_skills": ["align"],
+      "expected_sequence": ["git-worktrees"],
+      "assertions": ["识别目标仍受另一个宿主 Git 仓库观察", "创建前证明目标不会污染其状态", "尊重用户指定位置"]
+    },
+    {
+      "id": "native-worktree-uses-native-management",
+      "prompt": "当前 Claude Code 会话支持 EnterWorktree，请创建隔离工作区；项目里没有忽略 .claude/worktrees/。",
+      "expected_initial_skills": ["git-worktrees"],
+      "forbidden_initial_skills": ["align"],
+      "expected_sequence": ["git-worktrees"],
+      "assertions": ["优先使用当前会话的原生 worktree 能力", "仍在创建前确认宿主仓库不会被污染", "创建与清理交由同一机制管理"]
     }
   ]
 }
