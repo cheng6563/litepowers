@@ -70,23 +70,39 @@
       "id": "decision-layering-for-durable-rule",
       "prompt": "我们已经决定所有跨租户查询必须显式传 tenantId。这条长期规则该放 ADR、模块文档、测试还是 hook？",
       "expected_initial_skills": ["decision-layering"],
-      "forbidden_initial_skills": ["align", "doc-or-not", "writing-skills"],
+      "forbidden_initial_skills": ["align", "code-as-spec", "writing-skills"],
       "expected_sequence": ["decision-layering"],
       "assertions": ["选择最小必要承载层", "机械部分优先测试或 CI", "不默认要求 ADR"]
     },
     {
       "id": "doc-drift-only",
       "prompt": "对照代码检查这篇接口文档有没有旧字段、重复 schema 和失效链接。",
-      "expected_initial_skills": ["doc-or-not"],
+      "expected_initial_skills": ["code-as-spec"],
       "forbidden_initial_skills": ["decision-layering", "writing-skills", "align"],
-      "expected_sequence": ["doc-or-not"],
-      "assertions": ["只处理文档范围和漂移", "不借机扩写无关内容"]
+      "expected_sequence": ["code-as-spec"],
+      "assertions": ["只处理文档范围和漂移", "不借机扩写无关内容", "把代码可推断的内容判为该清理"]
+    },
+    {
+      "id": "clean-changed-code-not-bugs",
+      "prompt": "我刚写完这个改动，帮我看看代码有没有重复造轮子、可以简化或明显低效的地方，顺手清理一下。不用找功能 bug。",
+      "expected_initial_skills": ["code-as-spec"],
+      "forbidden_initial_skills": ["code-review", "align", "tdd"],
+      "expected_sequence": ["code-as-spec"],
+      "assertions": ["从复用/简化/效率/高度四维审改动代码", "不查 correctness bug", "复用已有 helper 而非重造"]
+    },
+    {
+      "id": "verify-version-before-claiming",
+      "prompt": "我们用的这个 CLI 工具最新版本，某个命令的参数怎么写？直接告诉我当前用法。",
+      "expected_initial_skills": ["docs-over-memory"],
+      "forbidden_initial_skills": ["align", "tdd", "verification"],
+      "expected_sequence": ["docs-over-memory"],
+      "assertions": ["答版本敏感用法前先查官方文档核对当前版本", "评估来源可靠性不轻信单篇结果", "不靠可能过时的记忆直接断言"]
     },
     {
       "id": "author-skill-only",
       "prompt": "已经确定交付 Skill：把这套根因追踪方法写成新的 SKILL.md。",
       "expected_initial_skills": ["writing-skills"],
-      "forbidden_initial_skills": ["decision-layering", "doc-or-not", "align"],
+      "forbidden_initial_skills": ["decision-layering", "code-as-spec", "align"],
       "expected_sequence": ["writing-skills", "verification"],
       "assertions": ["description 同时说明 what 与 when", "验证相邻 Skill 的触发边界"]
     },
@@ -94,7 +110,7 @@
       "id": "explain-adr-without-governance-flow",
       "prompt": "简单解释一下 ADR 是什么，以及为什么 Agent 时代还有用。不要修改任何文件。",
       "expected_initial_skills": [],
-      "forbidden_initial_skills": ["decision-layering", "doc-or-not", "align", "tdd"],
+      "forbidden_initial_skills": ["decision-layering", "code-as-spec", "align", "tdd"],
       "expected_sequence": [],
       "assertions": ["只做概念解释", "不要求建立 ADR 目录或治理机制"]
     },

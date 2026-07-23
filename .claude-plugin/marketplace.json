@@ -9,7 +9,7 @@
     {
       "name": "litepowers",
       "source": "./",
-      "description": "精简版方法论 skill 集：动手前对齐、系统化调试、TDD、完成前验证、代码自审、worktree 隔离、写 skill、规则分层、文档该不该写。无全局强制门，纯按需触发。"
+      "description": "精简版方法论 skill 集：动手前对齐、系统化调试、TDD、完成前验证、代码自审、worktree 隔离、写 skill、规则分层、代码即业务、版本前查文档。无全局强制门，纯按需触发。"
     }
   ]
 }
