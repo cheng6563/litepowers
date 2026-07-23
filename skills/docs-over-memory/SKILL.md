@@ -1,6 +1,6 @@
 ---
 name: docs-over-memory
-description: "回答或实现涉及工具版本、API/CLI 用法、配置或依赖行为前，先用官方文档核对当前版本，不靠可能过时的训练记忆；并评估来源可靠性。Use when about to state version-specific behavior, API/CLI usage, or config options — before relying on memory."
+description: "回答或实现涉及可能随版本变化的工具行为、API/CLI 用法、配置或依赖行为前，先查官方文档核对项目实际版本并评估来源可靠性，不靠可能过时的记忆；稳定语言语法和通用知识不适用。Use before stating version-specific or possibly-changed behavior of a tool, library, API/CLI, or config option — not for stable language syntax or general knowledge."
 ---
 
 # 先查文档，别信记忆
