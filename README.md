@@ -23,7 +23,8 @@
 | `git-worktrees` | 自动 | 明确要求隔离工作区时，安全创建、锚定和回收 worktree |
 | `writing-skills` | 自动 | 创建或修改可复用 Skill，保持克制并验证触发边界 |
 | `decision-layering` | 自动 | 已有候选持久规则时，选择 ADR、文档、测试、lint、hook 或 CI |
-| `doc-or-not` | 自动 | 专门判断文档范围、重复内容和 doc/code 漂移 |
+| `code-as-spec` | `/litepowers:code-as-spec` 或自动 | 代码即业务：文档只做索引、业务进就近注释、doc/code 漂移检查，并把改动代码清理到可读为业务 |
+| `docs-over-memory` | 自动 | 答版本/API/配置/依赖行为前，先查官方文档核对当前版本并评估来源，不靠过时记忆 |
 
 ## 安装（Claude Code）
 
@@ -54,7 +55,7 @@ gh skill install cheng6563/litepowers align --agent codex --scope user
 
 > **务必带 `--scope user`**：`gh skill install` 默认是 `--scope project`，只在当前 repo 生效。litepowers 是通用方法论，全局装一次、所有项目可用才合理。
 
-一次装一个（按 skill 名，9 个名见上表）。Codex 会话内也可用 `$skill-installer`。
+一次装一个（按 skill 名，10 个名见上表）。Codex 会话内也可用 `$skill-installer`。
 
 **手动兜底（无 gh CLI 时）**——把整个 `skills/` 软链成共享目录，一份内容多 agent 共用：
 
@@ -79,7 +80,9 @@ ln -s /abs/path/to/litepowers/skills ~/.agents/skills
 | `git-worktrees` | `using-git-worktrees` |
 | `code-review` | `requesting-code-review` + `receiving-code-review` |
 | `writing-skills` | 同名 |
-| `decision-layering`、`doc-or-not` | litepowers 原创 |
+| `decision-layering` | litepowers 原创 |
+| `code-as-spec` | litepowers 原创 + 吸收 `simplify` 的清理判据 |
+| `docs-over-memory` | litepowers 原创 |
 
 本仓按方法价值选择性吸收 Superpowers 6.x 的轻量改进，例如 reviewer 只读、需求/质量双 verdict 和任务接口；不会恢复完整 SDD 或 SessionStart 强制门。
 
