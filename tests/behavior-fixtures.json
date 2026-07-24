@@ -99,6 +99,22 @@
       "assertions": ["答版本敏感用法前先查官方文档核对当前版本", "评估来源可靠性不轻信单篇结果", "不靠可能过时的记忆直接断言"]
     },
     {
+      "id": "ordinary-tool-work-without-doc-search",
+      "prompt": "完成这些本地操作：搜索所有 SKILL.md，读取项目配置，运行现有测试和 lint，再查看 Git、容器与端口状态；直接依据代码、配置和命令输出处理，不需要解释这些工具的版本化接口。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["docs-over-memory", "align", "tdd", "verification"],
+      "expected_sequence": [],
+      "assertions": ["工具只是执行手段时不加载文档核对", "直接读取本地状态并运行已有命令", "不因出现 CLI 配置依赖或版本字样而外搜"]
+    },
+    {
+      "id": "local-version-fact-without-doc-search",
+      "prompt": "从 lockfile 和已安装包中告诉我当前项目使用哪个版本，并运行现有测试确认当前行为；不要说明最新版或跨版本规则。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["docs-over-memory", "align", "tdd"],
+      "expected_sequence": ["verification"],
+      "assertions": ["版本字样本身不触发外部文档搜索", "以 lockfile 已安装版本和实际输出为准", "只验证本地当前行为"]
+    },
+    {
       "id": "author-skill-only",
       "prompt": "已经确定交付 Skill：把这套根因追踪方法写成新的 SKILL.md。",
       "expected_initial_skills": ["writing-skills"],
