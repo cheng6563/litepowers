@@ -1,7 +1,7 @@
 {
   "name": "litepowers",
   "description": "精简版方法论 skill 集（superpowers 瘦身 + 去项目化治理理念）。按需触发，无 SessionStart 强制门。",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "author": {
     "name": "cheng6563",
     "email": "hab852110@hotmail.com"
