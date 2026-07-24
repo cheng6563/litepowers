@@ -1,6 +1,6 @@
 ---
 name: docs-over-memory
-description: "回答或实现涉及可能随版本变化的工具行为、API/CLI 用法、配置或依赖行为前，先查官方文档核对项目实际版本并评估来源可靠性，不靠可能过时的记忆；稳定语言语法和通用知识不适用。Use before stating version-specific or possibly-changed behavior of a tool, library, API/CLI, or config option — not for stable language syntax or general knowledge."
+description: "核对当前项目与实际执行无法确定、但回答或实现所依赖的外部版本化契约。Use only when the task requires an unresolved claim about version-specific API, CLI, configuration, compatibility, defaults, or deprecation; do not use for ordinary tool-assisted work when no such external contract is in question."
 ---
 
 # 先查文档，别信记忆
@@ -9,21 +9,28 @@ description: "回答或实现涉及可能随版本变化的工具行为、API/CL
 
 **核心：给出版本敏感的断言前，先用官方源核对当前版本。**
 
-## 触发（先核对再答）
+## 触发门槛
 
-- 工具 / 库 / 框架的**版本特定行为**、默认值、弃用；
-- **API / CLI 用法**：签名、参数、flag、返回结构；
-- **配置**：键名、格式、生效范围；
-- 依赖升级后的行为变化；
-- 用户点明「最新」「当前」「这个版本」或时效性。
+仅当下面三项**同时成立**时触发：
 
-## 跳过（记忆足够）
+1. 任务需要回答或据此实现一个外部工具、库、平台的契约；
+2. 该契约可能因版本而变化，例如 API 签名、CLI 参数、配置键、默认值、兼容性或弃用状态；
+3. 当前项目内容与实际执行不能充分确定它，必须查外部资料。
 
-- 稳定的语言基础语法、通用算法、设计原则；
-- 用户已给定版本和确切行为；
-- 纯本仓事实（读代码 / 配置 / lockfile 更准，不必外搜）。
+典型场景：用户询问某版本的行为；升级后行为发生变化；实现被未知的参数、默认值或兼容性阻塞。
 
-先分清「这是稳定常识还是版本敏感事实」——拿不准就当版本敏感,去核对。
+## 不触发
+
+**工具只是完成任务的手段时，不触发。** 包括但不限于：
+
+- 搜索、读取、编辑本地文件，或检查仓库、进程、端口、容器等状态；
+- 运行测试、构建、lint、格式化、部署或其他已有项目命令；
+- 根据代码、配置、lockfile、日志、帮助输出或命令结果判断本地事实；
+- 使用语法已知的 CLI、库或 API 完成常规操作；
+- 任务碰巧提到工具、依赖、配置、命令名或版本号，但没有待确认的外部契约；
+- 稳定的语言基础语法、通用算法和设计原则。
+
+判断问题只有一个：**若不查外部文档，是否仍能可靠完成当前任务？** 能就直接做；不能且缺口属于版本化外部契约，才加载本 skill。
 
 ## 怎么核对
 
