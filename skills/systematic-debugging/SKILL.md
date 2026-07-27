@@ -1,6 +1,6 @@
 ---
 name: systematic-debugging
-description: "通过复现、证据、数据流和单一假设定位未知故障的根因。Use when a bug, failing test, stack trace, or unexpected behavior is observed but the cause is not yet established; after root cause is known, use tdd for the fix."
+description: "通过复现、证据、数据流和单一假设定位未知故障的根因。Use when a bug, failing test, stack trace, or unexpected behavior is observed but the cause is not yet established; once the cause is known, ask whether the user wants tests/evidence first or direct implementation unless they already stated a preference."
 ---
 
 # 系统化调试
@@ -36,7 +36,7 @@ description: "通过复现、证据、数据流和单一假设定位未知故障
 
 ### 4. 交接实现
 
-根因、证据链和预期行为明确后，转 `skill:tdd` 建立失败证据并实施最小修复；完成声明前转 `skill:verification`。若连续三个单一假设都失败，停下来重审证据和架构，不再叠补丁。
+根因、证据链和预期行为明确后，若用户尚未表达实现方式，先询问选择测试 / 证据优先还是直接实现；仅选择前者时转 `skill:tdd`，选择直接实现则跳过。完成声明前转 `skill:verification`。若连续三个单一假设都失败，停下来重审证据和架构，不再叠补丁。
 
 出现无假设试改、一次改变多个变量或连续叠补丁时，撤销实验并回到阶段 1。
 

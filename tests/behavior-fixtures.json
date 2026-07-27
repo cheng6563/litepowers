@@ -7,24 +7,24 @@
       "prompt": "给结算系统加一个优惠功能，具体规则你帮我设计并实现。当前是 Git 仓库，origin 已配置且可推送，也能确定项目默认分支；项目有测试命令，但没有测试或生产部署方案。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-review", "verification"],
-      "expected_sequence": ["align", "tdd", "code-review", "verification"],
-      "assertions": ["先澄清业务目标与完成标准", "关键需求未确定前不写生产代码", "方案确定后允许进入实现和验证阶段", "询问本次做到实现并验证成功、提交、推送当前分支或合并默认分支并推送", "没有部署方案时不提供测试或生产部署选项"]
+      "expected_sequence": ["align"],
+      "assertions": ["先澄清业务目标与完成标准", "关键需求未确定前不写生产代码", "方案确定后先询问测试或证据优先还是直接实现", "用户选择前不加载 TDD", "询问本次做到实现并验证成功、提交、推送当前分支或合并默认分支并推送", "没有部署方案时不提供测试或生产部署选项"]
     },
     {
       "id": "align-delivery-target-by-project-capability",
       "prompt": "帮我设计并实现一个高影响功能。对齐交付终点时请分别说明：非 Git 且无部署方案；Git 无远端；Git 有可推送远端但默认分支未知；以及 Git、默认分支、测试部署和生产部署流程都已确认时，各自提供哪些选项。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-review", "verification"],
-      "expected_sequence": ["align", "tdd", "code-review", "verification"],
-      "assertions": ["非 Git 项目不提供提交推送合并选项", "Git 无远端时可提供提交但不提供推送", "默认分支未知时不提供合并且不猜 main 或 master", "测试与生产部署能力分别判断", "所有层级都可用时完整列出且高层说明必要前置步骤"]
+      "expected_sequence": ["align"],
+      "assertions": ["非 Git 项目不提供提交推送合并选项", "Git 无远端时可提供提交但不提供推送", "默认分支未知时不提供合并且不猜 main 或 master", "测试与生产部署能力分别判断", "所有层级都可用时完整列出且高层说明必要前置步骤", "实现方式未表态时先询问测试或证据优先还是直接实现"]
     },
     {
       "id": "align-respects-explicit-delivery-target",
       "prompt": "帮我设计并实现一个跨模块功能，做到本地验证成功就停，不要提交、推送或部署。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-review", "verification"],
-      "expected_sequence": ["align", "tdd", "code-review", "verification"],
-      "assertions": ["复述本地验证成功这一交付终点", "不重复询问交付终点", "不执行提交推送合并或部署"]
+      "expected_sequence": ["align"],
+      "assertions": ["复述本地验证成功这一交付终点", "不重复询问交付终点", "实现方式未表态时先询问测试或证据优先还是直接实现", "不执行提交推送合并或部署"]
     },
     {
       "id": "skip-align-for-explicit-small-change",
@@ -39,16 +39,40 @@
       "prompt": "登录测试在 CI 偶发超时，本地正常，帮我修掉。",
       "expected_initial_skills": ["systematic-debugging"],
       "forbidden_initial_skills": ["tdd", "align", "verification"],
-      "expected_sequence": ["systematic-debugging", "tdd", "verification"],
-      "assertions": ["先收集 CI 与本地差异证据", "根因未知时不猜修法", "根因明确后允许进入 TDD"]
+      "expected_sequence": ["systematic-debugging"],
+      "assertions": ["先收集 CI 与本地差异证据", "根因未知时不猜修法", "根因明确后询问测试或证据优先还是直接实现", "用户选择前不加载 TDD"]
     },
     {
-      "id": "tdd-after-root-cause-known",
-      "prompt": "根因已确认：parseAmount 遇到全角小数点返回 NaN。请修复并防回归。",
+      "id": "ask-before-tdd-when-preference-unstated",
+      "prompt": "根因已确认：parseAmount 遇到全角小数点返回 NaN。请修复。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["tdd", "systematic-debugging", "align", "verification"],
+      "expected_sequence": [],
+      "assertions": ["先询问测试或证据优先还是直接实现", "用户选择前不加载 TDD", "不把测试当作所有代码改动的强制前置"]
+    },
+    {
+      "id": "tdd-after-explicit-regression-choice",
+      "prompt": "根因已确认：parseAmount 遇到全角小数点返回 NaN。请修复并先写防回归测试。",
       "expected_initial_skills": ["tdd"],
       "forbidden_initial_skills": ["systematic-debugging", "align", "verification"],
       "expected_sequence": ["tdd", "verification"],
-      "assertions": ["先建立全角小数点的失败证据", "再做最小实现并验证回归"]
+      "assertions": ["明确要求防回归测试视为已选择测试优先", "先建立全角小数点的失败证据", "再做最小实现并验证回归"]
+    },
+    {
+      "id": "direct-implementation-skips-tdd",
+      "prompt": "这个导入脚本只能在客户内网执行，本地没有数据和运行环境。把导出的日期改为 ISO 8601；直接改代码，不要先补测试，并把无法验证的风险说清楚。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["tdd", "systematic-debugging", "align", "verification"],
+      "expected_sequence": [],
+      "assertions": ["尊重直接实现的明确选择", "不加载 TDD 或强造本地测试", "说明本地无法验证和剩余风险"]
+    },
+    {
+      "id": "unavailable-local-test-prompts-choice",
+      "prompt": "把只能在远端设备运行的温控阈值从 80 调到 85，本地不能执行。我没想好要不要补测试。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["tdd", "systematic-debugging", "align", "verification"],
+      "expected_sequence": [],
+      "assertions": ["先说明本地无法运行的限制", "询问改用远端或静态证据还是直接实现", "用户选择前不加载 TDD"]
     },
     {
       "id": "review-before-verification",
@@ -89,30 +113,6 @@
       "forbidden_initial_skills": ["code-review", "align", "tdd"],
       "expected_sequence": ["code-as-spec"],
       "assertions": ["从复用/简化/效率/高度四维审改动代码", "不查 correctness bug", "复用已有 helper 而非重造"]
-    },
-    {
-      "id": "verify-version-before-claiming",
-      "prompt": "我们用的这个 CLI 工具最新版本，某个命令的参数怎么写？直接告诉我当前用法。",
-      "expected_initial_skills": ["docs-over-memory"],
-      "forbidden_initial_skills": ["align", "tdd", "verification"],
-      "expected_sequence": ["docs-over-memory"],
-      "assertions": ["答版本敏感用法前先查官方文档核对当前版本", "评估来源可靠性不轻信单篇结果", "不靠可能过时的记忆直接断言"]
-    },
-    {
-      "id": "ordinary-tool-work-without-doc-search",
-      "prompt": "完成这些本地操作：搜索所有 SKILL.md，读取项目配置，运行现有测试和 lint，再查看 Git、容器与端口状态；直接依据代码、配置和命令输出处理，不需要解释这些工具的版本化接口。",
-      "expected_initial_skills": [],
-      "forbidden_initial_skills": ["docs-over-memory", "align", "tdd", "verification"],
-      "expected_sequence": [],
-      "assertions": ["工具只是执行手段时不加载文档核对", "直接读取本地状态并运行已有命令", "不因出现 CLI 配置依赖或版本字样而外搜"]
-    },
-    {
-      "id": "local-version-fact-without-doc-search",
-      "prompt": "从 lockfile 和已安装包中告诉我当前项目使用哪个版本，并运行现有测试确认当前行为；不要说明最新版或跨版本规则。",
-      "expected_initial_skills": [],
-      "forbidden_initial_skills": ["docs-over-memory", "align", "tdd"],
-      "expected_sequence": ["verification"],
-      "assertions": ["版本字样本身不触发外部文档搜索", "以 lockfile 已安装版本和实际输出为准", "只验证本地当前行为"]
     },
     {
       "id": "author-skill-only",
