@@ -19,6 +19,14 @@
       "assertions": ["收敛迁移范围与安全完成标准", "非 Git 项目不询问提交推送或合并", "遵循本地验证终点而不扩展到发布"]
     },
     {
+      "id": "align-test-deploy-asks-delivery",
+      "prompt": "把 core-postloan 从 Gradle 多模块迁移为 Maven 多模块。项目已有可靠本地测试，也有已确认可用的测试环境部署流程；spec 没写交付终点，也没涉及生产发布。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-review"],
+      "expected_sequence": ["align"],
+      "assertions": ["自动采用可靠现有测试而不询问是否测试", "前置询问本地验证还是部署测试环境", "测试部署不因入口存在而自动执行", "不询问生产发布或发版"]
+    },
+    {
       "id": "align-testcontainers-auto-evidence",
       "prompt": "按现有 spec 实现订单归档。spec 明确要求用项目现有 Testcontainers PostgreSQL 集成测试验证，允许安全创建和销毁测试数据；只需提交当前分支，不要推送。",
       "expected_initial_skills": ["align"],
