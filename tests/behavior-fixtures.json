@@ -3,172 +3,108 @@
   "purpose": "Initial routing and multi-stage sequence expectations. Run prompts in a clean context and record measured outcomes separately; this file defines expectations, not measured behavior.",
   "cases": [
     {
-      "id": "align-before-tdd-for-ambiguous-feature",
-      "prompt": "给结算系统加一个优惠功能，具体规则你帮我设计并实现。当前是 Git 仓库，origin 已配置且可推送，也能确定项目默认分支；项目有测试命令，但没有测试或生产部署方案。",
+      "id": "align-ambiguous-feature-smart-contract",
+      "prompt": "给结算系统加一个优惠功能，具体规则你帮我设计并实现。spec 只描述本地业务行为，没有生产环境或发布内容；仓库已有单元测试入口。",
       "expected_initial_skills": ["align"],
-      "forbidden_initial_skills": ["tdd", "code-review", "verification"],
+      "forbidden_initial_skills": ["tdd", "code-review"],
       "expected_sequence": ["align"],
-      "assertions": ["先澄清业务目标与完成标准", "关键需求未确定前不写生产代码", "方案确定后先询问测试或证据优先还是直接实现", "用户选择前不加载 TDD", "询问本次做到实现并验证成功、提交、推送当前分支或合并默认分支并推送", "没有部署方案时不提供测试或生产部署选项"]
+      "assertions": ["先澄清会改变实现路线的业务规则与完成标准", "沿用可靠现有测试而不询问要不要测试", "spec 未涉及生产或发布时不主动询问发版", "关键未知解决后直接执行"]
     },
     {
-      "id": "align-delivery-target-by-project-capability",
-      "prompt": "帮我设计并实现一个高影响功能。对齐交付终点时请分别说明：非 Git 且无部署方案；Git 无远端；Git 有可推送远端但默认分支未知；以及 Git、默认分支、测试部署和生产部署流程都已确认时，各自提供哪些选项。",
+      "id": "align-non-git-omits-git-delivery",
+      "prompt": "这是一个没有 Git 的本地目录。请设计并实现一个高影响的数据迁移脚本，做到本地演练验证成功即可。",
       "expected_initial_skills": ["align"],
-      "forbidden_initial_skills": ["tdd", "code-review", "verification"],
+      "forbidden_initial_skills": ["tdd", "code-review"],
       "expected_sequence": ["align"],
-      "assertions": ["非 Git 项目不提供提交推送合并选项", "Git 无远端时可提供提交但不提供推送", "默认分支未知时不提供合并且不猜 main 或 master", "测试与生产部署能力分别判断", "所有层级都可用时完整列出且高层说明必要前置步骤", "实现方式未表态时先询问测试或证据优先还是直接实现"]
+      "assertions": ["收敛迁移范围与安全完成标准", "非 Git 项目不询问提交推送或合并", "遵循本地验证终点而不扩展到发布"]
     },
     {
-      "id": "align-respects-explicit-delivery-target",
-      "prompt": "帮我设计并实现一个跨模块功能，做到本地验证成功就停，不要提交、推送或部署。",
+      "id": "align-testcontainers-auto-evidence",
+      "prompt": "按现有 spec 实现订单归档。spec 明确要求用项目现有 Testcontainers PostgreSQL 集成测试验证，允许安全创建和销毁测试数据；只需提交当前分支，不要推送。",
       "expected_initial_skills": ["align"],
-      "forbidden_initial_skills": ["tdd", "code-review", "verification"],
+      "forbidden_initial_skills": ["tdd", "code-review"],
       "expected_sequence": ["align"],
-      "assertions": ["复述本地验证成功这一交付终点", "不重复询问交付终点", "实现方式未表态时先询问测试或证据优先还是直接实现", "不执行提交推送合并或部署"]
+      "assertions": ["直接采用 spec 指定的 Testcontainers 验证", "不再询问要不要测试或怎么测试", "采用提交后停止的交付终点", "不询问推送合并或发版"]
     },
     {
       "id": "skip-align-for-explicit-small-change",
       "prompt": "把 README 安装命令中的旧仓库 URL 改成 https://example.com/new.git，只改这一处并检查链接文本。",
       "expected_initial_skills": [],
       "forbidden_initial_skills": ["align", "tdd", "code-review"],
-      "expected_sequence": ["verification"],
-      "assertions": ["明确低风险任务直接修改", "完成前检查目标文本"]
-    },
-    {
-      "id": "debug-before-tdd-when-cause-unknown",
-      "prompt": "登录测试在 CI 偶发超时，本地正常，帮我修掉。",
-      "expected_initial_skills": ["systematic-debugging"],
-      "forbidden_initial_skills": ["tdd", "align", "verification"],
-      "expected_sequence": ["systematic-debugging"],
-      "assertions": ["先收集 CI 与本地差异证据", "根因未知时不猜修法", "根因明确后询问测试或证据优先还是直接实现", "用户选择前不加载 TDD"]
-    },
-    {
-      "id": "ask-before-tdd-when-preference-unstated",
-      "prompt": "根因已确认：parseAmount 遇到全角小数点返回 NaN。请修复。",
-      "expected_initial_skills": [],
-      "forbidden_initial_skills": ["tdd", "systematic-debugging", "align", "verification"],
       "expected_sequence": [],
-      "assertions": ["先询问测试或证据优先还是直接实现", "用户选择前不加载 TDD", "不把测试当作所有代码改动的强制前置"]
+      "assertions": ["明确低风险任务直接修改", "完成前检查目标文本", "不展示执行合同问卷"]
     },
     {
-      "id": "tdd-after-explicit-regression-choice",
-      "prompt": "根因已确认：parseAmount 遇到全角小数点返回 NaN。请修复并先写防回归测试。",
-      "expected_initial_skills": ["tdd"],
-      "forbidden_initial_skills": ["systematic-debugging", "align", "verification"],
-      "expected_sequence": ["tdd", "verification"],
-      "assertions": ["明确要求防回归测试视为已选择测试优先", "先建立全角小数点的失败证据", "再做最小实现并验证回归"]
+      "id": "debug-unknown-cause-returns-to-contract",
+      "prompt": "登录测试在 CI 偶发超时，本地正常，帮我定位并修掉；使用项目现有测试验证，本地验证后停。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-review"],
+      "expected_sequence": ["align", "systematic-debugging"],
+      "assertions": ["先形成包含现有测试和本地终点的执行合同", "再收集 CI 与本地差异证据", "一次只验证一个假设", "调试阶段不修改生产行为", "根因明确后返回合同且不重复询问"]
     },
     {
-      "id": "direct-implementation-skips-tdd",
-      "prompt": "这个导入脚本只能在客户内网执行，本地没有数据和运行环境。把导出的日期改为 ISO 8601；直接改代码，不要先补测试，并把无法验证的风险说清楚。",
+      "id": "known-cause-direct-implementation",
+      "prompt": "根因已确认：parseAmount 遇到全角小数点返回 NaN。请直接修复，运行现有相关测试，不新增测试。",
       "expected_initial_skills": [],
-      "forbidden_initial_skills": ["tdd", "systematic-debugging", "align", "verification"],
+      "forbidden_initial_skills": ["tdd", "systematic-debugging", "align"],
       "expected_sequence": [],
-      "assertions": ["尊重直接实现的明确选择", "不加载 TDD 或强造本地测试", "说明本地无法验证和剩余风险"]
+      "assertions": ["根因和执行方式明确时直接实现", "不重复询问测试策略", "不加载 TDD"]
     },
     {
-      "id": "unavailable-local-test-prompts-choice",
-      "prompt": "把只能在远端设备运行的温控阈值从 80 调到 85，本地不能执行。我没想好要不要补测试。",
+      "id": "lightweight-test-first-no-mandatory-red",
+      "prompt": "根因已确认：parseAmount 遇到全角小数点返回 NaN。请先补一个回归测试再修复，不要求严格 RED-GREEN。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["systematic-debugging", "code-review"],
+      "expected_sequence": ["align", "tdd"],
+      "assertions": ["先形成测试先行的执行合同", "再写最小行为测试", "不为形式完整强制单独运行 RED", "做最小实现后运行目标测试和必要回归"]
+    },
+    {
+      "id": "strict-tdd-confirms-focused-red",
+      "prompt": "严格按 TDD 修复金额解析问题：必须先运行聚焦测试确认旧实现失败，再修改生产代码。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["systematic-debugging", "code-review"],
+      "expected_sequence": ["align", "tdd"],
+      "assertions": ["先形成严格 TDD 的执行合同", "修改生产行为前运行一次聚焦 RED", "确认失败来自目标缺陷", "实现后运行目标测试和必要回归", "不先跑无关全套测试"]
+    },
+    {
+      "id": "unavailable-environment-direct-work",
+      "prompt": "这个导入脚本只能在客户内网执行，本地没有数据和运行环境。把导出的日期改为 ISO 8601；直接改代码，不要补测试，并把无法验证的风险说清楚。",
       "expected_initial_skills": [],
-      "forbidden_initial_skills": ["tdd", "systematic-debugging", "align", "verification"],
+      "forbidden_initial_skills": ["tdd", "systematic-debugging", "align"],
       "expected_sequence": [],
-      "assertions": ["先说明本地无法运行的限制", "询问改用远端或静态证据还是直接实现", "用户选择前不加载 TDD"]
+      "assertions": ["尊重直接实现的明确选择", "不强造测试或测试基础设施", "说明本地无法验证和剩余风险"]
     },
     {
-      "id": "review-before-verification",
-      "prompt": "实现已经在当前 diff 里了。先审查是否满足需求和代码质量，暂时不要修改。",
+      "id": "review-working-diff-read-only",
+      "prompt": "实现已经在当前 diff 里了。先审查是否满足需求和是否有具体代码缺陷，暂时不要修改。",
       "expected_initial_skills": ["code-review"],
-      "forbidden_initial_skills": ["verification", "align", "tdd"],
+      "forbidden_initial_skills": ["align", "tdd"],
       "expected_sequence": ["code-review"],
-      "assertions": ["输出 requirement verdict 与 quality verdict", "reviewer 保持只读", "无法从 diff 判断的事项明确标注"]
+      "assertions": ["先核对需求再找具体缺陷", "reviewer 保持只读", "finding 包含失败场景", "无法从 diff 判断的事项明确标注"]
     },
     {
-      "id": "verification-after-review-fixes",
-      "prompt": "评审问题都处理完了，确认现在能不能说测试通过并准备合并。",
-      "expected_initial_skills": ["verification"],
-      "forbidden_initial_skills": ["code-review", "align", "tdd"],
-      "expected_sequence": ["verification"],
-      "assertions": ["运行新鲜且完整的验证命令", "证据与完成声明逐项匹配"]
-    },
-    {
-      "id": "decision-layering-for-durable-rule",
-      "prompt": "我们已经决定所有跨租户查询必须显式传 tenantId。这条长期规则该放 ADR、模块文档、测试还是 hook？",
-      "expected_initial_skills": ["decision-layering"],
-      "forbidden_initial_skills": ["align", "code-as-spec", "writing-skills"],
-      "expected_sequence": ["decision-layering"],
-      "assertions": ["选择最小必要承载层", "机械部分优先测试或 CI", "不默认要求 ADR"]
+      "id": "minimal-layer-for-durable-rule",
+      "prompt": "我们已经决定所有跨租户查询必须显式传 tenantId。这条长期规则该放 CLAUDE.md、spec、测试还是 hook？",
+      "expected_initial_skills": ["code-as-spec"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["code-as-spec"],
+      "assertions": ["选择最小有效承载层", "可稳定判断的约束交给测试或 CI", "不为单条规则新建治理体系"]
     },
     {
       "id": "doc-drift-only",
-      "prompt": "对照代码检查这篇接口文档有没有旧字段、重复 schema 和失效链接。",
+      "prompt": "对照代码检查这篇内部业务文档有没有重复 schema、复述调用流程或失效的代码入口。",
       "expected_initial_skills": ["code-as-spec"],
-      "forbidden_initial_skills": ["decision-layering", "writing-skills", "align"],
+      "forbidden_initial_skills": ["align", "code-review"],
       "expected_sequence": ["code-as-spec"],
-      "assertions": ["只处理文档范围和漂移", "不借机扩写无关内容", "把代码可推断的内容判为该清理"]
+      "assertions": ["代码可还原的内容收敛为入口索引", "局部业务 why 下沉到就近注释", "不借机扩写或重构无关内容"]
     },
     {
-      "id": "clean-changed-code-not-bugs",
-      "prompt": "我刚写完这个改动，帮我看看代码有没有重复造轮子、可以简化或明显低效的地方，顺手清理一下。不用找功能 bug。",
+      "id": "no-doc-system-stays-in-code",
+      "prompt": "这个项目从来没有 docs 或 spec。请记录刚实现的退款状态流转和几个特殊业务边界，方便以后维护。",
       "expected_initial_skills": ["code-as-spec"],
-      "forbidden_initial_skills": ["code-review", "align", "tdd"],
+      "forbidden_initial_skills": ["align", "code-review"],
       "expected_sequence": ["code-as-spec"],
-      "assertions": ["从复用/简化/效率/高度四维审改动代码", "不查 correctness bug", "复用已有 helper 而非重造"]
-    },
-    {
-      "id": "author-skill-only",
-      "prompt": "已经确定交付 Skill：把这套根因追踪方法写成新的 SKILL.md。",
-      "expected_initial_skills": ["writing-skills"],
-      "forbidden_initial_skills": ["decision-layering", "code-as-spec", "align"],
-      "expected_sequence": ["writing-skills", "verification"],
-      "assertions": ["description 同时说明 what 与 when", "验证相邻 Skill 的触发边界"]
-    },
-    {
-      "id": "explain-adr-without-governance-flow",
-      "prompt": "简单解释一下 ADR 是什么，以及为什么 Agent 时代还有用。不要修改任何文件。",
-      "expected_initial_skills": [],
-      "forbidden_initial_skills": ["decision-layering", "code-as-spec", "align", "tdd"],
-      "expected_sequence": [],
-      "assertions": ["只做概念解释", "不要求建立 ADR 目录或治理机制"]
-    },
-    {
-      "id": "docs-change-does-not-force-unit-test",
-      "prompt": "修正 README 中两个拼写错误并检查 Markdown 结构。",
-      "expected_initial_skills": [],
-      "forbidden_initial_skills": ["tdd", "align", "code-review"],
-      "expected_sequence": ["verification"],
-      "assertions": ["不强造单元测试", "使用适合文档的轻量验证"]
-    },
-    {
-      "id": "existing-worktree-no-nesting",
-      "prompt": "我已经在原生 worktree 会话里，请在这里继续实现，不要再创建 worktree。",
-      "expected_initial_skills": ["git-worktrees"],
-      "forbidden_initial_skills": ["align"],
-      "expected_sequence": ["git-worktrees"],
-      "assertions": ["检测到现有隔离后不再创建", "锚定当前 worktree 路径"]
-    },
-    {
-      "id": "worktree-ignore-before-create",
-      "prompt": "请在仓库内的 .worktrees/ 下新建一个 worktree，再开始实现功能。当前项目还没有忽略这个目录。",
-      "expected_initial_skills": ["git-worktrees"],
-      "forbidden_initial_skills": ["align"],
-      "expected_sequence": ["git-worktrees"],
-      "assertions": ["创建前识别会观察目标路径的宿主 Git 仓库", "在宿主仓库建立并复验忽略规则后才创建"]
-    },
-    {
-      "id": "external-worktree-no-ignore-change",
-      "prompt": "请把 worktree 建到当前项目外的 D:/workspace/worktrees/demo；D:/workspace 本身是另一个 Git 仓库，不要让它跟踪新 worktree。",
-      "expected_initial_skills": ["git-worktrees"],
-      "forbidden_initial_skills": ["align"],
-      "expected_sequence": ["git-worktrees"],
-      "assertions": ["识别目标仍受另一个宿主 Git 仓库观察", "创建前证明目标不会污染其状态", "尊重用户指定位置"]
-    },
-    {
-      "id": "native-worktree-uses-native-management",
-      "prompt": "当前 Claude Code 会话支持 EnterWorktree，请创建隔离工作区；项目里没有忽略 .claude/worktrees/。",
-      "expected_initial_skills": ["git-worktrees"],
-      "forbidden_initial_skills": ["align"],
-      "expected_sequence": ["git-worktrees"],
-      "assertions": ["优先使用当前会话的原生 worktree 能力", "仍在创建前确认宿主仓库不会被污染", "创建与清理交由同一机制管理"]
+      "assertions": ["不新建文档目录或治理体系", "流程由代码表达", "非显然业务语义写进就近注释"]
     }
   ]
 }
