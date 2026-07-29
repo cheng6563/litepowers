@@ -8,7 +8,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-review"],
       "expected_sequence": ["align"],
-      "assertions": ["先澄清会改变实现路线的业务规则与完成标准", "沿用可靠现有测试而不询问要不要测试", "spec 未涉及生产或发布时不主动询问发版", "关键未知解决后直接执行"]
+      "assertions": ["先通过结构化交互澄清会改变实现路线的业务规则与完成标准，并等待回答", "沿用可靠现有测试而不询问要不要测试", "spec 未涉及生产或发布时不主动询问发版", "关键未知解决后直接执行", "最终报告默认一屏内，先结论、再列 3–7 个关键点和明确下一步"]
     },
     {
       "id": "align-non-git-omits-git-delivery",
@@ -24,7 +24,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-review"],
       "expected_sequence": ["align"],
-      "assertions": ["自动采用可靠现有测试而不询问是否测试", "前置询问本地验证还是部署测试环境", "测试部署不因入口存在而自动执行", "不询问生产发布或发版"]
+      "assertions": ["自动采用可靠现有测试而不询问是否测试", "通过结构化交互前置询问本地验证还是部署测试环境，并等待回答", "测试部署不因入口存在而自动执行", "不询问生产发布或发版", "最终报告不复述过程或穷举证据，但保留关键取舍、失败、剩余风险和未决事项"]
     },
     {
       "id": "align-testcontainers-auto-evidence",
