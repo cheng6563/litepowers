@@ -52,11 +52,23 @@ gh skill install cheng6563/litepowers align --agent codex --scope user
 
 一次装一个（按 skill 名，5 个名见上表）。Codex 会话内也可用 `$skill-installer`。
 
-**手动兜底（无 gh CLI 时）**——把整个 `skills/` 软链成共享目录，一份内容多 agent 共用：
+**手动兜底（无 gh CLI 时）**——按目标 agent 的用户级 skill 目录，把各个 skill 目录软链过去，一份内容多 agent 共用。Codex 用户级目录是 `~/.codex/skills/`（Windows 为 `%USERPROFILE%\.codex\skills\`）：
 
 ```shell
-ln -s /abs/path/to/litepowers/skills ~/.agents/skills
+# Codex（每个 skill 一个软链，逐个建）
+for s in align systematic-debugging tdd code-review code-as-spec; do
+  ln -s "/abs/path/to/litepowers/skills/$s" "$HOME/.codex/skills/$s"
+done
 ```
+
+```powershell
+# Codex on Windows（管理员 PowerShell）
+'align','systematic-debugging','tdd','code-review','code-as-spec' | ForEach-Object {
+  New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.codex\skills\$_" -Target "C:\abs\path\to\litepowers\skills\$_"
+}
+```
+
+其它 agent 换成各自的用户级 skill 目录即可；不要软链到项目级的 `.agents/skills`（那只在当前 repo 生效，和"全局装一次"相悖）。
 
 ## 与上游 superpowers 的关系
 
