@@ -20,6 +20,7 @@
 | `tdd` | `align` 选定后 | 执行合同选择测试先行时，用最小测试约束实现；仅必要时单独确认 RED |
 | `code-review` | `/litepowers:code-review` 或自动 | 独立、只读地审查已有 working diff 的需求符合性和具体代码缺陷 |
 | `code-as-spec` | `/litepowers:code-as-spec` 或自动 | 代码流程与就近注释承载核心业务，常规内部业务文档只做代码入口索引，并为项目规则选择最小承载层 |
+| `git-worktrees` | 显式请求或项目要求隔离时 | 定位并锚定 worktree、创建前处理上级仓库的忽略规则，防改动落错仓；优先平台原生工具，无则退回手动 git worktree |
 
 ## 安装（Claude Code）
 
