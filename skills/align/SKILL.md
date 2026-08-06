@@ -1,6 +1,6 @@
 ---
 name: align
-description: "开发任务的统一首入口：先选择快速推进或对齐推进，再确定执行范围、路线、验证和交付。新需求或实质变更时使用。Use when a new requirement or substantial change arises; start here for non-trivial implementation, debugging, tests-first, migration, or delivery work."
+description: "开发任务的统一首入口。Use when a new requirement or substantial change arises; start here for non-trivial implementation, debugging, tests-first, migration, or delivery work."
 ---
 
 # 执行前对齐

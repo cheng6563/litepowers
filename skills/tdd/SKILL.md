@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: "用最小失败测试或可重复证据约束实现。仅在 align 明确转入，或用户手动指定本 Skill 时使用；不得自行触发。Use only when delegated by align or explicitly invoked by the user; never invoke autonomously."
+description: "用最小失败测试或可重复证据约束实现。Use only when delegated by align or explicitly invoked by the user; never invoke autonomously."
 ---
 
 # 轻量测试先行
