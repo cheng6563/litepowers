@@ -1,17 +1,25 @@
 ---
 name: align
-description: "开发任务的统一首入口。Use when a new requirement or substantial change arises; start here for non-trivial implementation, debugging, tests-first, migration, or delivery work."
+description: "开发任务的统一首入口。Use when a new non-trivial development requirement arises or an active task changes scope, approach, evidence, or delivery; do not restart alignment for local follow-ups or failures produced while executing an already aligned task."
 ---
 
 # 执行前对齐
 
-用户提出新的开发需求时先执行本 Skill。后续变更若可能影响范围、实现路线、验证方式或交付目标，则重新执行；兼容当前目标的局部调整沿用原模式。
+用户提出新的、非简单开发需求时先执行本 Skill。后续变更只有在可能影响范围、实现路线、验证方式或交付目标时才重新执行；兼容当前目标的局部调整沿用原模式。
+
+以下情况不重新执行，也不重复询问推进模式：
+
+- 当前任务执行过程中刚产生的测试、构建、CI、部署或运行失败；
+- 对当前实现的局部修正、补漏或继续执行已授权的验证与交付动作；
+- 根因和执行方式都已明确的直接修复，或用户明确限定的简单改动。
+
+其中，当前任务产生的失败视为原任务的证据：继承其 Scope、Evidence 和 Delivery；根因未知时直接转 `skill:systematic-debugging`，定位后回到原合同继续修复，不因“开始调试”再次对齐。只有失败暴露出新的业务目标、明显扩大影响范围、需要更换实现路线，或要求未授权的外部动作时才停下询问。
 
 ## 选择推进模式
 
 先依靠现有上下文粗略判断任务难度，不详细分析、扫描项目或制定计划。必要时最多进行一次只读分析，用于确认涉及文件和代码规模；不得启动 subagent。
 
-用户未明确选择时，通过结构化交互询问：
+仅当本 Skill 确实适用，且用户既未明确选择、当前任务也没有可继承的推进模式时，通过结构化交互询问：
 
 - **快速推进**：直接修改，减少前置分析和确认；
 - **对齐推进**：先扫描项目并确认执行合同，再开始修改。

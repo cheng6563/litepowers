@@ -51,6 +51,14 @@
       "assertions": ["先形成包含现有测试和本地终点的执行合同", "再收集 CI 与本地差异证据", "一次只验证一个假设", "调试阶段不修改生产行为", "根因明确后返回合同且不重复询问"]
     },
     {
+      "id": "continue-after-action-failure-no-realign",
+      "prompt": "你刚才已经按快速推进完成修改、本地验证、提交并推送；现在我说：GitHub Action 好像失败了，看看并修好，仍然提交推送。",
+      "expected_initial_skills": ["systematic-debugging"],
+      "forbidden_initial_skills": ["align", "tdd", "code-review"],
+      "expected_sequence": ["systematic-debugging"],
+      "assertions": ["把失败视为原任务执行产生的新证据", "继承快速推进、验证方式和提交推送终点", "不重复弹出快速推进或对齐推进选择", "先读取失败日志并验证单一根因假设", "根因明确后直接修复、验证并继续原交付动作"]
+    },
+    {
       "id": "known-cause-direct-implementation",
       "prompt": "根因已确认：parseAmount 遇到全角小数点返回 NaN。请直接修复，运行现有相关测试，不新增测试。",
       "expected_initial_skills": [],
