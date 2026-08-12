@@ -1,6 +1,6 @@
 ---
 name: git-worktrees
-description: "为隔离开发创建、进入和清理 Git worktree。只要用户提到 worktree、隔离分支、独立工作目录，或项目指令要求隔离工作，就使用本技能；尤其用于外层套壳仓包含多个独立子 Git 仓的场景，确保原生 worktree 工具锚定到真正要修改的子仓。"
+description: "为隔离开发创建、进入和清理 Git worktree。只要用户提到 worktree、隔离分支、独立工作目录，或项目指令要求隔离工作，就使用本技能；尤其用于外层套壳仓包含多个独立子 Git 仓的场景，确保原生 worktree 工具锚定到真正要修改的子仓。Use when creating, entering, or cleaning an isolated Git worktree, or when project instructions require isolated work."
 ---
 
 # 使用 Git Worktrees
