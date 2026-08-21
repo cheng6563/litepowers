@@ -1,6 +1,6 @@
 ---
 name: align
-description: "开发任务的统一首入口。Use when a new non-trivial development requirement arises or an active task changes scope, approach, evidence, or delivery; do not restart alignment for local follow-ups or failures produced while executing an already aligned task."
+description: "开发任务的统一首入口。Use when a new non-trivial development requirement arises or an active task changes scope, approach, evidence, or delivery; for a brand-new large requirement without an existing requirements document, route creation of a temporary first-review snapshot; do not restart alignment for local follow-ups or failures produced while executing an already aligned task."
 ---
 
 # 执行前对齐
@@ -28,7 +28,7 @@ description: "开发任务的统一首入口。Use when a new non-trivial develo
 
 ## 快速推进
 
-内部形成最小执行合同后直接修改，始终由主线程执行，不启动 subagent，不创建计划、spec 或 ADR。
+内部形成最小执行合同后直接修改，始终由主线程执行，不启动 subagent，不创建计划、持久 spec 或 ADR；符合下述条件的临时 review 快照不属于持久 spec。
 
 普通细节和轻微需求漂移，按最符合用户目标、现有代码和项目约定的方式处理，并在最终报告说明。若漂移会改变核心行为、完成标准、公开接口、数据结构、架构、外部副作用或明显扩大范围，立即停止并询问。
 
@@ -48,6 +48,12 @@ description: "开发任务的统一首入口。Use when a new non-trivial develo
 Evidence 能由现有测试体系和项目约定确定时直接采用。非 Git 项目不询问提交推送；无远端不询问推送；没有已确认测试环境入口时不询问部署。生产部署或正式发版仅在用户明确要求时执行。
 
 根因未知时转 `skill:systematic-debugging`；选择测试先行时转 `skill:tdd`。专项 Skill 返回后继续按原合同执行，不重复询问。
+
+## 临时 review 快照
+
+无论采用哪种推进模式，若需求是全新的大型功能且不存在现成需求文档，则在任务开始时按 `skill:code-as-spec` 创建仅供首次 review 的临时快照。已有需求文档时直接使用，不创建快照。
+
+快照不参与设计、实现或调试；初次开发完成后由调用方把冻结版本显式交给首次 review。review 完成后弃置。后续补充、二次修改和普通增量开发不创建、不读取、不引用、不补写，也不追溯旧快照。
 
 ## 结果与后续
 

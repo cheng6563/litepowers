@@ -99,6 +99,38 @@
       "assertions": ["先核对需求再找具体缺陷", "reviewer 保持只读", "finding 包含失败场景", "无法从 diff 判断的事项明确标注"]
     },
     {
+      "id": "align-first-large-feature-creates-review-snapshot",
+      "prompt": "这是一个全新的大型结算重构需求，项目没有现成需求文档。请先确定范围后实现；功能完成时需要独立 review。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-review"],
+      "expected_sequence": ["align", "code-as-spec"],
+      "assertions": ["align 判断为全新大型需求且无现成需求文档后，路由 code-as-spec", "在任务开始时于临时目录创建仅供首次 review 的需求快照", "快照不作为设计、实现或调试依据", "初次开发完成后冻结版本，由调用方显式传给首次 review", "首次 review 完成后弃置快照"]
+    },
+    {
+      "id": "align-large-feature-existing-document-no-snapshot",
+      "prompt": "按仓库现有的订单迁移需求文档实现一个全新的大型订单归档功能，并在完成后 review。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-review", "code-as-spec"],
+      "expected_sequence": ["align"],
+      "assertions": ["直接使用现成需求文档", "不创建临时需求快照或替代副本", "现有文档的缺口通过本次请求、代码事实或必要澄清补足"]
+    },
+    {
+      "id": "review-first-large-feature-explicit-snapshot",
+      "prompt": "首次大型功能已经完成。这里是调用方提供的冻结临时需求快照和目标 diff；请做只读 review，不要修改。",
+      "expected_initial_skills": ["code-review"],
+      "forbidden_initial_skills": ["align", "tdd", "code-as-spec"],
+      "expected_sequence": ["code-review"],
+      "assertions": ["上游任务将冻结快照与目标 diff 一并作为 review 输入", "reviewer 只依据提供的输入核对需求符合性，不自行扫描临时目录", "review 完成后不要求维护或转存快照", "reviewer 保持只读"]
+    },
+    {
+      "id": "follow-up-change-does-not-use-old-snapshot",
+      "prompt": "此前大型订单归档功能已经完成首次 review，旧临时快照仍可能留在临时目录。现在只把归档日期格式改为 ISO 8601，按当前代码逻辑继续，不要 review。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["align", "tdd", "code-review", "code-as-spec"],
+      "expected_sequence": [],
+      "assertions": ["按本次请求和当前代码直接修改", "不扫描、读取、引用、补写或校准旧临时快照", "不因旧快照存在而新建或维护业务文档"]
+    },
+    {
       "id": "minimal-layer-for-durable-rule",
       "prompt": "我们已经决定所有跨租户查询必须显式传 tenantId。这条长期规则该放 CLAUDE.md、spec、测试还是 hook？",
       "expected_initial_skills": ["code-as-spec"],
