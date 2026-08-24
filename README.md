@@ -15,11 +15,11 @@
 
 | Skill | 触发方式 | 作用 |
 |-------|----------|------|
-| `align` | `/litepowers:align` 或自动 | 从请求、spec 与项目事实确定范围、实现路线、验证证据和交付终点；为无现成文档的首次大型需求路由临时 review 快照 |
+| `align` | `/litepowers:align` 或自动 | 从请求、spec 与项目事实确定范围、实现路线、验证证据和交付终点；选择对齐推进时询问是否独立 review，仅按肯定选择路由临时 review 需求文档 |
 | `systematic-debugging` | `align` 选定后 | 根因未知时用复现、数据流和单一假设定位源头，再返回执行合同修复 |
 | `tdd` | `align` 选定后 | 执行合同选择测试先行时，用最小测试约束实现；仅必要时单独确认 RED |
 | `code-review` | `/litepowers:code-review` 或自动 | 独立、只读地审查已有 working diff 的需求符合性和具体代码缺陷 |
-| `code-as-spec` | `/litepowers:code-as-spec` 或自动 | 代码与就近注释优先承载业务；持久业务文档只保留代码无法充分表达的关键跨模块信息，并按 align 路由创建首次 review 临时快照 |
+| `code-as-spec` | `/litepowers:code-as-spec` 或自动 | 代码与就近注释优先承载业务；持久业务文档只保留代码无法充分表达的关键跨模块信息，并按 align 已确认的独立 review 创建临时验收式需求文档 |
 | `git-worktrees` | 显式请求或项目要求隔离时 | 定位并锚定 worktree、创建前处理上级仓库的忽略规则，防改动落错仓；优先平台原生工具，无则退回手动 git worktree |
 
 ## 安装（Claude Code）

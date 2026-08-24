@@ -1,6 +1,6 @@
 ---
 name: code-as-spec
-description: "让代码、注释和文档各自承载合适的业务信息，并在 align 路由后创建首次大型需求的临时 review 快照。Use when maintaining internal business documentation, deciding where business knowledge or durable project rules belong, checking docs that duplicate implementation, or when align has identified a brand-new large requirement without an existing requirements document."
+description: "让代码、注释和文档各自承载合适的业务信息，并在 align 确认独立 review 后于开发前创建临时 review 需求文档。Use when maintaining internal business documentation, deciding where business knowledge or durable project rules belong, checking docs that duplicate implementation, or when align has recorded an opted-in independent post-development review."
 ---
 
 # 代码即核心业务文档
@@ -15,15 +15,19 @@ description: "让代码、注释和文档各自承载合适的业务信息，并
 
 稳定项目约定、面向外部读者的使用说明、集成协议、运维手册或合规记录按其用途保留，不把它们误当成内部业务文档清理。
 
-## 首次大型需求的临时 review 快照
+## 独立 review 的临时需求文档
 
-仅当 `skill:align` 已识别出**全新的大型需求**且项目不存在现成需求文档时，在任务开始时建立一份临时需求快照。已有需求文档时直接使用，不创建替代副本。
+仅当 `skill:align` 的对齐推进交互已确认**需要独立 review**时，在开发前建立一份该次 review 专用的独立需求文档；不因任务规模、是否全新或是否已有需求文档自动创建。选择不需要独立 review 时不创建任何临时文档，也不安排 review。
 
-把快照放在运行环境约定的临时目录，不放入项目文档体系，不提交、不发布，也不转成持久 spec。它只记录首次 review 所需的原始需求：目标、范围与非目标、验收标准，以及关键不可违背的业务约束；不记录实现方案、字段清单或调用顺序。
+把文档放在运行环境约定的临时目录，不放入项目文档体系，不提交、不发布，也不转成持久 spec。即使已有需求文档，也要为已选择的独立 review 单独创建此文件；可以以已有文档为事实来源，但不修改或替代它。
 
-快照不作为设计、实现、调试或开发期决策的依据。初次功能开发完成后冻结它；调用方将确切的冻结版本与目标 diff 显式传给首次 review，reviewer 不自行扫描临时目录寻找文件。首次 review 完成后弃置该快照。
+文档采用接近验收文档的结构，写清：需求目标、范围与非目标、前置条件或关键约束，以及可逐项核对的验收项（场景、预期结果，必要时包含边界和失败结果）。只记录 review 判断需求符合性所需内容；不记录实现方案、字段清单、调用顺序或开发过程。
 
-后续补充、二次修改、修复和普通增量开发只依据当次请求、当前代码、测试及仍有价值的持久文档推进；不得读取、引用、补写、校准或追溯此前的临时快照。
+该文档不作为设计、实现、调试或开发期决策的依据。开发中只有用户明确补充或调整目标、范围、关键约束或验收标准时，才在实现该调整前更新该文档；不回改初始正文，而是在末尾追加 `## 需求补充与调整` 条目。每条注明是新增、替换还是废止，并指向对应的初始条目或前序追加项：替换项写明更新后的可验证要求；废止项写明被取消的条目，review 时不再将其作为验收要求。同一事项以后追加且明确标为替换或废止的条目为准。实现细节、调试发现和测试失败不追加。
+
+开发完成后，调用方将开发前建立并包含上述追加项的文档与目标 diff 显式交给独立 reviewer，reviewer 不自行扫描临时目录寻找文件。review 完成后弃置该文档。
+
+后续补充、二次修改、修复和普通增量开发只依据当次请求、当前代码、测试及仍有价值的持久文档推进；不得读取、引用、补写、校准或追溯此前的临时 review 需求文档。
 
 ## 项目规则的极简承载
 

@@ -1,19 +1,19 @@
 ---
 name: align
-description: "开发任务的统一首入口。Use when a new non-trivial development requirement arises or an active task changes scope, approach, evidence, or delivery; for a brand-new large requirement without an existing requirements document, route creation of a temporary first-review snapshot; do not restart alignment for local follow-ups or failures produced while executing an already aligned task."
+description: "开发任务的统一首入口。Use when a new non-trivial development requirement arises; when the user selects alignment-driven work, ask whether to run an independent post-development review and, only if selected, route creation of its temporary review-requirements document."
 ---
 
 # 执行前对齐
 
-用户提出新的、非简单开发需求时先执行本 Skill。后续变更只有在可能影响范围、实现路线、验证方式或交付目标时才重新执行；兼容当前目标的局部调整沿用原模式。
+用户提出新的、非简单开发需求时先执行本 Skill。当前任务的后续变更沿用原模式。
 
-以下情况不重新执行，也不重复询问推进模式：
+当前任务推进中，以下情况沿用原模式，不重复询问推进模式：
 
 - 当前任务执行过程中刚产生的测试、构建、CI、部署或运行失败；
 - 对当前实现的局部修正、补漏或继续执行已授权的验证与交付动作；
 - 根因和执行方式都已明确的直接修复，或用户明确限定的简单改动。
 
-其中，当前任务产生的失败视为原任务的证据：继承其 Scope、Evidence 和 Delivery；根因未知时直接转 `skill:systematic-debugging`，定位后回到原合同继续修复，不因“开始调试”再次对齐。只有失败暴露出新的业务目标、明显扩大影响范围、需要更换实现路线，或要求未授权的外部动作时才停下询问。
+其中，当前任务产生的失败视为原任务的证据：继承其 Scope、Evidence 和 Delivery；根因未知时直接转 `skill:systematic-debugging`，定位后回到原合同继续修复。只有失败暴露出新的业务目标、明显扩大影响范围、需要更换实现路线，或要求未授权的外部动作时才停下询问。
 
 ## 选择推进模式
 
@@ -28,7 +28,7 @@ description: "开发任务的统一首入口。Use when a new non-trivial develo
 
 ## 快速推进
 
-内部形成最小执行合同后直接修改，始终由主线程执行，不启动 subagent，不创建计划、持久 spec 或 ADR；符合下述条件的临时 review 快照不属于持久 spec。
+内部形成最小执行合同后直接修改，始终由主线程执行，不启动 subagent，不创建计划、持久 spec 或 ADR。
 
 普通细节和轻微需求漂移，按最符合用户目标、现有代码和项目约定的方式处理，并在最终报告说明。若漂移会改变核心行为、完成标准、公开接口、数据结构、架构、外部副作用或明显扩大范围，立即停止并询问。
 
@@ -45,15 +45,18 @@ description: "开发任务的统一首入口。Use when a new non-trivial develo
 
 能从请求和项目事实可靠推断的直接采用，只询问会改变执行路线且无法确定的事项。使用结构化交互提供 2–4 个真实选项、说明影响并标出推荐项，然后等待回答；没有真实取舍时不凑选项。
 
+在**对齐推进**的合同交互中，必须询问“开发完成后是否需要独立 review”，并提供两个真实选择：
+
+- **需要独立 review**：在开发前按 `skill:code-as-spec` 创建仅供该次 review 使用的临时、独立需求文档；开发完成后将该文档与目标 diff 显式交给 reviewer；
+- **不需要独立 review**：不创建临时需求文档，不在完成后自动调用或安排 review。
+
+该选择只适用于当前任务；即使项目已有需求文档，选择独立 review 也创建独立的临时 review 需求文档。它不参与设计、实现或调试。
+
+当前任务开发中，用户明确补充或调整目标、范围、关键约束或验收标准时：已选择独立 review 且文档已建立的，在实现调整前按 `skill:code-as-spec` 将变更追加到该文档末尾，不回改初始正文，独立 review 选择继续有效；未选择独立 review 的，直接按当前任务实现，不创建或补写 review 文档。实现细节、调试发现和测试失败不追加。当前任务的 review 完成后，后续补充、二次修改、修复和普通增量开发不读取、不引用、不补写或追溯旧文档。
+
 Evidence 能由现有测试体系和项目约定确定时直接采用。非 Git 项目不询问提交推送；无远端不询问推送；没有已确认测试环境入口时不询问部署。生产部署或正式发版仅在用户明确要求时执行。
 
 根因未知时转 `skill:systematic-debugging`；选择测试先行时转 `skill:tdd`。专项 Skill 返回后继续按原合同执行，不重复询问。
-
-## 临时 review 快照
-
-无论采用哪种推进模式，若需求是全新的大型功能且不存在现成需求文档，则在任务开始时按 `skill:code-as-spec` 创建仅供首次 review 的临时快照。已有需求文档时直接使用，不创建快照。
-
-快照不参与设计、实现或调试；初次开发完成后由调用方把冻结版本显式交给首次 review。review 完成后弃置。后续补充、二次修改和普通增量开发不创建、不读取、不引用、不补写，也不追溯旧快照。
 
 ## 结果与后续
 
