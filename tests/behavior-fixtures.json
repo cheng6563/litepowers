@@ -91,12 +91,28 @@
       "assertions": ["尊重直接实现的明确选择", "不强造测试或测试基础设施", "说明本地无法验证和剩余风险"]
     },
     {
+      "id": "content-maintenance-writes-reader-facing-final-state",
+      "prompt": "更新 README 的安装说明：把旧命令 `tool setup --legacy` 换成 `tool setup`，删除不再支持的 legacy 参数说明及其引用。不要把变更过程写进 README。",
+      "expected_initial_skills": ["content-maintenance"],
+      "forbidden_initial_skills": ["align", "tdd", "code-review", "code-as-spec"],
+      "expected_sequence": ["content-maintenance"],
+      "assertions": ["按 README 读者的使用需要保留安装说明", "直接保留新命令而非写入由旧命令改为新命令的过程", "删除 legacy 参数的失效说明与关联引用", "不为普通删除额外添加没有独立价值的否定式约束"]
+    },
+    {
       "id": "review-working-diff-read-only",
       "prompt": "实现已经在当前 diff 里了。先审查是否满足需求和是否有具体代码缺陷，暂时不要修改。",
       "expected_initial_skills": ["code-review"],
       "forbidden_initial_skills": ["align", "tdd"],
       "expected_sequence": ["code-review"],
       "assertions": ["先核对需求再找具体缺陷", "reviewer 保持只读", "finding 包含失败场景", "无法从 diff 判断的事项明确标注"]
+    },
+    {
+      "id": "review-ui-interaction-product-usability",
+      "prompt": "当前 diff 为客服人员新增了一个查询与导出页面。客服要按客户查记录并导出，请从产品可用性和具体代码缺陷两方面做只读 review，不要修改。",
+      "expected_initial_skills": ["code-review"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["code-review"],
+      "assertions": ["从明确的客服人员及其查询、导出任务视角审查 UI/交互", "检查完成任务所需信息和操作是否齐全、自然", "检查是否要求手动输入可避免的内部 ID、编码或日期字符串", "只有存在具体失败场景时才报告可用性 finding", "reviewer 保持只读"]
     },
     {
       "id": "align-asks-independent-review-choice",
