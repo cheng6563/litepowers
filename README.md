@@ -2,14 +2,13 @@
 
 [![release](https://img.shields.io/github/v/release/cheng6563/litepowers)](https://github.com/cheng6563/litepowers/releases)
 
-精简版方法论 skill 集。superpowers 的瘦身骨架 + 去项目化的治理理念，**按需触发、无全局强制门**。
+通用方法论 skill 集，**按需触发、轻量执行**。
 
 ## 设计取向
 
-- **无 SessionStart 强制门**：不注入"1% 沾边就必须用 skill"那套全局指令。每个 skill 靠 `description` 自动按需触发（model-invoked），需要时也能 `/litepowers:<name>` 手动启动。
-- **砍掉重型流程**：不含 `writing-plans` / `executing-plans` / `subagent-driven-development` / 并行 subagent 编排——慢且费 token。
-- **瘦身**：每个 skill 只留判断核心，去掉冗长的恐吓话术和重复 rationalization 表。
-- **去项目化**：不绑定任何具体技术栈 / 表名 / 框架。
+- **按需触发**：每个 skill 靠 `description` 自动触发，需要时也能 `/litepowers:<name>` 手动启动。
+- **轻量执行**：以执行合同、必要证据和明确交付终点组织任务，每个 skill 保留影响决策的核心规则。
+- **跨项目使用**：方法保持通用，具体技术栈与业务约定由项目提供。
 
 ## Skills
 
@@ -78,9 +77,7 @@ done
 
 ## 与上游 superpowers 的关系
 
-本仓是基于 superpowers **5.1.0** 的一次观点鲜明的**重写**（去项目化 / 砍 SessionStart 强制门 / 砍 plan+subagent 重型流程 / 瘦身 / brainstorming 改名 align / 加原创治理 skill），**不是 fork，无 git 血缘**。
-
-上游更新**不机械合并**——把它当灵感源按需吸收：偶尔扫一眼 changelog，遇到值得的方法论洞察就手动提炼进对应 skill、保持精简；遇到“更多流程 / 功能 / 强制门”则忽略（那正是本仓要砍的）。基线锁在 5.1.0，将来只 diff `5.1.0 → 新版` 看增量。两者持续分叉是预期，不是落后。
+本项目以 superpowers **5.1.0** 为参考独立重写，采用按需触发和轻量任务合同。上游变化以 5.1.0 为基线比较，按方法价值选择性吸收；当前已吸收 Superpowers 6.x 的只读 reviewer、需求／质量双结论和任务接口等改进。
 
 ### Skill 来源映射
 
@@ -92,8 +89,6 @@ done
 | `code-review` | `requesting-code-review` + `receiving-code-review` |
 | `code-as-spec` | litepowers 原创 |
 | `content-maintenance` | litepowers 原创 |
-
-本仓按方法价值选择性吸收 Superpowers 6.x 的轻量改进，例如 reviewer 只读、需求/质量双 verdict 和任务接口；不会恢复完整 SDD 或 SessionStart 强制门。
 
 ## License
 

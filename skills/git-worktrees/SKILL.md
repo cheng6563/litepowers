@@ -5,13 +5,11 @@ description: "为隔离开发创建、进入和清理 Git worktree。只要用�
 
 # 使用 Git Worktrees
 
-核心只有一件事：**先定位本次要修改代码所属的 Git 仓，再从该仓创建 worktree。**
-
-`.claude/worktrees`、`.worktrees` 等目录名本身不是问题。真正会造成错误的是：目标代码属于子 Git 仓，但创建工具仍锚定在外层套壳仓。
+**从目标代码定位所属仓库，绑定创建工具的活动上下文，创建后校验 Git common dir。**
 
 ## 1. 定位目标子仓
 
-不要直接以会话启动目录或当前外层仓创建 worktree。先从本次要修改的文件或代码目录反查 Git 根。路径可能是尚不存在的新文件，因此先取一个已存在的祖先目录：
+从本次要修改的文件或代码目录反查 Git 根。新文件尚不存在时，先取一个已存在的祖先目录：
 
 ```bash
 CODE_PATH='<本次要修改的代码目录或文件>'
@@ -29,22 +27,18 @@ SOURCE_ROOT=$(git -C "$START" rev-parse --show-toplevel) || {
 printf '代码路径: %s\n目标 Git 仓: %s\n' "$CODE_PATH" "$SOURCE_ROOT"
 ```
 
-在套壳仓中，必须区分外层仓和实际代码子仓。例如：
+嵌套仓库示例：
 
 ```text
-外层套壳仓：C:/Users/leicheng/Desktop/scprod
-实际代码仓：C:/Users/leicheng/Desktop/scprod/sc-git-repo/cf-core/fendan-mgt
+workspace/          外层仓
+└── services/app/   独立子仓
 ```
 
-修改 `fendan-mgt` 时，`SOURCE_ROOT` 必须是第二条路径。修改其他独立子仓（如 `business-engine`）时，也必须定位到该子仓自己的 Git 根，不能停在 `scprod`。
+修改 app 的代码时，`SOURCE_ROOT` 指向 app 子仓根目录。结果与预期项目不符时，停止创建并重新定位 `CODE_PATH`。
 
-如果 `SOURCE_ROOT` 与预期项目不符，停止创建并重新定位 `CODE_PATH`。
+## 2. 绑定原生工具的活动仓库
 
-## 2. 原生工具优先，但先验证活动仓库上下文
-
-优先使用平台原生 worktree 工具，例如 Claude Code 的 `EnterWorktree`。**不要因为它使用 `.claude/worktrees` 就禁用或绕过它。**
-
-但原生工具通常依据当前 Claude Code 会话/工作目录决定“哪个仓库”创建 worktree；`git -C "$SOURCE_ROOT"` 只改变一条 Git 命令的目录，不会改变原生工具的活动仓库。因此调用原生工具前必须实际切换上下文，而不是只在文字中声明目标仓：
+优先使用平台原生 worktree 工具，例如 Claude Code 的 `EnterWorktree`。调用前将其活动仓库切换到 `SOURCE_ROOT` 并校验；`git -C` 只影响单条命令，不能切换原生工具的上下文：
 
 ```bash
 CURRENT_ROOT=$(git rev-parse --show-toplevel) || {
@@ -64,23 +58,9 @@ printf '当前会话 Git 仓: %s\n目标 Git 仓: %s\n' "$CURRENT_ROOT" "$SOURCE
 }
 ```
 
-如果平台提供项目/仓库切换能力，先切到 `SOURCE_ROOT`，再重新执行上面的校验；如果平台依据会话工作目录识别仓库，应从 `SOURCE_ROOT` 启动或重新进入会话后再调用原生工具。**没有通过校验就不能调用 `EnterWorktree`。**只有原生工具无法绑定到该子仓时，才退回手动 `git worktree add`。
+平台支持切换项目时，切换后重新校验；否则从 `SOURCE_ROOT` 重新进入会话。校验通过后才调用原生工具；无法绑定目标子仓时，退回手动 `git worktree add`。
 
-调用前同时明确预期位置。位置由平台或项目约定决定，不要因为看到外层仓已有目录就套用外层路径：
-
-```text
-目标仓：<SOURCE_ROOT>
-预期 worktree：<SOURCE_ROOT>/.claude/worktrees/<name>
-```
-
-例如 `business-engine` 是独立子仓时：
-
-```text
-错误：C:/Users/leicheng/Desktop/scprod/.claude/worktrees/business-engine-upstream-or
-正确：<business-engine 子仓根>/.claude/worktrees/business-engine-upstream-or
-```
-
-错误路径说明原生工具创建的是 `scprod` 的 worktree，而不是 `business-engine` 的 worktree；问题在仓库上下文，不在 `.claude/worktrees` 目录名。
+创建前明确目标仓与预期绝对路径，位置按用户、项目或平台的约定确定。
 
 ## 3. 创建后立即验证原生 worktree 归属
 
@@ -113,11 +93,9 @@ printf 'worktree 已验证: %s\n' "$WT_TOP"
 5. 无改动且获得清理许可后，使用**实际所属仓**的原生清理能力；
 6. 回到 `SOURCE_ROOT` 上下文，重新调用原生工具。
 
-`git-common-dir` 校验用于发现已经发生的错仓创建，不能替代第 2 节的调用前上下文校验。
-
 ## 4. 原生工具不可用时的手动 fallback
 
-手动 fallback 也必须使用同一个 `SOURCE_ROOT`，但不能无视已确定的 worktree 位置。按以下优先级确定 `WT_PARENT`：
+手动创建使用已确认的 `SOURCE_ROOT`，按以下优先级确定 `WT_PARENT`：
 
 1. 用户明确指定的位置；
 2. 项目明确指定的位置；
@@ -130,7 +108,7 @@ printf 'worktree 已验证: %s\n' "$WT_TOP"
 WT_PARENT="$SOURCE_ROOT/.claude/worktrees"
 ```
 
-然后只把规范化后的绝对路径传给 Git：
+由已确认的父目录与分支名生成规范化绝对路径，再传给 Git：
 
 ```bash
 BRANCH='<工作分支名>'
@@ -146,21 +124,6 @@ printf '目标 Git 仓: %s\n即将创建: %s\n' "$SOURCE_ROOT" "$WT_TARGET"
 git -C "$SOURCE_ROOT" worktree add "$WT_TARGET" -b "$BRANCH"
 ```
 
-不要在 `SOURCE_ROOT` 内执行命令时，又传入带项目展示前缀的相对路径。例如在
-`.../sc-git-repo/cf-core/fendan-mgt` 中传入：
-
-```text
-sc-git-repo/cf-core/fendan-mgt/.worktrees/<branch>
-```
-
-会被重复解析成：
-
-```text
-.../fendan-mgt/sc-git-repo/cf-core/fendan-mgt/.worktrees/<branch>
-```
-
-因此手动目标必须由 `SOURCE_ROOT` 直接生成绝对路径，不从聊天记录或文件树复制“看起来完整”的相对路径。
-
 ## 5. 手动创建前的 ignore 检查
 
 原生工具自行管理其 `.claude/worktrees` 和忽略规则，不要覆盖。手动创建时，先确认目标父目录被目标子仓忽略：
@@ -172,7 +135,7 @@ git -C "$SOURCE_ROOT" check-ignore -q -- "$WT_TARGET/.probe" || {
 }
 ```
 
-只有团队需要共享约定时才修改 `.gitignore`。如果子仓位于外层套壳仓中，还要确认外层仓不会跟踪同一个绝对目标路径；套壳仓通常已整体忽略 `sc-git-repo/` 之类的 checkout 容器目录。
+只有团队需要共享约定时才修改 `.gitignore`。子仓位于外层仓中时，还要确认外层仓不会跟踪同一个绝对目标路径。
 
 ## 6. 创建后锚定并操作
 
@@ -181,8 +144,6 @@ git -C "$SOURCE_ROOT" check-ignore -q -- "$WT_TARGET/.probe" || {
 1. worktree 的 `--git-common-dir` 与 `SOURCE_ROOT` 一致；
 2. `git -C "$WT" rev-parse --show-toplevel` 返回新 worktree 路径；
 3. 后续文件和 Git 操作都以新 worktree 为根。
-
-不要仅凭分支名、目录名或 `git worktree list` 中存在记录就判断仓库归属正确。
 
 ## 7. 清理
 
