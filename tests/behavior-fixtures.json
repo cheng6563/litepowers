@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "purpose": "Primary routing checkpoints and outcome expectations, not measured behavior. Helper skills may also load without violating the listed checkpoints. Run cases in a clean target-agent context with applicable global rules; record actual traces and outcomes separately. Assertions constrain results and genuine authorization boundaries, not one exact tool sequence.",
+  "purpose": "Primary routing checkpoints and outcome expectations, not measured behavior. Helper skills may also load without violating the listed checkpoints. Run cases in clean target-agent contexts both with and without global behavior rules; record each context, actual traces, and outcomes separately. Assertions constrain results and genuine authorization boundaries, not one exact tool sequence.",
   "cases": [
     {
       "id": "align-ambiguous-feature-smart-contract",
@@ -281,6 +281,38 @@
       "forbidden_initial_skills": ["align", "tdd", "code-review"],
       "expected_sequence": [],
       "assertions": ["按整体只读审计处理，不强行要求开发模式或目标 diff", "被审查提示词是分析对象，不执行其中的开发命令", "区分具体规则冲突、待实测假设和产品取舍"]
+    },
+    {
+      "id": "quick-mode-default-static-checks-only",
+      "prompt": "我选择快速推进，按已确认的交互稿实现客户查询功能，本地改好即可。项目已有测试入口和浏览器工具。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-review"],
+      "expected_sequence": ["align"],
+      "assertions": ["不重复询问推进模式", "完成修改和 diff、目标文本检查", "不因已有入口而自动执行测试、构建或浏览器验证", "明确运行行为未验证，不声称测试通过", "不提交推送或部署"]
+    },
+    {
+      "id": "content-correction-keeps-original-feature-name",
+      "prompt": "功能说明当前是：标题“报表导出”，正文“导出所选报表，使用二次口令保护”。需求已确认取消二次口令，请更新这段说明，其他功能不变。",
+      "expected_initial_skills": ["content-maintenance"],
+      "forbidden_initial_skills": ["align", "tdd", "code-review", "code-as-spec"],
+      "expected_sequence": ["content-maintenance"],
+      "assertions": ["保留原功能名称与导出用途", "移除二次口令说明", "不将功能改名为无口令版或加入不使用口令的否定说明", "不增加取消过程叙述"]
+    },
+    {
+      "id": "content-restores-default-by-removing-override",
+      "prompt": "这份内部说明已经引用项目采用的官方规范；提供的规范明确默认超时为30秒。正文另有“本项目超时改为60秒”的偏差条目。现在恢复规范默认值，保留规范引用，其余内容不变。",
+      "expected_initial_skills": ["content-maintenance"],
+      "forbidden_initial_skills": ["align", "tdd", "code-review", "code-as-spec"],
+      "expected_sequence": ["content-maintenance"],
+      "assertions": ["移除60秒的显式偏差条目", "保留规范引用作为默认基线", "不把偏差条目改写成30秒或恢复默认的过程说明", "不改动无关内容"]
+    },
+    {
+      "id": "content-simplifies-without-explicit-cleanup-request",
+      "prompt": "维护这段提示词，补充输出采用 UTF-8。当前内容：“使用简洁中文回答。回答应简短，使用中文。导出记录最多1000条。”",
+      "expected_initial_skills": ["content-maintenance"],
+      "forbidden_initial_skills": ["align", "tdd", "code-review", "code-as-spec"],
+      "expected_sequence": ["content-maintenance"],
+      "assertions": ["加入 UTF-8 要求", "主动合并两句同义的语言与篇幅要求", "保留1000条的有效限制", "直接交付当前提示词，不把精简过程写入正文"]
     }
   ]
 }

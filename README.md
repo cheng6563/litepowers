@@ -15,12 +15,12 @@
 
 | Skill | 触发方式 | 作用 |
 |-------|----------|------|
-| `align` | `/litepowers:align` 或自动 | 确定范围、实现路线、验证与交付；继承已确认授权，显式直接修改或 AFK 不重问模式，独立 review 仅按当前任务选择执行 |
+| `align` | `/litepowers:align` 或自动 | 确定范围、实现路线、验证与交付；快速推进默认只做 diff 与文本检查，已有验证授权继续有效；独立 review 仅按当前任务选择执行 |
 | `systematic-debugging` | `align` 选定、任务内失败或显式只诊断 | 根因未知时用复现、数据流和单一假设定位源头，不在诊断中修改生产行为 |
 | `tdd` | `align` 选定或用户显式调用 | 执行合同选择测试先行时，用最小测试约束实现；仅必要时单独确认 RED |
 | `code-review` | `/litepowers:code-review` 或自动 | 只读审查工作区、暂存区或固定提交范围，分别给出需求与质量结论；无法隔离时如实标明独立性限制 |
 | `code-as-spec` | `/litepowers:code-as-spec` 或自动 | 业务信息采用最小承载层；对齐推进选择独立 review 时建立当前有效验收输入，保留到同次问题处置结束 |
-| `content-maintenance` | `/litepowers:content-maintenance` 或自动 | 将文档、注释、提示词和模板等非编程内容直接整理为面向读者的最终状态，清除编辑叙述与失效残留 |
+| `content-maintenance` | `/litepowers:content-maintenance` 或自动 | 以明确需求和可靠基线维护内容，纠偏直接归位，主动精简重复与失效信息，保留必要约束和有独立价值的内容 |
 | `git-worktrees` | 显式请求或项目要求隔离时 | 定位并锚定 worktree、创建前处理上级仓库的忽略规则，防改动落错仓；优先平台原生工具，无则退回手动 git worktree |
 
 ## 验证
