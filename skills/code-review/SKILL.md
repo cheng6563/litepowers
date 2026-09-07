@@ -1,13 +1,15 @@
 ---
 name: code-review
-description: "独立审查已有 working diff 的需求符合性和代码缺陷。Use when implementation artifacts already exist and need review before integration; use the platform's PR review capability for GitHub pull requests."
+description: "只读审查明确变更范围的需求符合性和具体缺陷。Use for an existing working diff, staged changes, or an explicit commit range; not for implementation or a whole-project methodology audit. Prefer the platform's review capability for pull requests."
 ---
 
-# 评审 Working Diff
+# 评审明确的变更范围
 
-使用干净上下文的只读 subagent 审查 working diff。
+优先使用干净上下文的只读 subagent，不输入实现者的完整思考过程。平台不支持隔离上下文时，可在当前线程做只读审查，但必须标明不具备独立性，不能声称完成独立 review；用户明确禁止降级时报告阻塞。
 
-输入需求、验收标准、目标 diff 和核实所需的最少上下文，不输入实现者的完整思考过程。若上游在对齐推进中选择了独立 review，则使用其开发前建立、并含开发中用户确认的追加项的临时 review 需求文档作为需求与验收输入；按初始正文再按追加顺序阅读，同一事项以后追加且明确标为替换或废止的条目为准：替换项按其更新后的要求判断，废止项不再作为验收要求。reviewer 不自行扫描临时目录寻找文件。Reviewer 不得修改 working tree、index、HEAD 或 branch。
+调用方显式提供当前需求、验收标准、目标范围和核实所需的最少上下文。目标可为工作区、暂存区或固定 base/head 提交范围；包含未跟踪的新文件时一并提供。工作区为空不等于任务没有修改，范围不明时先澄清，不能据此宣告通过。
+
+若已提供本次临时 review 需求文档，按其当前有效验收项判断；不自行扫描临时目录、不重建或修改需求。Reviewer 不得修改 working tree、index、HEAD 或 branch。
 
 先逐条判断需求是否满足，再寻找会导致错误结果、崩溃、安全问题或明显回归的代码缺陷。若目标 diff 涉及 UI、表单或用户交互流程，额外从明确的使用人员及其任务视角检查：该人员是否看得到完成任务所需信息、能否以自然操作完成任务、是否需要理解不应暴露的业务逻辑，以及是否被迫手动输入内部 ID、编码或日期字符串等可避免的技术格式。使用人员或任务无法从需求、diff 和代码库证据核实时，明确标为无法验证，不猜。
 
@@ -15,9 +17,11 @@ Finding 必须包含：
 
 - 具体文件和位置；
 - 可触发问题的输入或状态；
-- 实际错误结果；
+- 可由证据支持的错误结果，区分实际复现与静态推断；
 - 简洁修正方向。
 
 按严重度排序。没有具体失败场景的风格偏好、假设性风险和任务外优化不报 finding。
 
-处理已有评审意见时，只核实每条 finding 是否成立并给出代码或测试证据。本 Skill 止于只读 findings，不修改文件；修复作为后续实现任务执行。
+分别给出**需求符合性**（满足／不满足／无法验证）与**代码质量**（未发现具体缺陷／有具体缺陷／无法验证）结论，并列出未验证项；没有 findings 不代表所有验收项已通过，也不代表运行时验证成功。
+
+处理已有评审意见时，只核实每条 finding 是否成立并给出代码或测试证据。本 Skill 止于只读结论与 findings，不修改文件；修复和复审由调用方按授权安排，同次复核沿用任务基线与当前有效验收输入，目标更新为修复后的变更。

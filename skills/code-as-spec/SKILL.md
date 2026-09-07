@@ -1,6 +1,6 @@
 ---
 name: code-as-spec
-description: "让代码、注释和文档各自承载合适的业务信息，并在 align 确认独立 review 后于开发前创建临时 review 需求文档。Use when maintaining internal business documentation, deciding where business knowledge or durable project rules belong, checking docs that duplicate implementation, or when align has recorded an opted-in independent post-development review."
+description: "确定业务知识与项目规则的最小承载位置。Use when maintaining internal business documentation, deciding where durable rules belong, or managing temporary acceptance input for an opted-in alignment-driven review; use content-maintenance for wording-only edits."
 ---
 
 # 代码即核心业务文档
@@ -17,17 +17,17 @@ description: "让代码、注释和文档各自承载合适的业务信息，并
 
 ## 独立 review 的临时需求文档
 
-仅当 `skill:align` 的对齐推进交互已确认**需要独立 review**时，在开发前建立一份该次 review 专用的独立需求文档；不因任务规模、是否全新或是否已有需求文档自动创建。选择不需要独立 review 时不创建任何临时文档，也不安排 review。
+仅当 `skill:align` 的对齐推进交互已确认**需要独立 review**时，在开发前建立一份该次 review 专用的独立需求文档；不因任务规模、是否全新或是否已有需求文档自动创建。选择不需要独立 review 时不创建 review 需求文档，也不安排 review。
 
 把文档放在运行环境约定的临时目录，不放入项目文档体系，不提交、不发布，也不转成持久 spec。即使已有需求文档，也要为已选择的独立 review 单独创建此文件；可以以已有文档为事实来源，但不修改或替代它。
 
 文档采用接近验收文档的结构，写清：需求目标、范围与非目标、前置条件或关键约束，以及可逐项核对的验收项（场景、预期结果，必要时包含边界和失败结果）。只记录 review 判断需求符合性所需内容；不记录实现方案、字段清单、调用顺序或开发过程。
 
-该文档不作为设计、实现、调试或开发期决策的依据。开发中只有用户明确补充或调整目标、范围、关键约束或验收标准时，才在实现该调整前更新该文档；不回改初始正文，而是在末尾追加 `## 需求补充与调整` 条目。每条注明是新增、替换还是废止，并指向对应的初始条目或前序追加项：替换项写明更新后的可验证要求；废止项写明被取消的条目，review 时不再将其作为验收要求。同一事项以后追加且明确标为替换或废止的条目为准。实现细节、调试发现和测试失败不追加。
+该文档仅作为 review 的验收输入，不替代开发执行合同，不记录实现或调试过程。用户明确调整目标、范围、关键约束或验收标准时，在实现调整前按 `skill:content-maintenance` 直接更新相应条目：同一事项仅保留当前有效要求，取消项及其引用一并移除。实现者的技术解释、测试失败和调试发现不能自行改变验收标准。
 
-开发完成后，调用方将开发前建立并包含上述追加项的文档与目标 diff 显式交给独立 reviewer，reviewer 不自行扫描临时目录寻找文件。review 完成后弃置该文档。
+开发完成后，调用方把当前验收文档与明确的目标 diff 显式交给 reviewer；reviewer 不自行扫描临时目录。单次 review 返回不等于任务关闭：文档保留到本次 findings 已处置且已授权复核结束，期间可作为同次复核的验收输入，不因此自动授权修复或复审。
 
-后续补充、二次修改、修复和普通增量开发只依据当次请求、当前代码、测试及仍有价值的持久文档推进；不得读取、引用、补写、校准或追溯此前的临时 review 需求文档。
+本次任务关闭后弃置文档。之后的新需求与普通增量只依据当次请求、当前代码、测试及有价值的持久文档推进，不扫描或沿用已关闭任务的临时验收输入。
 
 ## 项目规则的极简承载
 
@@ -41,6 +41,8 @@ description: "让代码、注释和文档各自承载合适的业务信息，并
 一个规则可以有说明层和执行层，但每层都应提供独立价值。
 
 ## 处理现有业务文档
+
+先确认是只读检查还是已授权维护；只读请求只返回判断与建议。获得修改授权后：
 
 - 删掉或收敛代码能够还原的字段、调用流程和局部规则；
 - 只剩代码入口引用且没有独立业务信息的文档不保留；

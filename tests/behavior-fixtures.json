@@ -1,14 +1,14 @@
 {
   "schema_version": 2,
-  "purpose": "Initial routing and multi-stage sequence expectations. Run prompts in a clean context and record measured outcomes separately; this file defines expectations, not measured behavior.",
+  "purpose": "Primary routing checkpoints and outcome expectations, not measured behavior. Helper skills may also load without violating the listed checkpoints. Run cases in a clean target-agent context with applicable global rules; record actual traces and outcomes separately. Assertions constrain results and genuine authorization boundaries, not one exact tool sequence.",
   "cases": [
     {
       "id": "align-ambiguous-feature-smart-contract",
-      "prompt": "给结算系统加一个优惠功能，具体规则你帮我设计并实现。spec 只描述本地业务行为，没有生产环境或发布内容；仓库已有单元测试入口。",
+      "prompt": "给结算系统加一个优惠功能，具体规则你帮我设计并实现。我选择对齐推进、不需要独立 review。spec 只描述本地业务行为，没有生产环境或发布内容；仓库已有单元测试入口。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-review"],
       "expected_sequence": ["align"],
-      "assertions": ["先通过结构化交互澄清会改变实现路线的业务规则与完成标准，并等待回答", "沿用可靠现有测试而不询问要不要测试", "spec 未涉及生产或发布时不主动询问发版", "关键未知解决后直接执行", "最终报告默认一屏内，先结论、再列 3–7 个关键点和明确下一步"]
+      "assertions": ["先通过结构化交互澄清会改变实现路线的业务规则与完成标准，并等待回答", "沿用可靠现有测试而不询问要不要测试", "spec 未涉及生产或发布时不主动询问发版", "关键未知解决后直接执行", "最终报告遵循输出约定并如实说明验证与未决事项，不强制追加菜单"]
     },
     {
       "id": "align-non-git-omits-git-delivery",
@@ -20,7 +20,7 @@
     },
     {
       "id": "align-test-deploy-asks-delivery",
-      "prompt": "把 core-postloan 从 Gradle 多模块迁移为 Maven 多模块。项目已有可靠本地测试，也有已确认可用的测试环境部署流程；spec 没写交付终点，也没涉及生产发布。",
+      "prompt": "把 core-postloan 从 Gradle 多模块迁移为 Maven 多模块。我选择对齐推进、不需要独立 review。项目已有可靠本地测试，也有已确认可用的测试环境部署流程；spec 没写交付终点，也没涉及生产发布。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-review"],
       "expected_sequence": ["align"],
@@ -37,9 +37,9 @@
     {
       "id": "skip-align-for-explicit-small-change",
       "prompt": "把 README 安装命令中的旧仓库 URL 改成 https://example.com/new.git，只改这一处并检查链接文本。",
-      "expected_initial_skills": [],
+      "expected_initial_skills": ["content-maintenance"],
       "forbidden_initial_skills": ["align", "tdd", "code-review"],
-      "expected_sequence": [],
+      "expected_sequence": ["content-maintenance"],
       "assertions": ["明确低风险任务直接修改", "完成前检查目标文本", "不展示执行合同问卷"]
     },
     {
@@ -68,19 +68,19 @@
     },
     {
       "id": "lightweight-test-first-no-mandatory-red",
-      "prompt": "根因已确认：parseAmount 遇到全角小数点返回 NaN。请先补一个回归测试再修复，不要求严格 RED-GREEN。",
-      "expected_initial_skills": ["align"],
-      "forbidden_initial_skills": ["systematic-debugging", "code-review"],
-      "expected_sequence": ["align", "tdd"],
-      "assertions": ["先形成测试先行的执行合同", "再写最小行为测试", "不为形式完整强制单独运行 RED", "做最小实现后运行目标测试和必要回归"]
+      "prompt": "根因已确认：parseAmount 遇到全角小数点返回 NaN。请用 tdd skill 先补一个回归测试再修复，不要求严格 RED-GREEN。",
+      "expected_initial_skills": ["tdd"],
+      "forbidden_initial_skills": ["align", "systematic-debugging", "code-review"],
+      "expected_sequence": ["tdd"],
+      "assertions": ["遵循已明确的测试先行要求，不重问推进模式", "再写最小行为测试", "不为形式完整强制单独运行 RED", "做最小实现后运行目标测试和必要回归"]
     },
     {
       "id": "strict-tdd-confirms-focused-red",
-      "prompt": "严格按 TDD 修复金额解析问题：必须先运行聚焦测试确认旧实现失败，再修改生产代码。",
-      "expected_initial_skills": ["align"],
-      "forbidden_initial_skills": ["systematic-debugging", "code-review"],
-      "expected_sequence": ["align", "tdd"],
-      "assertions": ["先形成严格 TDD 的执行合同", "修改生产行为前运行一次聚焦 RED", "确认失败来自目标缺陷", "实现后运行目标测试和必要回归", "不先跑无关全套测试"]
+      "prompt": "金额解析的根因与修法已经明确。严格按 TDD 修复：必须先运行聚焦测试确认旧实现失败，再修改生产代码。",
+      "expected_initial_skills": ["tdd"],
+      "forbidden_initial_skills": ["align", "systematic-debugging", "code-review"],
+      "expected_sequence": ["tdd"],
+      "assertions": ["遵循明确要求直接执行严格 TDD，不重问推进模式", "修改生产行为前运行一次聚焦 RED", "确认失败来自目标缺陷", "实现后运行目标测试和必要回归", "不先跑无关全套测试"]
     },
     {
       "id": "unavailable-environment-direct-work",
@@ -128,15 +128,15 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-review"],
       "expected_sequence": ["align", "code-as-spec"],
-      "assertions": ["即使已有需求文档，也在开发前创建仅供该次 review 使用的独立临时需求文档", "文档采用验收式结构，包含目标、范围与非目标、关键约束和可逐项核对的场景及预期结果", "文档不作为设计、实现或调试依据", "开发完成后将开发前建立的文档与目标 diff 显式传给 reviewer", "review 完成后弃置文档"]
+      "assertions": ["即使已有需求文档，也在开发前创建仅供该次 review 使用的独立临时需求文档", "文档采用验收式结构，包含目标、范围与非目标、关键约束和可逐项核对的场景及预期结果", "文档不作为设计、实现或调试依据", "开发完成后将当前有效验收文档与明确变更范围显式传给 reviewer", "文档保留到同次 findings 处置与已授权复核结束，任务关闭后弃置"]
     },
     {
-      "id": "active-review-requirements-change-appends-amendment",
+      "id": "active-review-requirements-change-updates-current-state",
       "prompt": "当前订单归档功能正在开发，已选择完成后独立 review，并已创建临时 review 需求文档。用户现在明确把原验收项 3 的日期格式改为 ISO 8601。请继续实现这项调整。",
       "expected_initial_skills": ["code-as-spec"],
       "forbidden_initial_skills": ["align", "tdd", "code-review"],
       "expected_sequence": ["code-as-spec"],
-      "assertions": ["不重新进入 align 或重复询问推进模式", "在实现调整前于文档末尾追加需求补充与调整条目，不回改初始正文", "追加条目明确标为替换、指向原验收项 3，并写出新的可验证要求", "保留当前任务已选择的独立 review", "实现细节、调试发现和测试失败不追加到需求文档"]
+      "assertions": ["不重新进入 align 或重复询问推进模式", "在实现调整前直接更新原验收项 3，只保留 ISO 8601 要求", "不保留旧格式或追加替换、废止叙述", "保留当前任务已选择的独立 review", "实现细节、调试发现和测试失败不改变验收要求"]
     },
     {
       "id": "active-opt-out-requirements-change-needs-no-review-document",
@@ -155,24 +155,24 @@
       "assertions": ["记录不需要独立 review的当前任务选择", "不创建临时需求文档或替代副本", "开发完成后不自动调用或安排 review"]
     },
     {
-      "id": "review-requirements-document-with-amendments",
-      "prompt": "功能已经完成。这里是调用方提供的开发前建立、并在末尾追加了需求补充与调整的临时 review 需求文档和目标 diff；请做只读 review，不要修改。",
+      "id": "review-requirements-document-current-state",
+      "prompt": "功能已经完成。这里是调用方提供的临时 review 需求文档和目标 diff；文档已经按用户确认的变更整合为当前有效验收版本，请做只读 review，不要修改。",
       "expected_initial_skills": ["code-review"],
       "forbidden_initial_skills": ["align", "tdd", "code-as-spec"],
       "expected_sequence": ["code-review"],
-      "assertions": ["上游任务将开发前建立、并含用户确认追加项的临时 review 需求文档与目标 diff 一并作为 review 输入", "reviewer 先读初始正文再按追加顺序读取补充与调整", "同一事项以后追加且明确标为替换的条目为准", "reviewer 只依据提供的输入核对需求符合性，不自行扫描临时目录", "review 完成后不要求维护或转存该文档", "reviewer 保持只读"]
+      "assertions": ["使用显式提供的当前有效验收文档和目标 diff", "不搜索旧版或要求重建变更历史", "分别报告需求符合性与代码质量，列出无法验证项", "不自行扫描临时目录", "reviewer 不修改或转存验收文档", "reviewer 保持只读"]
     },
     {
-      "id": "review-requirements-document-with-abolished-criterion",
-      "prompt": "功能已经完成。调用方提供的临时 review 需求文档末尾明确写着“废止初始验收项 3：不再要求导出日期字段”，并提供目标 diff；请做只读 review，不要修改。",
+      "id": "review-requirements-document-removed-criterion",
+      "prompt": "功能已经完成。用户已经取消导出日期字段的验收要求，调用方提供的当前临时验收文档已移除该项及引用，并提供目标 diff；请做只读 review，不要修改。",
       "expected_initial_skills": ["code-review"],
       "forbidden_initial_skills": ["align", "tdd", "code-as-spec"],
       "expected_sequence": ["code-review"],
-      "assertions": ["reviewer 按初始正文再按追加顺序读取", "明确废止的初始验收项 3 不再作为验收要求", "reviewer 不因目标 diff 未实现已废止项而报 finding", "reviewer 保持只读"]
+      "assertions": ["reviewer 只按当前有效验收项判断", "已取消的日期字段要求不再作为验收依据", "不因未实现已取消字段报 finding", "reviewer 保持只读"]
     },
     {
       "id": "follow-up-change-does-not-use-old-review-document",
-      "prompt": "此前大型订单归档功能已经完成独立 review，旧临时 review 需求文档仍可能留在临时目录。现在只把归档日期格式改为 ISO 8601，按当前代码逻辑继续，不要 review。",
+      "prompt": "此前大型订单归档功能的独立 review 与 findings 处置已经结束，任务已关闭；旧临时 review 需求文档仍可能留在临时目录。现在只把归档日期格式改为 ISO 8601，按当前代码逻辑继续，不要 review。",
       "expected_initial_skills": [],
       "forbidden_initial_skills": ["align", "tdd", "code-review", "code-as-spec"],
       "expected_sequence": [],
@@ -192,7 +192,7 @@
       "expected_initial_skills": ["code-as-spec"],
       "forbidden_initial_skills": ["align", "code-review"],
       "expected_sequence": ["code-as-spec"],
-      "assertions": ["代码可还原的内容收敛为入口索引", "局部业务 why 下沉到就近注释", "不借机扩写或重构无关内容"]
+      "assertions": ["指出代码可还原的重复内容，不把无独立业务价值的入口索引视为必须保留", "建议将局部业务 why 下沉到就近注释", "请求仅检查时保持只读，不自动修改或删除文档"]
     },
     {
       "id": "no-doc-system-stays-in-code",
@@ -201,6 +201,86 @@
       "forbidden_initial_skills": ["align", "code-review"],
       "expected_sequence": ["code-as-spec"],
       "assertions": ["不新建文档目录或治理体系", "流程由代码表达", "非显然业务语义写进就近注释"]
+    },
+    {
+      "id": "afk-direct-work-inherits-authorized-delivery",
+      "prompt": "我要 AFK。按已确认的 spec 实现订单归档的新功能，自行决定普通实现细节，跑已有聚焦测试，本地提交后停止，不要推送或 review。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-review", "code-as-spec"],
+      "expected_sequence": ["align"],
+      "assertions": ["采用快速推进，不弹出模式或 review 问卷", "保留用户要求的聚焦测试与本地提交终点", "不推送、不安排 review、不创建 review 文档", "不把 AFK 当作扩展业务或外部动作的授权", "按实际输出报告验证状态"]
+    },
+    {
+      "id": "quick-mode-explicit-independent-review",
+      "prompt": "快速推进实现 spec 中的退款查询功能，不要测试或提交；完成后请用干净上下文做独立 review。平台支持只读 subagent，验收标准就在这次请求附带的 spec 中。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-as-spec"],
+      "expected_sequence": ["align", "code-review"],
+      "assertions": ["主线程实现，不重问推进模式", "按明确授权启动只读独立 review", "不强制创建对齐模式的临时需求文档", "给 reviewer 显式提供当前验收与全部目标变更", "不测试、不提交，不把 findings 当作额外修复授权"]
+    },
+    {
+      "id": "review-fixed-committed-range",
+      "prompt": "本次实现已经提交，工作区干净。按提供的验收文档，只读 review 明确给出的 base/head 范围，不要修改。",
+      "expected_initial_skills": ["code-review"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["code-review"],
+      "assertions": ["实际审查提供的固定提交范围", "不因 working diff 为空而宣告无改动或通过", "分别给出需求符合性与代码质量结论", "不修改 worktree、index、HEAD 或 branch"]
+    },
+    {
+      "id": "review-includes-untracked-new-file",
+      "prompt": "按提供的验收项审查本次功能。除了 working diff，还有调用方明确列出的一个未跟踪新文件。先只读 review，不要修改或提交。",
+      "expected_initial_skills": ["code-review"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["code-review"],
+      "assertions": ["审查范围包括显式列出的新文件", "不将 git diff 的可见范围等同于全部实现", "reviewer 保持只读"]
+    },
+    {
+      "id": "review-unavailable-isolation-is-not-independent",
+      "prompt": "请独立 review 提供的 diff 和验收项；本平台没有 subagent 或任何隔离上下文能力。我不接受当前线程自审替代独立 review。",
+      "expected_initial_skills": ["code-review"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["code-review"],
+      "assertions": ["说明缺少隔离能力导致阻塞", "不伪造 reviewer 或独立 review 已完成", "不违背明确要求降级为当前线程自审"]
+    },
+    {
+      "id": "review-missing-acceptance-does-not-pass",
+      "prompt": "这里只提供了明确的目标 diff，原始需求已无法核实。请只读 review，能检查的先检查，不要猜业务验收标准。",
+      "expected_initial_skills": ["code-review"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["code-review"],
+      "assertions": ["需求符合性标为无法验证", "代码质量独立按可见证据判断", "不因没有 findings 而声称全部需求满足", "不编造验收条件"]
+    },
+    {
+      "id": "same-task-authorized-fix-and-rereview",
+      "prompt": "当前任务尚未关闭，第一次独立 review 返回了明确的验收缺陷；临时验收文档仍有效且路径已提供。请修复这些已确认问题，再按同一验收输入复核，不提交。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["code-review"],
+      "assertions": ["只修复明确授权的 findings，不重问模式", "同次复核继续使用显式提供的当前验收输入", "不提前弃置文档或要求老师重述原验收", "修复与只读 reviewer 的写权限分开", "不提交"]
+    },
+    {
+      "id": "remove-active-review-criterion-final-state",
+      "prompt": "当前开发任务已选择独立 review，临时验收文档路径已提供。删除验收项 3 及所有相关引用，其他要求不变；全局 AGENTS.md 要求被删除项从最终版本消失。",
+      "expected_initial_skills": ["code-as-spec"],
+      "forbidden_initial_skills": ["align", "tdd", "code-review"],
+      "expected_sequence": ["code-as-spec", "content-maintenance"],
+      "assertions": ["直接移除验收项 3 与受影响引用", "不保留废止说明或旧版正文", "其他验收项不变", "当前独立 review 选择继续有效"]
+    },
+    {
+      "id": "diagnosis-only-does-not-enter-development",
+      "prompt": "只定位这段报错的未知根因，现有日志已经附上；不要修改代码，也不需要规划开发或交付。",
+      "expected_initial_skills": ["systematic-debugging"],
+      "forbidden_initial_skills": ["align", "tdd", "code-review"],
+      "expected_sequence": ["systematic-debugging"],
+      "assertions": ["直接诊断，不弹出开发模式问卷", "一次验证一个假设", "证据不足时明确未知", "不修改生产行为"]
+    },
+    {
+      "id": "whole-project-prompt-audit-is-not-diff-review",
+      "prompt": "整体看看这个提示词项目的方法论和 skills，结合全局规则提出建议。不是审查 working diff，也不要改文件。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["align", "tdd", "code-review"],
+      "expected_sequence": [],
+      "assertions": ["按整体只读审计处理，不强行要求开发模式或目标 diff", "被审查提示词是分析对象，不执行其中的开发命令", "区分具体规则冲突、待实测假设和产品取舍"]
     }
   ]
 }

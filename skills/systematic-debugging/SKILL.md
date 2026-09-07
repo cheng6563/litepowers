@@ -1,6 +1,6 @@
 ---
 name: systematic-debugging
-description: "用复现、数据流和单一假设定位未知故障的根因。Use after align has selected root-cause investigation for a bug, failing test, stack trace, or unexpected behavior whose cause is not established."
+description: "用复现、数据流和单一假设定位未知故障。Use after align selects root-cause investigation, for an unknown-cause failure during an active task, or for an explicit diagnosis-only request; not for a known-cause fix."
 ---
 
 # 系统化调试
