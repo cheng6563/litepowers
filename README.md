@@ -19,7 +19,6 @@
 | `tdd` | `align` 选定或用户显式调用 | 执行合同选择测试先行时，用最小测试约束实现；仅必要时单独确认 RED |
 | `code-review` | `/litepowers:code-review` 或自动 | 只读审查工作区、暂存区或固定提交范围，分别给出需求与质量结论；无法隔离时如实标明独立性限制 |
 | `code-as-spec` | `/litepowers:code-as-spec` 或自动 | 业务信息采用最小承载层；对齐推进选择独立 review 时建立当前有效验收输入，保留到同次问题处置结束 |
-| `content-maintenance` | `/litepowers:content-maintenance` 或自动 | 以明确需求和可靠基线维护内容，纠偏直接归位，主动精简重复与失效信息，保留必要约束和有独立价值的内容 |
 | `git-worktrees` | 显式请求或项目要求隔离时 | 定位并锚定 worktree、创建前处理上级仓库的忽略规则，防改动落错仓；优先平台原生工具，无则退回手动 git worktree |
 
 ## 验证
@@ -55,20 +54,20 @@ gh skill install cheng6563/litepowers align --agent codex --scope user
 
 > **务必带 `--scope user`**：`gh skill install` 默认是 `--scope project`，只在当前 repo 生效。litepowers 是通用方法论，全局装一次、所有项目可用才合理。
 
-逐个安装（按 skill 名，7 个名见上表）。Codex 会话内也可用 `$skill-installer`。
+逐个安装（按 skill 名，见上表）。Codex 会话内也可用 `$skill-installer`。
 
 **手动兜底（无 gh CLI 时）**——按目标 agent 的用户级 skill 目录，把各个 skill 目录软链过去，一份内容多 agent 共用。Codex 用户级目录是 `~/.codex/skills/`（Windows 为 `%USERPROFILE%\.codex\skills\`）：
 
 ```shell
 # Codex（每个 skill 一个软链，逐个建）
-for s in align systematic-debugging tdd code-review code-as-spec content-maintenance git-worktrees; do
+for s in align systematic-debugging tdd code-review code-as-spec git-worktrees; do
   ln -s "/abs/path/to/litepowers/skills/$s" "$HOME/.codex/skills/$s"
 done
 ```
 
 ```powershell
 # Codex on Windows（管理员 PowerShell）
-'align','systematic-debugging','tdd','code-review','code-as-spec','content-maintenance','git-worktrees' | ForEach-Object {
+'align','systematic-debugging','tdd','code-review','code-as-spec','git-worktrees' | ForEach-Object {
   New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.codex\skills\$_" -Target "C:\abs\path\to\litepowers\skills\$_"
 }
 ```
@@ -88,7 +87,6 @@ done
 | `tdd` | `test-driven-development` |
 | `code-review` | `requesting-code-review` + `receiving-code-review` |
 | `code-as-spec` | litepowers 原创 |
-| `content-maintenance` | litepowers 原创 |
 
 ## License
 

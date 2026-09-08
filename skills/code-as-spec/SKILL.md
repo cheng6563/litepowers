@@ -1,6 +1,6 @@
 ---
 name: code-as-spec
-description: "确定业务知识与项目规则的最小承载位置。Use when maintaining internal business documentation, deciding where durable rules belong, or managing temporary acceptance input for an opted-in alignment-driven review; use content-maintenance for wording-only edits."
+description: "确定业务知识与项目规则的最小承载位置。Use when maintaining internal business documentation, deciding where durable rules belong, or managing temporary acceptance input for an opted-in alignment-driven review; not for wording-only edits."
 ---
 
 # 代码即核心业务文档
@@ -23,7 +23,7 @@ description: "确定业务知识与项目规则的最小承载位置。Use when 
 
 文档采用接近验收文档的结构，写清：需求目标、范围与非目标、前置条件或关键约束，以及可逐项核对的验收项（场景、预期结果，必要时包含边界和失败结果）。只记录 review 判断需求符合性所需内容；不记录实现方案、字段清单、调用顺序或开发过程。
 
-该文档仅作为 review 的验收输入，不替代开发执行合同。用户明确调整目标、范围、关键约束或验收标准时，在实现调整前按 `skill:content-maintenance` 直接更新相应条目：同一事项仅保留当前有效要求，取消项及其引用一并移除。实现者的技术解释、测试失败和调试发现不能自行改变验收标准。
+该文档仅作为 review 的验收输入，不替代开发执行合同。用户明确调整目标、范围、关键约束或验收标准时，在实现调整前直接更新相应条目：同一事项仅保留当前有效要求，取消项及其引用一并移除。实现者的技术解释、测试失败和调试发现不能自行改变验收标准。
 
 开发完成后，调用方把当前验收文档与明确的目标 diff 显式交给 reviewer；reviewer 不自行扫描临时目录。单次 review 返回不等于任务关闭：文档保留到本次 findings 已处置且已授权复核结束，期间可作为同次复核的验收输入，不因此自动授权修复或复审。
 

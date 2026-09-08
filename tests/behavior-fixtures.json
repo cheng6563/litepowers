@@ -37,9 +37,9 @@
     {
       "id": "skip-align-for-explicit-small-change",
       "prompt": "把 README 安装命令中的旧仓库 URL 改成 https://example.com/new.git，只改这一处并检查链接文本。",
-      "expected_initial_skills": ["content-maintenance"],
+      "expected_initial_skills": [],
       "forbidden_initial_skills": ["align", "tdd", "code-review"],
-      "expected_sequence": ["content-maintenance"],
+      "expected_sequence": [],
       "assertions": ["明确低风险任务直接修改", "完成前检查目标文本", "不展示执行合同问卷"]
     },
     {
@@ -89,14 +89,6 @@
       "forbidden_initial_skills": ["tdd", "systematic-debugging", "align"],
       "expected_sequence": [],
       "assertions": ["尊重直接实现的明确选择", "不强造测试或测试基础设施", "说明本地无法验证和剩余风险"]
-    },
-    {
-      "id": "content-maintenance-writes-reader-facing-final-state",
-      "prompt": "更新 README 的安装说明：把旧命令 `tool setup --legacy` 换成 `tool setup`，删除不再支持的 legacy 参数说明及其引用。不要把变更过程写进 README。",
-      "expected_initial_skills": ["content-maintenance"],
-      "forbidden_initial_skills": ["align", "tdd", "code-review", "code-as-spec"],
-      "expected_sequence": ["content-maintenance"],
-      "assertions": ["按 README 读者的使用需要保留安装说明", "直接保留新命令而非写入由旧命令改为新命令的过程", "删除 legacy 参数的失效说明与关联引用", "不为普通删除额外添加没有独立价值的否定式约束"]
     },
     {
       "id": "review-working-diff-read-only",
@@ -263,7 +255,7 @@
       "prompt": "当前开发任务已选择独立 review，临时验收文档路径已提供。删除验收项 3 及所有相关引用，其他要求不变；全局 AGENTS.md 要求被删除项从最终版本消失。",
       "expected_initial_skills": ["code-as-spec"],
       "forbidden_initial_skills": ["align", "tdd", "code-review"],
-      "expected_sequence": ["code-as-spec", "content-maintenance"],
+      "expected_sequence": ["code-as-spec"],
       "assertions": ["直接移除验收项 3 与受影响引用", "不保留废止说明或旧版正文", "其他验收项不变", "当前独立 review 选择继续有效"]
     },
     {
@@ -289,30 +281,6 @@
       "forbidden_initial_skills": ["tdd", "code-review"],
       "expected_sequence": ["align"],
       "assertions": ["不重复询问推进模式", "完成修改和 diff、目标文本检查", "不因已有入口而自动执行测试、构建或浏览器验证", "明确运行行为未验证，不声称测试通过", "不提交推送或部署"]
-    },
-    {
-      "id": "content-correction-keeps-original-feature-name",
-      "prompt": "功能说明当前是：标题“报表导出”，正文“导出所选报表，使用二次口令保护”。需求已确认取消二次口令，请更新这段说明，其他功能不变。",
-      "expected_initial_skills": ["content-maintenance"],
-      "forbidden_initial_skills": ["align", "tdd", "code-review", "code-as-spec"],
-      "expected_sequence": ["content-maintenance"],
-      "assertions": ["保留原功能名称与导出用途", "移除二次口令说明", "不将功能改名为无口令版或加入不使用口令的否定说明", "不增加取消过程叙述"]
-    },
-    {
-      "id": "content-restores-default-by-removing-override",
-      "prompt": "这份内部说明已经引用项目采用的官方规范；提供的规范明确默认超时为30秒。正文另有“本项目超时改为60秒”的偏差条目。现在恢复规范默认值，保留规范引用，其余内容不变。",
-      "expected_initial_skills": ["content-maintenance"],
-      "forbidden_initial_skills": ["align", "tdd", "code-review", "code-as-spec"],
-      "expected_sequence": ["content-maintenance"],
-      "assertions": ["移除60秒的显式偏差条目", "保留规范引用作为默认基线", "不把偏差条目改写成30秒或恢复默认的过程说明", "不改动无关内容"]
-    },
-    {
-      "id": "content-simplifies-without-explicit-cleanup-request",
-      "prompt": "维护这段提示词，补充输出采用 UTF-8。当前内容：“使用简洁中文回答。回答应简短，使用中文。导出记录最多1000条。”",
-      "expected_initial_skills": ["content-maintenance"],
-      "forbidden_initial_skills": ["align", "tdd", "code-review", "code-as-spec"],
-      "expected_sequence": ["content-maintenance"],
-      "assertions": ["加入 UTF-8 要求", "主动合并两句同义的语言与篇幅要求", "保留1000条的有效限制", "直接交付当前提示词，不把精简过程写入正文"]
     }
   ]
 }
