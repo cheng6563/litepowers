@@ -48,7 +48,23 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-review"],
       "expected_sequence": ["align", "systematic-debugging"],
-      "assertions": ["先形成包含现有测试和本地终点的执行合同", "再收集 CI 与本地差异证据", "一次只验证一个假设", "调试阶段不修改生产行为", "根因明确后返回合同且不重复询问"]
+      "assertions": ["先通过结构化交互询问快速推进或对齐推进并等待回答，不将帮我定位并修掉视为免交互要求", "选择模式后形成包含现有测试和本地终点的执行合同", "再收集 CI 与本地差异证据", "一次只验证一个假设", "调试阶段不修改生产行为", "根因明确后返回合同且不重复询问"]
+    },
+    {
+      "id": "new-single-point-bug-asks-mode-recommends-quick",
+      "prompt": "小程序在开发者工具里能操作，但点真机预览报错：Error: invalid file: api/conversation.js, 1:1237，SyntaxError: Unexpected token ?。产物对应代码是 new ApiError(t.message, t.code??-1)。这是本次新报告的故障，尚未检查源码或编译配置；长期约定是修复后验证、提交并推送，没有当前任务的推进模式选择。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-review"],
+      "expected_sequence": ["align"],
+      "assertions": ["通过结构化交互提供快速推进和对齐推进，推荐快速推进并说明报错集中、预计影响范围小", "等待用户选择，回答前只允许确认范围所需的只读检查，不进入完整根因调查或修改", "不把语法兼容线索视为根因和修法均已确认", "不把长期验证与提交推送约定视为模式选择，同时保留这些交付要求"]
+    },
+    {
+      "id": "new-single-point-bug-explicit-direct-skips-mode",
+      "prompt": "小程序真机预览报 api/conversation.js 的 Unexpected token ?，产物包含 t.code??-1，源码和编译配置还没查。这是新故障，请直接定位并修改，不用先问推进方式；运行已有相关验证，本地修改后停，不提交。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-review"],
+      "expected_sequence": ["align", "systematic-debugging"],
+      "assertions": ["按明确的直接推进要求采用快速推进，不弹出模式问卷", "先定位语法兼容的根因和修法，不仅凭报错猜测直接修改", "定位后做最小修复，沿用已有相关验证和本地修改终点", "不提交或推送"]
     },
     {
       "id": "continue-after-action-failure-no-realign",
