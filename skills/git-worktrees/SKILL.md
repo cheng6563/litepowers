@@ -121,10 +121,9 @@ printf '目标 Git 仓: %s\n即将创建: %s\n' "$SOURCE_ROOT" "$WT_TARGET"
 
 [ "$WT_TARGET" != "$SOURCE_ROOT" ] || { echo '错误：不能把源仓根作为 worktree 目标' >&2; exit 1; }
 [ ! -e "$WT_TARGET" ] || { echo "错误：目标已存在：$WT_TARGET" >&2; exit 1; }
-git -C "$SOURCE_ROOT" worktree add "$WT_TARGET" -b "$BRANCH"
 ```
 
-## 5. 手动创建前的 ignore 检查
+## 5. 手动检查 ignore 后创建
 
 原生工具自行管理其 `.claude/worktrees` 和忽略规则，不要覆盖。手动创建时，先确认目标父目录被目标子仓忽略：
 
@@ -135,7 +134,11 @@ git -C "$SOURCE_ROOT" check-ignore -q -- "$WT_TARGET/.probe" || {
 }
 ```
 
-只有团队需要共享约定时才修改 `.gitignore`。子仓位于外层仓中时，还要确认外层仓不会跟踪同一个绝对目标路径。
+只有团队需要共享约定时才修改 `.gitignore`。子仓位于外层仓中时，还要确认外层仓不会跟踪同一个绝对目标路径。全部检查通过后才创建：
+
+```bash
+git -C "$SOURCE_ROOT" worktree add "$WT_TARGET" -b "$BRANCH"
+```
 
 ## 6. 创建后锚定并操作
 
