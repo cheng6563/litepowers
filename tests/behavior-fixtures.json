@@ -116,11 +116,11 @@
     },
     {
       "id": "delegation-explicit-md-reaches-child",
-      "prompt": "请委派一个独立子代理，只按附带的 requirements.md 和当前材料完成评估，不修改文件。当前平台没有 MD 文件注入参数，但允许通过任务文本传入正文；不要额外套用固定审核模板。",
+      "prompt": "请委派一个独立子代理，只按指定的 requirements.md 和当前材料完成评估，不修改文件。当前平台没有 MD 文件注入参数，但子代理能读取该路径。不要额外套用固定审核模板。",
       "expected_initial_skills": ["delegation"],
       "forbidden_initial_skills": ["align", "tdd"],
       "expected_sequence": ["delegation"],
-      "assertions": ["调用方读取已提供的 MD，将正文与本次材料、只读权限交给子代理", "使用干净上下文，不传入实现者的完整推演", "不只传子代理无法访问的路径", "按给定标准报告，不额外强制代码质量或合并结论模板"]
+      "assertions": ["主线程不为派发读取执行 MD 的正文", "向子代理提供可访问路径并要求先读取再执行", "使用干净上下文，显式交接必要材料和只读权限，不传入整段父会话", "按给定标准报告，不额外强制代码质量或合并结论模板"]
     },
     {
       "id": "align-asks-independent-review-choice",
@@ -297,6 +297,38 @@
       "forbidden_initial_skills": ["align", "tdd"],
       "expected_sequence": ["delegation"],
       "assertions": ["加载 skill 不等于必须启动子代理", "普通单次构建由主线程执行", "不为形式完整额外调用模型或增加审核"]
+    },
+    {
+      "id": "delegation-native-md-injection",
+      "prompt": "请按指定的执行 MD 委派任务，目标、输入材料与只读权限均已明确。平台支持直接附加该文件，执行器负责读取；主线程不需要阅读正文。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["通过平台实际支持的参数传入文件路径", "主线程不先读取或转述执行 MD", "将本次任务与权限一并交接", "不为传递要求而继承整段父会话"]
+    },
+    {
+      "id": "delegation-md-loading-unavailable",
+      "prompt": "请委派子代理，必须按指定的执行 MD 完成任务。平台既不能附加文件，子代理也不能读取该文件；不要由主线程阅读或代执行。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["报告执行要求无法加载", "不由主线程读取、转述或代执行", "不在缺少必要要求时声称已完成交接或任务"]
+    },
+    {
+      "id": "delegation-optional-low-cost-uses-default",
+      "prompt": "请委派执行附带的明确任务，低成本模型只是推荐，不是限制。平台只允许使用默认模型，没有低成本开关或模型选择参数；默认模型具备任务需要的能力。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["使用平台默认模型继续", "不因缺少可选低成本能力而阻塞或额外询问", "不虚构低成本或模型选择参数", "不将默认模型描述为已启用低成本模式"]
+    },
+    {
+      "id": "delegation-low-cost-via-model-selection",
+      "prompt": "请委派执行附带任务，优先使用低成本模型。平台没有专用低成本模式，但支持指定模型，已提供配置中的低成本模型标识，且其工具与图像能力满足任务要求。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["使用平台实际支持的模型选择能力指定已提供的配置", "不因没有专用低成本开关就放弃已有可用模型", "不硬编码其他平台参数或本机配置路径"]
     },
     {
       "id": "delegation-required-low-cost-unavailable",
