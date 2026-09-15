@@ -198,9 +198,9 @@
       "id": "doc-drift-only",
       "prompt": "对照代码检查这篇内部业务文档有没有重复 schema、复述调用流程或失效的代码入口。",
       "expected_initial_skills": ["code-as-spec"],
-      "forbidden_initial_skills": ["align", "delegation"],
+      "forbidden_initial_skills": ["align"],
       "expected_sequence": ["code-as-spec"],
-      "assertions": ["指出代码可还原的重复内容，不把无独立业务价值的入口索引视为必须保留", "建议将局部业务 why 下沉到就近注释", "请求仅检查时保持只读，不自动修改或删除文档"]
+      "assertions": ["指出代码可还原的重复内容，不把无独立业务价值的入口索引视为必须保留", "建议将局部业务 why 下沉到就近注释", "请求仅检查时保持只读，不自动修改或删除文档", "允许为判断委派收益加载 delegation，但不发生无收益派发"]
     },
     {
       "id": "no-doc-system-stays-in-code",
@@ -417,6 +417,14 @@
       "forbidden_initial_skills": ["align", "tdd"],
       "expected_sequence": ["deep-research", "delegation"],
       "assertions": ["保留低成本选择，由单个研究代理完成调查与综合", "不通过 CLI 或其他方式绕过派生上限", "不把单层执行描述成已完成多层分工"]
+    },
+    {
+      "id": "deep-research-no-executor-is-blocked",
+      "prompt": "请深度研究已提供的问题。当前平台完全没有子代理执行能力，只有主线程可以读取文件和搜索；尚未选择改由主线程进行普通研究。",
+      "expected_initial_skills": ["deep-research"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["deep-research"],
+      "assertions": ["明确报告缺少子代理执行能力导致本次深度研究受阻", "不将零子代理能力误当成仍可启动单个研究代理", "不自行读取 researcher.md 并改由主线程代执行", "普通主线程研究留待用户另行选择，不声称已完成深度研究"]
     },
     {
       "id": "deep-research-child-inherits-confirmed-arrangement",
