@@ -219,7 +219,7 @@ def validate_readme(names, errors):
     listed = set(README_SKILL_RE.findall(table_section[1].split("## ", 1)[0]))
     if listed != names:
         fail(errors, f"README.md: Skill table mismatch; missing={sorted(names - listed)}, extra={sorted(listed - names)}")
-    for path in [readme_path, ROOT / "OPTIMIZATION-PLAN.md", *sorted(SKILLS_DIR.glob("*/SKILL.md"))]:
+    for path in [readme_path, ROOT / "OPTIMIZATION-PLAN.md", *sorted(SKILLS_DIR.rglob("*.md"))]:
         if path.exists():
             validate_local_links(path, errors)
 

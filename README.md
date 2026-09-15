@@ -18,6 +18,7 @@
 | `systematic-debugging` | `align` 选定、任务内失败或显式只诊断 | 根因未知时用复现、数据流和单一假设定位源头，不在诊断中修改生产行为 |
 | `tdd` | `align` 选定或用户显式调用 | 执行合同选择测试先行时，用最小测试约束实现；仅必要时单独确认 RED |
 | `delegation` | `/litepowers:delegation` 或自动 | 判断委派收益、准备任务与权限、选择模型并验收结果；按平台能力执行，场景要求按需附加 |
+| `deep-research` | 显式要求或模型主动推荐后获确认 | 组织低成本多层研究，复用 `delegation` 执行；缺少低成本或派生能力时采用单代理研究 |
 | `code-as-spec` | `/litepowers:code-as-spec` 或自动 | 业务信息采用最小承载层；对齐推进选择独立 review 时建立当前有效验收输入，保留到同次问题处置结束 |
 | `git-worktrees` | 显式请求或项目要求隔离时 | 定位并锚定 worktree、创建前处理上级仓库的忽略规则，防改动落错仓；优先平台原生工具，无则退回手动 git worktree |
 
@@ -54,20 +55,20 @@ gh skill install cheng6563/litepowers align --agent codex --scope user
 
 > **务必带 `--scope user`**：`gh skill install` 默认是 `--scope project`，只在当前 repo 生效。litepowers 是通用方法论，全局装一次、所有项目可用才合理。
 
-逐个安装（按 skill 名，见上表）。Codex 会话内也可用 `$skill-installer`。
+逐个安装（按 skill 名，见上表）；使用 `deep-research` 时同时安装 `delegation`。Codex 会话内也可用 `$skill-installer`。
 
 **手动兜底（无 gh CLI 时）**——按目标 agent 的用户级 skill 目录，把各个 skill 目录软链过去，一份内容多 agent 共用。Codex 用户级目录是 `~/.codex/skills/`（Windows 为 `%USERPROFILE%\.codex\skills\`）：
 
 ```shell
 # Codex（每个 skill 一个软链，逐个建）
-for s in align systematic-debugging tdd delegation code-as-spec git-worktrees; do
+for s in align systematic-debugging tdd delegation deep-research code-as-spec git-worktrees; do
   ln -s "/abs/path/to/litepowers/skills/$s" "$HOME/.codex/skills/$s"
 done
 ```
 
 ```powershell
 # Codex on Windows（管理员 PowerShell）
-'align','systematic-debugging','tdd','delegation','code-as-spec','git-worktrees' | ForEach-Object {
+'align','systematic-debugging','tdd','delegation','deep-research','code-as-spec','git-worktrees' | ForEach-Object {
   New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.codex\skills\$_" -Target "C:\abs\path\to\litepowers\skills\$_"
 }
 ```
@@ -86,6 +87,7 @@ done
 | `systematic-debugging` | 同名 |
 | `tdd` | `test-driven-development` |
 | `delegation` | `requesting-code-review` + `receiving-code-review`，扩展为通用任务委派 |
+| `deep-research` | litepowers 原创 |
 | `code-as-spec` | litepowers 原创 |
 
 ## License
