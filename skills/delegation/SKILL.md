@@ -1,6 +1,6 @@
 ---
 name: delegation
-description: "判断是否委派、准备任务并验收子代理结果。Use for review requests, explicit delegation, or substantial repetitive execution and batch analysis; not for ordinary single commands or tasks that forbid delegation."
+description: "判断是否委派、准备任务并验收子代理结果。Use for review requests, explicit delegation, substantial repetitive execution, batch analysis, or multi-step workflow validation; not for ordinary single commands or tasks that forbid delegation."
 ---
 
 # 任务委派
