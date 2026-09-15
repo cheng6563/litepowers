@@ -17,7 +17,7 @@
 | `align` | `/litepowers:align` 或自动 | 确定范围、实现路线、验证与交付；快速推进默认只做 diff 与文本检查，已有验证授权继续有效；独立 review 仅按当前任务选择执行 |
 | `systematic-debugging` | `align` 选定、任务内失败或显式只诊断 | 根因未知时用复现、数据流和单一假设定位源头，不在诊断中修改生产行为 |
 | `tdd` | `align` 选定或用户显式调用 | 执行合同选择测试先行时，用最小测试约束实现；仅必要时单独确认 RED |
-| `code-review` | `/litepowers:code-review` 或自动 | 只读审查工作区、暂存区或固定提交范围，分别给出需求与质量结论；无法隔离时如实标明独立性限制 |
+| `delegation` | `/litepowers:delegation` 或自动 | 判断委派收益、准备任务与权限、选择模型并验收结果；按平台能力执行，场景要求按需附加 |
 | `code-as-spec` | `/litepowers:code-as-spec` 或自动 | 业务信息采用最小承载层；对齐推进选择独立 review 时建立当前有效验收输入，保留到同次问题处置结束 |
 | `git-worktrees` | 显式请求或项目要求隔离时 | 定位并锚定 worktree、创建前处理上级仓库的忽略规则，防改动落错仓；优先平台原生工具，无则退回手动 git worktree |
 
@@ -60,14 +60,14 @@ gh skill install cheng6563/litepowers align --agent codex --scope user
 
 ```shell
 # Codex（每个 skill 一个软链，逐个建）
-for s in align systematic-debugging tdd code-review code-as-spec git-worktrees; do
+for s in align systematic-debugging tdd delegation code-as-spec git-worktrees; do
   ln -s "/abs/path/to/litepowers/skills/$s" "$HOME/.codex/skills/$s"
 done
 ```
 
 ```powershell
 # Codex on Windows（管理员 PowerShell）
-'align','systematic-debugging','tdd','code-review','code-as-spec','git-worktrees' | ForEach-Object {
+'align','systematic-debugging','tdd','delegation','code-as-spec','git-worktrees' | ForEach-Object {
   New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.codex\skills\$_" -Target "C:\abs\path\to\litepowers\skills\$_"
 }
 ```
@@ -76,7 +76,7 @@ done
 
 ## 与上游 superpowers 的关系
 
-本项目以 superpowers **5.1.0** 为参考独立重写，采用按需触发和轻量任务合同。上游变化以 5.1.0 为基线比较，按方法价值选择性吸收；当前已吸收 Superpowers 6.x 的只读 reviewer、需求／质量双结论和任务接口等改进。
+本项目以 superpowers **5.1.0** 为参考独立重写，采用按需触发和轻量任务合同。上游变化以 5.1.0 为基线比较，按方法价值选择性吸收；当前已吸收 Superpowers 6.x 的独立审查和任务接口等改进。
 
 ### Skill 来源映射
 
@@ -85,7 +85,7 @@ done
 | `align` | `brainstorming` |
 | `systematic-debugging` | 同名 |
 | `tdd` | `test-driven-development` |
-| `code-review` | `requesting-code-review` + `receiving-code-review` |
+| `delegation` | `requesting-code-review` + `receiving-code-review`，扩展为通用任务委派 |
 | `code-as-spec` | litepowers 原创 |
 
 ## License
