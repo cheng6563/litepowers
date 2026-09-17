@@ -515,12 +515,28 @@
       "assertions": ["沿用快速验证及本地交付终点，不重新询问模式或 review", "先定位当前测试失败，再在原合同范围内修复", "重跑受影响测试并完成独立 review", "不自动提交、推送或部署"]
     },
     {
+      "id": "quick-mode-batch-tests-stay-with-parent",
+      "prompt": "当前游客浏览任务已选择搞快点，主线程已修改页面。项目要求运行相关测试，现在有七个测试文件需要适配旧断言和测试桩。全局通用规则推荐把已授权批量工作交给低成本子代理，平台也支持；本次没有明确安排委派或独立 review。请继续完成测试维护与验证，本地改完停。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": [],
+      "assertions": ["主线程适配本次改动的测试并运行已要求的验证", "不因文件较多、低成本模型可用或通用批量委派建议启动子代理", "不把测试授权当作委派授权，不把运行测试当作已切换为快速验证", "不重问模式、不自动安排独立 review、不提交推送"]
+    },
+    {
+      "id": "quick-mode-explicit-test-delegation-is-scoped-exception",
+      "prompt": "当前任务采用搞快点。请只把已有测试用例的执行明确交给一个子代理，不让它修改文件；实现和修复继续由主线程完成，不要独立 review，不提交。测试入口、范围和本地环境均已提供。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["按本次明确安排仅委派已有测试执行", "不因搞快点的默认限制拒绝用户明确委派要求", "不扩展子代理权限到修改或 review，主线程保留实现与修复", "不重问模式，不自动改为快速验证或提交"]
+    },
+    {
       "id": "quick-mode-default-static-checks-only",
       "prompt": "我选择搞快点，按已确认的交互稿实现客户查询功能，本地改好即可。项目已有测试入口和浏览器工具。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align"],
-      "assertions": ["不重复询问推进模式", "完成修改和 diff、目标文本检查", "不因已有入口而自动执行测试、构建或浏览器验证", "明确运行行为未验证，不声称测试通过", "不提交推送或部署"]
+      "assertions": ["不重复询问推进模式", "主线程完成修改和 diff、目标文本检查，不主动启动子代理", "不因已有入口而自动执行测试、构建或浏览器验证", "明确运行行为未验证，不声称测试通过", "不提交推送或部署"]
     }
   ]
 }
