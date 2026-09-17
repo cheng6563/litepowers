@@ -59,12 +59,28 @@
       "assertions": ["通过结构化交互提供搞快点、快速验证和对齐推进，推荐搞快点并说明报错集中、预计影响范围小", "等待用户选择，回答前只允许确认范围所需的只读检查，不进入完整根因调查或修改", "不把语法兼容线索视为根因和修法均已确认", "不把长期验证与提交推送约定视为模式选择，同时保留这些交付要求"]
     },
     {
+      "id": "approved-feature-plan-still-asks-mode",
+      "prompt": "此前只讨论了小程序游客态方案：复用现有页面，游客可看主界面，业务操作要求登录，并补齐登录返回和退出后的游客态，涉及页面、鉴权与数据加载。尚未选择推进模式，也未授权免交互。用户现在回复：‘那改一下吧。’ 项目有测试、提交推送和独立工作区约定。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "delegation"],
+      "expected_sequence": ["align"],
+      "assertions": ["把用户回复识别为批准业务方案，不视为已选模式或免除交互", "通过结构化交互提供搞快点、快速验证、对齐推进并等待回答", "回答前仅做确认范围所需的只读检查，不创建 worktree 或开始修改", "不把已讨论方案视为可沿用的原模式", "保留项目验证和交付约定，但不以此代替模式选择"]
+    },
+    {
+      "id": "implementation-discretion-does-not-select-mode",
+      "prompt": "按刚讨论的订单归档方案做，普通实现细节你自行决定。方案跨多个模块且未开始实现；没有选过推进模式，也没有说不用问或 AFK。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "delegation"],
+      "expected_sequence": ["align"],
+      "assertions": ["区分普通实现细节授权与推进方式授权", "通过结构化交互询问三种模式并等待回答", "不自动采用搞快点，也不因方案已有而跳过模式选择"]
+    },
+    {
       "id": "new-single-point-bug-explicit-direct-skips-mode",
       "prompt": "小程序真机预览报 api/conversation.js 的 Unexpected token ?，产物包含 t.code??-1，源码和编译配置还没查。这是新故障，请直接定位并修改，不用先问推进方式；运行已有相关验证，本地修改后停，不提交。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align", "systematic-debugging"],
-      "assertions": ["按明确的直接推进要求采用搞快点，不弹出模式问卷", "先定位语法兼容的根因和修法，不仅凭报错猜测直接修改", "定位后做最小修复，沿用已有相关验证和本地修改终点", "不提交或推送"]
+      "assertions": ["按明确的不用先问推进方式要求采用搞快点，不弹出模式问卷，并在开工提示中说明模式及免交互依据", "先定位语法兼容的根因和修法，不仅凭报错猜测直接修改", "定位后做最小修复，沿用已有相关验证和本地修改终点", "不提交或推送"]
     },
     {
       "id": "continue-after-action-failure-no-realign",
@@ -216,7 +232,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation", "code-as-spec"],
       "expected_sequence": ["align"],
-      "assertions": ["采用搞快点，不弹出模式或 review 问卷", "保留用户要求的聚焦测试与本地提交终点", "不推送、不安排 review、不创建 review 文档", "不把 AFK 当作扩展业务或外部动作的授权", "按实际输出报告验证状态"]
+      "assertions": ["采用搞快点，不弹出模式或 review 问卷，开工时说明模式及 AFK 依据", "保留用户要求的聚焦测试与本地提交终点", "不推送、不安排 review、不创建 review 文档", "不把 AFK 当作扩展业务或外部动作的授权", "按实际输出报告验证状态"]
     },
     {
       "id": "quick-mode-explicit-independent-review",
@@ -480,7 +496,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-as-spec"],
       "expected_sequence": ["align", "delegation"],
-      "assertions": ["识别为快速验证，不重复询问模式或是否 review", "实际运行相关测试并委派独立 review，不因 AFK 跳过", "不强制补建临时验收文档", "保留本地修改终点，不提交推送或部署", "高影响业务取舍仍停在相应边界，不扩大授权"]
+      "assertions": ["识别为快速验证，不重复询问模式或是否 review，开工时说明 AFK 及测试和独立 review 要求这一依据", "实际运行相关测试并委派独立 review，不因 AFK 跳过", "不强制补建临时验收文档", "保留本地修改终点，不提交推送或部署", "高影响业务取舍仍停在相应边界，不扩大授权"]
     },
     {
       "id": "quick-verified-unavailable-evidence-reports-incomplete",
