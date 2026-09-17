@@ -48,7 +48,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align", "systematic-debugging"],
-      "assertions": ["先通过结构化交互询问快速推进或对齐推进并等待回答，不将帮我定位并修掉视为免交互要求", "选择模式后形成包含现有测试和本地终点的执行合同", "再收集 CI 与本地差异证据", "一次只验证一个假设", "调试阶段不修改生产行为", "根因明确后返回合同且不重复询问"]
+      "assertions": ["先通过结构化交互询问快速推进、快速验证或对齐推进并等待回答，不将帮我定位并修掉视为免交互要求", "选择模式后形成包含现有测试和本地终点的执行合同", "再收集 CI 与本地差异证据", "一次只验证一个假设", "调试阶段不修改生产行为", "根因明确后返回合同且不重复询问"]
     },
     {
       "id": "new-single-point-bug-asks-mode-recommends-quick",
@@ -56,7 +56,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align"],
-      "assertions": ["通过结构化交互提供快速推进和对齐推进，推荐快速推进并说明报错集中、预计影响范围小", "等待用户选择，回答前只允许确认范围所需的只读检查，不进入完整根因调查或修改", "不把语法兼容线索视为根因和修法均已确认", "不把长期验证与提交推送约定视为模式选择，同时保留这些交付要求"]
+      "assertions": ["通过结构化交互提供快速推进、快速验证和对齐推进，推荐快速推进并说明报错集中、预计影响范围小", "等待用户选择，回答前只允许确认范围所需的只读检查，不进入完整根因调查或修改", "不把语法兼容线索视为根因和修法均已确认", "不把长期验证与提交推送约定视为模式选择，同时保留这些交付要求"]
     },
     {
       "id": "new-single-point-bug-explicit-direct-skips-mode",
@@ -72,7 +72,7 @@
       "expected_initial_skills": ["systematic-debugging"],
       "forbidden_initial_skills": ["align", "tdd", "delegation"],
       "expected_sequence": ["systematic-debugging"],
-      "assertions": ["把失败视为原任务执行产生的新证据", "继承快速推进、验证方式和提交推送终点", "不重复弹出快速推进或对齐推进选择", "先读取失败日志并验证单一根因假设", "根因明确后直接修复、验证并继续原交付动作"]
+      "assertions": ["把失败视为原任务执行产生的新证据", "继承快速推进、验证方式和提交推送终点", "不重复弹出推进模式选择", "先读取失败日志并验证单一根因假设", "根因明确后直接修复、验证并继续原交付动作"]
     },
     {
       "id": "known-cause-direct-implementation",
@@ -449,6 +449,38 @@
       "forbidden_initial_skills": ["align", "delegation", "deep-research"],
       "expected_sequence": [],
       "assertions": ["直接回答 5000", "不推荐或启动深度研究", "不为简单查询创建分工或验证流程"]
+    },
+    {
+      "id": "quick-verified-mode-tests-and-independent-review",
+      "prompt": "用快速验证模式实现已确认 spec 中的客户查询功能。仓库有相关单元测试入口，平台支持独立只读子代理；只做本地修改，不提交。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-as-spec"],
+      "expected_sequence": ["align", "delegation"],
+      "assertions": ["沿用快速推进的少交互流程，不弹出模式、合同或 review 问卷", "实际运行相关聚焦测试及必要回归，覆盖不足时仅补最小必要用例，不自动改为 TDD", "向独立只读 reviewer 显式提供当前需求、验收标准与完整变更范围，包括提交和未跟踪文件", "不强制创建临时验收文档", "核实并修复合同内 findings，重跑受影响测试并针对修复复核，无新证据不重复验证", "不提交、不推送，不自动扩大为浏览器验证或部署"]
+    },
+    {
+      "id": "afk-with-tests-and-review-selects-quick-verified",
+      "prompt": "按已确认的 spec 实现退款查询，我要 AFK，普通细节自行决定，跑相关测试并做独立 review，本地改完就停。仓库有测试入口和独立子代理能力。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-as-spec"],
+      "expected_sequence": ["align", "delegation"],
+      "assertions": ["识别为快速验证，不重复询问模式或是否 review", "实际运行相关测试并委派独立 review，不因 AFK 跳过", "不强制补建临时验收文档", "保留本地修改终点，不提交推送或部署", "高影响业务取舍仍停在相应边界，不扩大授权"]
+    },
+    {
+      "id": "quick-verified-unavailable-evidence-reports-incomplete",
+      "prompt": "用快速验证模式按已确认的 spec 实现客户导入，本地修改后停。当前目录没有测试入口，也缺少运行环境；平台完全没有独立子代理或隔离上下文能力。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-as-spec"],
+      "expected_sequence": ["align", "delegation"],
+      "assertions": ["继续完成不受影响且已授权的本地修改和静态检查", "如实报告测试与独立 review 未完成及原因", "不扩建测试体系来替代缺失环境", "不把静态检查说成测试通过，不把主线程自审说成独立 review", "不宣称本模式的验证要求已全部完成"]
+    },
+    {
+      "id": "quick-verified-continuation-retains-mode",
+      "prompt": "当前客户查询任务已选择快速验证，本地修改后停止；你刚完成实现，相关测试报错。这是同一任务，请继续定位并修好，再完成测试和独立 review。",
+      "expected_initial_skills": ["systematic-debugging"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["systematic-debugging", "delegation"],
+      "assertions": ["沿用快速验证及本地交付终点，不重新询问模式或 review", "先定位当前测试失败，再在原合同范围内修复", "重跑受影响测试并完成独立 review", "不自动提交、推送或部署"]
     },
     {
       "id": "quick-mode-default-static-checks-only",
