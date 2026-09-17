@@ -48,7 +48,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align", "systematic-debugging"],
-      "assertions": ["先通过结构化交互询问快速推进、快速验证或对齐推进并等待回答，不将帮我定位并修掉视为免交互要求", "选择模式后形成包含现有测试和本地终点的执行合同", "再收集 CI 与本地差异证据", "一次只验证一个假设", "调试阶段不修改生产行为", "根因明确后返回合同且不重复询问"]
+      "assertions": ["先通过结构化交互询问搞快点、快速验证或对齐推进并等待回答，不将帮我定位并修掉视为免交互要求", "选择模式后形成包含现有测试和本地终点的执行合同", "再收集 CI 与本地差异证据", "一次只验证一个假设", "调试阶段不修改生产行为", "根因明确后返回合同且不重复询问"]
     },
     {
       "id": "new-single-point-bug-asks-mode-recommends-quick",
@@ -56,7 +56,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align"],
-      "assertions": ["通过结构化交互提供快速推进、快速验证和对齐推进，推荐快速推进并说明报错集中、预计影响范围小", "等待用户选择，回答前只允许确认范围所需的只读检查，不进入完整根因调查或修改", "不把语法兼容线索视为根因和修法均已确认", "不把长期验证与提交推送约定视为模式选择，同时保留这些交付要求"]
+      "assertions": ["通过结构化交互提供搞快点、快速验证和对齐推进，推荐搞快点并说明报错集中、预计影响范围小", "等待用户选择，回答前只允许确认范围所需的只读检查，不进入完整根因调查或修改", "不把语法兼容线索视为根因和修法均已确认", "不把长期验证与提交推送约定视为模式选择，同时保留这些交付要求"]
     },
     {
       "id": "new-single-point-bug-explicit-direct-skips-mode",
@@ -64,15 +64,15 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align", "systematic-debugging"],
-      "assertions": ["按明确的直接推进要求采用快速推进，不弹出模式问卷", "先定位语法兼容的根因和修法，不仅凭报错猜测直接修改", "定位后做最小修复，沿用已有相关验证和本地修改终点", "不提交或推送"]
+      "assertions": ["按明确的直接推进要求采用搞快点，不弹出模式问卷", "先定位语法兼容的根因和修法，不仅凭报错猜测直接修改", "定位后做最小修复，沿用已有相关验证和本地修改终点", "不提交或推送"]
     },
     {
       "id": "continue-after-action-failure-no-realign",
-      "prompt": "你刚才已经按快速推进完成修改、本地验证、提交并推送；现在我说：GitHub Action 好像失败了，看看并修好，仍然提交推送。",
+      "prompt": "你刚才已经按搞快点完成修改、本地验证、提交并推送；现在我说：GitHub Action 好像失败了，看看并修好，仍然提交推送。",
       "expected_initial_skills": ["systematic-debugging"],
       "forbidden_initial_skills": ["align", "tdd", "delegation"],
       "expected_sequence": ["systematic-debugging"],
-      "assertions": ["把失败视为原任务执行产生的新证据", "继承快速推进、验证方式和提交推送终点", "不重复弹出推进模式选择", "先读取失败日志并验证单一根因假设", "根因明确后直接修复、验证并继续原交付动作"]
+      "assertions": ["把失败视为原任务执行产生的新证据", "继承搞快点、验证方式和提交推送终点", "不重复弹出推进模式选择", "先读取失败日志并验证单一根因假设", "根因明确后直接修复、验证并继续原交付动作"]
     },
     {
       "id": "known-cause-direct-implementation",
@@ -216,11 +216,11 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation", "code-as-spec"],
       "expected_sequence": ["align"],
-      "assertions": ["采用快速推进，不弹出模式或 review 问卷", "保留用户要求的聚焦测试与本地提交终点", "不推送、不安排 review、不创建 review 文档", "不把 AFK 当作扩展业务或外部动作的授权", "按实际输出报告验证状态"]
+      "assertions": ["采用搞快点，不弹出模式或 review 问卷", "保留用户要求的聚焦测试与本地提交终点", "不推送、不安排 review、不创建 review 文档", "不把 AFK 当作扩展业务或外部动作的授权", "按实际输出报告验证状态"]
     },
     {
       "id": "quick-mode-explicit-independent-review",
-      "prompt": "快速推进实现 spec 中的退款查询功能，不要测试或提交；完成后请用干净上下文做独立 review。平台支持只读 subagent，验收标准就在这次请求附带的 spec 中。",
+      "prompt": "搞快点实现 spec 中的退款查询功能，不要测试或提交；完成后请用干净上下文做独立 review。平台支持只读 subagent，验收标准就在这次请求附带的 spec 中。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-as-spec"],
       "expected_sequence": ["align", "delegation"],
@@ -472,7 +472,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-as-spec"],
       "expected_sequence": ["align", "delegation"],
-      "assertions": ["沿用快速推进的少交互流程，不弹出模式、合同或 review 问卷", "实际运行相关聚焦测试及必要回归，覆盖不足时仅补最小必要用例，不自动改为 TDD", "向独立只读 reviewer 显式提供当前需求、验收标准与完整变更范围，包括提交和未跟踪文件", "不强制创建临时验收文档", "核实并修复合同内 findings，重跑受影响测试并针对修复复核，无新证据不重复验证", "不提交、不推送，不自动扩大为浏览器验证或部署"]
+      "assertions": ["沿用搞快点的少交互流程，不弹出模式、合同或 review 问卷", "实际运行相关聚焦测试及必要回归，覆盖不足时仅补最小必要用例，不自动改为 TDD", "向独立只读 reviewer 显式提供当前需求、验收标准与完整变更范围，包括提交和未跟踪文件", "不强制创建临时验收文档", "核实并修复合同内 findings，重跑受影响测试并针对修复复核，无新证据不重复验证", "不提交、不推送，不自动扩大为浏览器验证或部署"]
     },
     {
       "id": "afk-with-tests-and-review-selects-quick-verified",
@@ -500,7 +500,7 @@
     },
     {
       "id": "quick-mode-default-static-checks-only",
-      "prompt": "我选择快速推进，按已确认的交互稿实现客户查询功能，本地改好即可。项目已有测试入口和浏览器工具。",
+      "prompt": "我选择搞快点，按已确认的交互稿实现客户查询功能，本地改好即可。项目已有测试入口和浏览器工具。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align"],
