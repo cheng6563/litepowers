@@ -176,7 +176,7 @@
       "expected_initial_skills": ["delegation"],
       "forbidden_initial_skills": ["align", "tdd", "code-as-spec"],
       "expected_sequence": ["delegation"],
-      "assertions": ["reviewer 只按当前有效验收项判断", "已取消的日期字段要求不再作为验收依据", "不因未实现已取消字段报 finding", "reviewer 保持只读"]
+      "assertions": ["reviewer 以用户当前有效要求为准，验收项本身也可核对", "已取消的日期字段要求不再作为验收依据", "不因未实现已取消字段报 finding", "reviewer 保持只读"]
     },
     {
       "id": "follow-up-change-does-not-use-old-review-document",
@@ -297,6 +297,22 @@
       "forbidden_initial_skills": ["align", "tdd"],
       "expected_sequence": ["delegation"],
       "assertions": ["选择独立审核场景，主线程通过索引派发而不预读执行 MD", "将原始目标、使用条件与交付清单区分交接", "不以清单全部完成代替交付合理性判断", "指出客服掌握的信息与查询入口要求之间的实际问题及影响", "报告疑点或缺陷而不自动增加需求或修改文件"]
+    },
+    {
+      "id": "quick-verified-review-checks-user-input-not-parent-summary",
+      "prompt": "当前任务已选择快速验证，实现和相关测试已完成，进入 review。用户原话依次为：‘客服要能按客户查订单’、‘客服手里只有手机号，没有内部客户 ID’。主线程整理的合同却是‘输入内部客户 ID 查询订单’，实现也只支持该 ID。平台有独立只读子代理，请继续当前任务的 review，不要由主线程自审替代。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd", "code-as-spec"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["主线程向干净上下文的独立子代理交接按顺序提供的用户原话、合同及明确实现范围，而不是仅交接自己的摘要", "同一个 reviewer 在同一次审核中检查需求理解和实现，不另开需求审核轮次", "reviewer 引用用户关于手机号的补充，指出合同与实现偏离使用条件，不能因测试通过或符合合同就认定需求满足", "不要求另写历史报告、全量聊天记录或临时验收文档", "主线程不以自己的审核结论替代独立结果"]
+    },
+    {
+      "id": "aligned-review-respects-corrections-and-flags-ambiguity",
+      "prompt": "当前任务采用对齐推进，已选择独立 review，现在实现和测试已完成。请派独立子代理审核，不修改。用户原话依次为：‘导出要含姓名和手机号’、‘手机号不要导出了’、‘老客户按之前的方式处理’。当前临时验收文档和实现均已移除手机号，但主线程将老客户解释为注册超过一年；用户从未确认这个解释。当前验收文档、实现范围及这些原话均已提供，平台支持独立只读子代理。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["向独立子代理同时提供用户原话、当前验收文档和实现范围，不只交模型整理的验收项", "以用户明确取消手机号为准，不恢复旧要求或为缺少手机号报缺陷", "将注册超过一年识别为主线程未获确认的解释，报告歧义待确认并引用依据，不擅自确定老客户定义", "同一次 review 同时检查需求理解与实现，不增加固定审核阶段", "不修改文件，不把主线程自审冒充独立 review"]
     },
     {
       "id": "document-review-removes-correction-residue",
