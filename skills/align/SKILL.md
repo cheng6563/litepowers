@@ -1,6 +1,6 @@
 ---
 name: align
-description: "为新的非简单开发任务确定范围、推进方式、验证与交付，包括尚需定位修法的新故障。Use for a new non-trivial implementation or bug-fix request; not for read-only review, explicit small changes, or continuation of an active task."
+description: "Use for new non-trivial development or unresolved bug fixes; not read-only review, explicit small changes, or active-task continuation."
 ---
 
 # 执行前对齐

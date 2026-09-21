@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: "用最小失败测试或可重复证据约束实现。Use only when delegated by align or explicitly invoked by the user; never invoke autonomously."
+description: "Use only when align selects test-first work or the user explicitly invokes TDD; never invoke autonomously."
 ---
 
 # 轻量测试先行

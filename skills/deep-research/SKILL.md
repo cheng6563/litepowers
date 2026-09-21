@@ -1,6 +1,6 @@
 ---
 name: deep-research
-description: "推荐并组织低成本、多层协作的深度研究。Use for explicit deep research or consequential questions with scattered or conflicting evidence that benefit from independently investigated subquestions; recommend and obtain authorization before starting an unsolicited research tree, not for a routine lookup."
+description: "Use for explicit deep research or consequential questions with fragmented/conflicting evidence benefiting from independent subquestions. Obtain authorization before unsolicited research; not routine lookups."
 ---
 
 # 深度研究

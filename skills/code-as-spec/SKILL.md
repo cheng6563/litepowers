@@ -1,6 +1,6 @@
 ---
 name: code-as-spec
-description: "确定业务知识与项目规则的最小承载位置。Use when maintaining internal business documentation, deciding where durable rules belong, or managing temporary acceptance input for an opted-in alignment-driven review; not for wording-only edits."
+description: "Use to maintain internal business docs, place project rules, or manage temporary acceptance input for opted-in alignment-driven review; not wording-only edits."
 ---
 
 # 代码即核心业务文档
