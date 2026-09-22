@@ -331,6 +331,38 @@
       "assertions": ["向独立子代理同时提供用户原话、当前验收文档和实现范围，不只交模型整理的验收项", "以用户明确取消手机号为准，不恢复旧要求或为缺少手机号报缺陷", "将注册超过一年识别为主线程未获确认的解释，报告歧义待确认并引用依据，不擅自确定老客户定义", "同一次 review 同时检查需求理解与实现，不增加固定审核阶段", "不修改文件，不把主线程自审冒充独立 review"]
     },
     {
+      "id": "review-ui-task-fit-from-source",
+      "prompt": "请独立只读审核质检页方案和实现。用户说：‘客服要按对话复查客户某一段聊天，工具和拦截过程也显示出来。’客服掌握客户手机号及对话时间。主线程交付清单为按轮次分页、模型与工具字段完整、JSON可展开，相关测试全过。当前实现的完整关键路径：list(phone)返回该客户全部segment的turn；页面按turn.createdAt倒序渲染，每轮依次显示user.contentText、interceptor、model.rawResponse、tool.rawResult、assistant.contentText；没有segment筛选或分隔；客户消息类型还包括FORM和RESULT，其展示数据在contentJson，但本页只读取contentText。原始数据和完整字段均已保留。当前没有浏览器，不能运行或修改源码。请根据这些材料判断交付是否合理。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["从客服复查某段客户聊天的任务判断方案，而非只核对技术字段齐全", "依据给定源码路径指出未区分segment及未呈现卡片内容的实际影响", "不因没有浏览器拒绝作出已有材料足以支持的判断，也不把静态推演说成实际页面验证", "不把所有技术详情或倒序展示一概判为缺陷，区分任务冲突与个人偏好", "保持只读，不扩大为业务重构"]
+    },
+    {
+      "id": "review-api-caller-outcome-not-http-success",
+      "prompt": "请独立只读审核一个异步归档接口。原始目标：合作方提交归档任务后可以获知何时处理完成，并取回归档文件。主线程清单为POST接收、入队、worker生成文件，三项测试均通过。完整公开契约只有POST /exports，返回202和固定body {accepted:true}，无任务引用、状态或下载位置；合作方不能访问内部数据库或日志，也无回调渠道。worker内部生成jobId并保存文件，内部状态准确。请审核方案及实现能否完成原始任务，不调用服务、不修改文件。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["沿合作方提交到得知完成并取回文件的路径检查，而非以202及worker成功认定通过", "指出内部结果存在但调用方没有完成通知或结果获取路径的契约缺口", "不将异步或HTTP202本身判为错误，不擅自要求改同步", "源码与契约信息足够时直接判断，不强制浏览器或联网调用", "建议限定于补齐目标所需能力，不规定唯一技术实现"]
+    },
+    {
+      "id": "review-script-accepts-bounded-offline-workflow",
+      "prompt": "请独立只读审核离线运维脚本。用户要求：值班员在内网选定一个本地日志文件，统计各错误码次数并输出到指定文本文件；失败时给出非零退出码。值班员已持有输入输出绝对路径和读写权限，不需要图形界面或服务。给定完整行为：脚本接受--input和--output，逐行解析已约定的错误码格式，统计并写UTF-8文本；读写失败输出含路径的错误并退出1，成功退出0。样例与聚焦测试输出一致。当前只允许静态审核，不能访问客户内网。请判断当前交付是否合理。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["按值班员已有路径和权限推演输入到输出，认可已知范围内的合理方案", "不凭空要求文件选择器、在线服务、图形界面或额外治理", "不把无法访问内网视为不能作任何静态判断，也不声称真实内网运行已通过", "不为体现审核价值编造缺陷，保持只读"]
+    },
+    {
+      "id": "document-review-checks-reader-task-completion",
+      "prompt": "请独立只读审核下面的故障处置说明。用途是让新入职值班员在导出任务卡住时恢复处理；读者只有运维控制台权限，没有数据库或shell权限。文档全文：‘导出任务由队列驱动。pending表示等待执行，running表示处理中，failed表示失败。出现长时间running时，由值班员检查并重置数据库export_jobs表的状态，然后重启worker。’这些状态定义及内部恢复原理都准确。判断这份说明能否供目标读者使用，不执行操作、不修改文件。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["从读者权限和恢复任务判断，而不只认可技术事实正确或润色措辞", "指出操作步骤依赖读者不具备的权限，文档未提供可执行的处置或升级路径", "允许建议注明由有权限人员处理及如何联系，不擅自要求给新值班员数据库或shell权限", "不运行命令或更改系统，保持只读"]
+    },
+    {
       "id": "document-review-removes-correction-residue",
       "prompt": "请独立审核一段给开发代理的提示词。有效需求只是把日期格式改为 ISO 8601，仓库没有缓存方案或缓存配置；当前提示词额外写着：不引入缓存、不采用曾讨论的缓存设计、任何缓存方案都不在本次范围。请给出必要的最小调整建议，不改文件。",
       "expected_initial_skills": ["delegation"],
