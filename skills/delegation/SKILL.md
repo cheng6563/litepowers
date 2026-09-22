@@ -51,7 +51,7 @@ description: "Use for review, explicit delegation, substantial repetitive/batch 
 
 | 场景 | 适用条件与必要材料 | 执行 MD | 低成本建议 |
 |---|---|---|---|
-| 独立审核 | 评估实现或交付的整体合理性；提供原始目标、使用场景、相关约束、交付清单与明确审核范围 | [独立审核](scenarios/independent-review.md) | 默认模型 |
+| 独立审核 | 评估方案、实现或交付的整体合理性；提供原始目标、使用场景、相关约束、当前方案或交付清单与明确审核范围 | [独立审核](scenarios/independent-review.md) | 默认模型 |
 | 文档／提示词审核 | 评估内容必要性、表达或规则冲突；提供读者、用途、当前文本与有效要求 | [文档审核](scenarios/document-review.md) | 整体判断用默认模型 |
 | 页面验证 | 实际执行用户流程；提供测试入口、访问条件、用例与预期结果、环境及写入授权 | [页面验证](scenarios/browser-validation.md) | 明确用例的执行推荐低成本；须具备浏览器与必要的图像能力 |
 

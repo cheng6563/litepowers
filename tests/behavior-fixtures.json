@@ -139,12 +139,52 @@
       "assertions": ["主线程不为派发读取执行 MD 的正文", "向子代理提供可访问路径并要求先读取再执行", "使用干净上下文，显式交接必要材料和只读权限，不传入整段父会话", "按给定标准报告，不额外强制代码质量或合并结论模板"]
     },
     {
+      "id": "aligned-preimplementation-review-uses-supplied-plan",
+      "prompt": "当前任务已选对齐推进，合同信息齐全，尚未修改源码。用户原话：‘合作方提交导出任务后要能查进度并下载结果。’合同：只改导出接口，不改权限；异步入队，返回任务引用，提供状态与结果下载入口；用已有聚焦测试验证，本地修改后停止，不需要开发后review。主线程拟按这些行为实现，调用方只有公开API权限。平台支持干净上下文只读子代理。请继续任务，现有材料足够判断方案方向，不需要扫描其他文件。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["tdd", "code-as-spec"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["在源码修改前实际委派一次独立方案审核，不再次询问是否前审", "交接用户原话、使用条件、合同与拟议行为，不把模型摘要当唯一依据", "明确子代理审拟议方案而不是要求未实现的diff或已通过测试", "材料充分时直接审核，不默认扫描仓库、运行测试或另建方案及验收文档", "等待并处理会改变方向的发现后才开始受影响的实现", "保留开发后不review、不提交的交付边界"]
+    },
+    {
+      "id": "aligned-explicit-no-review-overrides-precheck",
+      "prompt": "我选择对齐推进，但本次前后所有review都不要，也不要启动子代理。范围与方案已明确：在现有导出功能中增加已确认的筛选条件，保留原接口和权限；按已有测试验证，本地修改后停止。请按这个合同继续。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd", "code-as-spec"],
+      "expected_sequence": ["align"],
+      "assertions": ["明确禁止review和子代理优先于对齐推进的默认前审", "不再询问是否前审或后审，不创建review临时文档", "不启动子代理，不把主线程检查称为独立前审", "沿用已确认范围、验证及本地交付边界"]
+    },
+    {
+      "id": "plan-review-missing-decisive-fact-stays-focused",
+      "prompt": "你是已接收独立审核要求的方案审查者，只读审开发前方案。用户要让只有运维控制台权限的值班员恢复卡住任务。方案为使用控制台现有的重试入口，不增权限；交接材料尚未核实该入口是否存在，但已提供可访问的控制台操作说明路径。允许只读核实材料，无修改、运行服务或浏览器验证授权。请完成方案审查。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": [],
+      "assertions": ["识别入口是否存在会改变方案可行性，按已给路径定点核实或明确待确认", "不把默认只看交接材料理解为禁止必要读取，也不扩成全仓库调查", "未核实入口时不自行假定存在或不存在，不把方案判为已满足目标", "不要求已经实现的diff、运行测试或浏览器，不修改文件"]
+    },
+    {
+      "id": "aligned-precheck-unavailable-stops-affected-implementation",
+      "prompt": "当前任务已选对齐推进，合同与方案均已形成，尚未实现，前审没有取消；开发后不需要review。本平台没有子代理或独立上下文能力。请继续执行，不自行改变推进方式。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["tdd", "code-as-spec"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["说明默认开工前独立方案审核缺少执行能力并报告阻塞", "不以主线程自审冒充独立审核或悄悄跳过前审开始受影响的实现", "不将开发后不review解释为已经取消前审", "无需建立方案报告或临时验收文档"]
+    },
+    {
+      "id": "aligned-resume-does-not-repeat-plan-review",
+      "prompt": "当前导出任务采用对齐推进，开工前方案审核已完成并处理发现，开发后review已取消。本次只是继续修正聚焦测试刚发现的日期格式错误，原目标、方案路线和交付边界都没变。请继续已授权修复，不提交。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": [],
+      "assertions": ["沿用原合同、前审完成状态及开发后不review选择", "普通续接不补做或重复开工前审核，不重新询问推进模式", "修复并重跑受影响测试，不把局部测试失败视为必须重新审方案", "不提交、不新增review文档或开发后审核"]
+    },
+    {
       "id": "align-asks-independent-review-choice",
       "prompt": "这是一个全新的大型结算重构需求，项目没有现成需求文档。我选择对齐推进，请先确定范围后实现。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation", "code-as-spec"],
       "expected_sequence": ["align"],
-      "assertions": ["在对齐推进的结构化合同交互中询问开发完成后是否需要独立 review", "提供需要独立 review和不需要独立 review两个真实选择，并等待回答", "未获选择前不创建临时需求文档或安排 review"]
+      "assertions": ["在对齐推进的结构化合同交互中询问开发完成后是否需要独立 review", "提供需要独立 review和不需要独立 review两个真实选择，并等待回答", "未获后审选择前不创建临时验收文档或安排开发后 review", "将默认开工前方案审核与可选开发后审核区分，不把前审作为新的选择题"]
     },
     {
       "id": "align-review-opt-in-creates-independent-requirements-document",
@@ -171,12 +211,12 @@
       "assertions": ["按当前任务直接实现用户明确的需求调整", "不重新进入 align 或重复询问推进模式", "不创建、读取或补写临时 review 需求文档", "开发完成后不自动调用或安排 review"]
     },
     {
-      "id": "align-review-opt-out-neither-document-nor-review",
+      "id": "aligned-post-review-opt-out-keeps-precheck",
       "prompt": "这是一个全新的大型结算重构需求。我选择对齐推进，并在合同交互中选择开发完成后不需要独立 review。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation", "code-as-spec"],
-      "expected_sequence": ["align"],
-      "assertions": ["记录不需要独立 review的当前任务选择", "不创建临时需求文档或替代副本", "开发完成后不自动调用或安排 review"]
+      "expected_sequence": ["align", "delegation"],
+      "assertions": ["记录不需要开发后独立 review的当前任务选择", "合同与方案形成后仍默认进行一次开工前独立方案审核，不重复询问前审选择", "不因前审创建临时验收文档或替代副本", "开发完成后不自动调用或安排 review"]
     },
     {
       "id": "review-requirements-document-current-state",
@@ -520,7 +560,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-as-spec"],
       "expected_sequence": ["align", "delegation"],
-      "assertions": ["沿用搞快点的少交互流程，不弹出模式、合同或 review 问卷", "实际运行相关聚焦测试及必要回归，覆盖不足时仅补最小必要用例，不自动改为 TDD", "向独立只读 reviewer 显式提供当前需求、验收标准与完整变更范围，包括提交和未跟踪文件", "不强制创建临时验收文档", "核实并修复合同内 findings，重跑受影响测试并针对修复复核，无新证据不重复验证", "不提交、不推送，不自动扩大为浏览器验证或部署"]
+      "assertions": ["沿用搞快点的少交互流程，不弹出模式、合同或 review 问卷，不自动增加对齐推进的开工前审核", "实际运行相关聚焦测试及必要回归，覆盖不足时仅补最小必要用例，不自动改为 TDD", "向独立只读 reviewer 显式提供当前需求、验收标准与完整变更范围，包括提交和未跟踪文件", "不强制创建临时验收文档", "核实并修复合同内 findings，重跑受影响测试并针对修复复核，无新证据不重复验证", "不提交、不推送，不自动扩大为浏览器验证或部署"]
     },
     {
       "id": "afk-with-tests-and-review-selects-quick-verified",
