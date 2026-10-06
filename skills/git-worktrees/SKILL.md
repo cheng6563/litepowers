@@ -5,7 +5,7 @@ description: "Use when worktrees, isolated branches/work directories, or project
 
 # 使用 Git Worktrees
 
-**从目标代码定位所属仓库，绑定创建工具的活动上下文，创建后校验 Git common dir。**
+**从目标代码定位所属仓库，绑定创建工具的活动上下文，工作分支必须基于远端主干切出，创建后校验 Git common dir。**
 
 ## 1. 定位目标子仓
 
@@ -59,6 +59,8 @@ printf '当前会话 Git 仓: %s\n目标 Git 仓: %s\n' "$CURRENT_ROOT" "$SOURCE
 ```
 
 平台支持切换项目时，切换后重新校验；否则从 `SOURCE_ROOT` 重新进入会话。校验通过后才调用原生工具；无法绑定目标子仓时，退回手动 `git worktree add`。
+
+无论原生还是手动，**工作分支必须从远端主干（`origin/master`）fork/切出**：创建前必须先在目标仓拉取最新主干（如 `git -C "$SOURCE_ROOT" fetch origin master`），严禁基于本地陈旧分支或临时测试分支切出。
 
 创建前明确目标仓与预期绝对路径，位置按用户、项目或平台的约定确定。
 
@@ -134,10 +136,22 @@ git -C "$SOURCE_ROOT" check-ignore -q -- "$WT_TARGET/.probe" || {
 }
 ```
 
-只有团队需要共享约定时才修改 `.gitignore`。子仓位于外层仓中时，还要确认外层仓不会跟踪同一个绝对目标路径。全部检查通过后才创建：
+只有团队需要共享约定时才修改 `.gitignore`。子仓位于外层仓中时，还要确认外层仓不会跟踪同一个绝对目标路径。
+
+全部检查通过后，显式基于远端主干创建工作分支：
 
 ```bash
-git -C "$SOURCE_ROOT" worktree add "$WT_TARGET" -b "$BRANCH"
+# 确定远端主干并拉取最新状态（严禁基于本地旧分支或临时测试分支）
+BASE_BRANCH='origin/master'
+git -C "$SOURCE_ROOT" fetch origin master 2>/dev/null || {
+  git -C "$SOURCE_ROOT" fetch origin main 2>/dev/null && BASE_BRANCH='origin/main'
+} || {
+  echo '错误：拉取远端主干 (master/main) 失败' >&2
+  exit 1
+}
+
+# 显式以远端主干为起点创建 worktree
+git -C "$SOURCE_ROOT" worktree add "$WT_TARGET" -b "$BRANCH" "$BASE_BRANCH"
 ```
 
 ## 6. 创建后锚定并操作
@@ -146,7 +160,8 @@ git -C "$SOURCE_ROOT" worktree add "$WT_TARGET" -b "$BRANCH"
 
 1. worktree 的 `--git-common-dir` 与 `SOURCE_ROOT` 一致；
 2. `git -C "$WT" rev-parse --show-toplevel` 返回新 worktree 路径；
-3. 后续文件和 Git 操作都以新 worktree 为根。
+3. 分支基线来源正确（已基于最新远端主干切出）；
+4. 后续文件和 Git 操作都以新 worktree 为根。
 
 ## 7. 清理
 
