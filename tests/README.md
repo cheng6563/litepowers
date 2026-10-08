@@ -24,6 +24,42 @@
 
 评测记录放在运行环境约定的临时目录或现有测试产物目录；提示词只保留有效决策规则，不把每次评测过程追加进 SKILL.md。模型或平台变化后重新检查关键用例；收益不再成立的规则优先删除，而非继续叠加流程。
 
+## 单文件原生注入与多份执行 MD
+
+定点用例为 `delegation-single-injection-multiple-mds` 和 `delegation-single-injection-extra-md-unavailable`。前者检查一份原生注入、其余两份路径读取；后者检查其中一份路径不可访问时的限制报告。现有“不支持注入”的用例不能替代这两个组合。
+
+先核对目标平台真实工具 schema：执行 MD 注入参数必须只接受一个文件，同时子代理能够读取其他文件。若当前接口没有原生文件注入参数，或不能取得注入加载记录，分别记录能力不匹配或证据不足；不能用消息正文、父会话继承、自制文件读取包装器冒充原生注入通过。
+
+由评测操作者在被测 Agent 会话之外准备输入；每个用例、版本和重复运行各用独立目录。以下脚本输出的绝对路径须在子代理执行环境中确实可用；跨容器时先建立真实挂载并提供子代理侧路径。
+
+```python
+from pathlib import Path
+from tempfile import mkdtemp
+
+root = Path(mkdtemp(prefix="delegation-multi-md-"))
+inputs = {
+    "requirements.md": "只读评估给定 payload.txt，统计非空行数。不得修改文件或继续派生。\n",
+    "checks.md": "额外检查 payload.txt 是否有一行恰为 beta，区分大小写。\n",
+    "output.md": "评估结果只输出 JSON 对象，字段为 nonempty_lines 和 has_beta，分别为整数和布尔值。\n",
+    "payload.txt": "alpha\n\nbeta\n",
+}
+for name, content in inputs.items():
+    (root / name).write_text(content, encoding="utf-8")
+    print(f"{name}: {root / name}")
+```
+
+成功用例保留所有文件；不可访问用例在启动被测主线程前删除该次目录中的 `output.md`，仍提供原路径，不把缺失文件正文交给主线程或子代理。操作者保留输入快照及删除记录。给被测主线程 fixture 的 prompt 与四个绝对路径，不提供 MD 正文、预期答案或下面的判定表；执行质量评测加载当前 delegation Skill。对照基线可用新规则前的 `147301b^`，沿用同一用例与能力条件。
+
+| 检查点 | 真实轨迹中的必要证据 |
+|---|---|
+| 首份原生注入 | 主线程委派工具调用的实际单文件参数指向 `requirements.md`；平台加载事件或导出的子代理初始上下文证明正文已进入子代理，只有调用参数不足以证明加载成功。 |
+| 其余路径交接 | 委派消息含 `checks.md`、`output.md` 的子代理侧路径，并明确要求全部适用 MD 先读取再执行；主线程没有为派发预读正文。 |
+| 全部加载及顺序 | 子代理读取工具的成功返回覆盖 `checks.md`、`output.md` 全文；原生加载与两份读取均早于首次读取 `payload.txt` 或其他评估动作。允许批量读取 MD，不要求固定工具名或两份 MD 的读取顺序。 |
+| 成功结果 | 子代理只读，返回语义等价于 `{"nonempty_lines": 2, "has_beta": true}` 的 JSON 对象；结果正确仍不能替代上述加载和读取轨迹。 |
+| 不可访问分支 | 保留 `output.md` 的真实读取失败及路径；子代理在评估前报告限制，主线程将完整任务记为受阻或未验证，不声称缺失要求已执行。 |
+
+分别记录“静态校验通过”“真实行为断言通过／失败”和“未验证”。不可访问用例的行为断言可以通过，但其委派的完整评估任务仍受阻；不要混为同一结论。至少保留主线程委派调用、平台注入证据、子代理读文件及后续动作的有序记录和最终结果；无法观察的检查点标为未验证，不依据 Agent 自述补全。
+
 ## 方法参考
 
 - [Agent Skills：创作最佳实践](https://agentskills.io/skill-creation/best-practices)
