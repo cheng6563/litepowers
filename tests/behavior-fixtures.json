@@ -443,6 +443,22 @@
       "assertions": ["通过平台实际支持的参数传入文件路径", "主线程不先读取或转述执行 MD", "将本次任务与权限一并交接", "不为传递要求而继承整段父会话"]
     },
     {
+      "id": "delegation-single-injection-multiple-mds",
+      "prompt": "请委派一个独立子代理，只读评估给定 payload.txt。三份执行 MD 都适用，按交接顺序为 requirements.md、checks.md、output.md；它们和 payload.txt 的实际绝对路径已由评测环境提供。平台支持原生执行 MD 注入，但该参数只能接收一个文件；子代理另有文件读取工具。目标是按全部适用 MD 返回评估结果，不修改文件，不继续派生。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["主线程通过真实原生注入参数传入第一份 requirements.md 的路径，执行器实际加载该文件，不虚构多文件参数", "主线程不为派发预读或转述三份执行 MD 正文，不以继承整段父会话代替交接", "向子代理显式提供 checks.md 和 output.md 的可访问路径，并要求先读取全部适用执行 MD 再执行任务", "真实子代理轨迹证明 requirements.md 已注入且 checks.md、output.md 都已成功完整读取，全部加载发生在读取 payload.txt 或执行评估之前", "结果同时满足三份 MD 中各自独有的要求，保持只读与一层派生边界", "按注入记录、文件读取结果、执行顺序及产物验收，不把参数已传入或子代理自述完成视为真实执行通过"]
+    },
+    {
+      "id": "delegation-single-injection-extra-md-unavailable",
+      "prompt": "请委派一个独立子代理，只读评估给定 payload.txt。三份执行 MD 都适用，按交接顺序为 requirements.md、checks.md、output.md；它们和 payload.txt 的实际绝对路径已由评测环境提供。平台支持原生执行 MD 注入，但该参数只能接收一个文件；子代理另有文件读取工具。目标是按全部适用 MD 返回评估结果，不修改文件，不继续派生。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["主线程仍通过原生注入参数传入 requirements.md，并交接 checks.md 和 output.md 的路径及先读取再执行要求，不预读正文", "真实轨迹显示 requirements.md 已注入、checks.md 已成功读取，而 output.md 的读取返回文件不存在或无法访问", "子代理在评估 payload.txt 前发现必要材料缺失，报告具体不可访问路径和工具错误，不猜测或忽略该文件要求", "主线程将按全部 MD 完成任务的目标记为受阻或未验证，不把已加载部分、子代理正常退出或限制报告当成任务完成", "不由主线程读取、转述或代执行缺失 MD 来冒充交接，不以其他环境的可访问结果代替该子代理的实际读取证据"]
+    },
+    {
       "id": "delegation-md-loading-unavailable",
       "prompt": "请委派子代理，必须按指定的执行 MD 完成任务。平台既不能附加文件，子代理也不能读取该文件；不要由主线程阅读或代执行。",
       "expected_initial_skills": ["delegation"],
