@@ -6,6 +6,7 @@
 #   worktree.ps1 verify <worktree> <code-path>
 #   worktree.ps1 remove <worktree> <code-path> [-Force]
 # Output: key=value lines on stdout; "error=<msg>" on stderr, exit 1.
+# Exit codes: 0 ok; 1 error; 3 remove: unregistered but leftover files (status=removed_with_residue).
 param(
   [Parameter(Position=0)][string]$Cmd,
   [Parameter(Position=1)][string]$A1,
@@ -127,31 +128,42 @@ function Create([string]$code, [string]$branch) {
   VerifyWt $target $code
 }
 
-function FindRecycler {
-  if ($env:LITEPOWERS_RECYCLE -and (Test-Path -LiteralPath $env:LITEPOWERS_RECYCLE)) { return $env:LITEPOWERS_RECYCLE }
-  $c = Get-Command rm_win.exe, rm_win -ErrorAction SilentlyContinue | Select-Object -First 1
-  if ($c) { return $c.Source }
-  return $null
+function IsRegistered([string]$repo, [string]$path) {
+  $want = Canon $path
+  foreach ($l in @((G -C $repo worktree list --porcelain) -split "`n")) {
+    if ($l.StartsWith('worktree ') -and (Canon $l.Substring(9)) -eq $want) { return $true }
+  }
+  return $false
 }
 
+# remove: exit 0 = fully removed; exit 3 = unregistered but files left (residue), non-fatal.
 function Remove([string]$wt, [string]$code) {
   VerifyWt $wt $code $false
   $dirty = G -C $wt status --porcelain
   if ($dirty -and -not $Force) { Die "worktree has uncommitted changes: $wt" }
   $ErrorActionPreference = 'Continue'
-  $rec = FindRecycler
-  if ($rec) {
-    # reversible: move directory to Recycle Bin, then let git drop the stale registration
-    & $rec $wt
-    if ($LASTEXITCODE -ne 0 -or (Test-Path -LiteralPath $wt)) { Die "recycle failed: $wt" }
-    if (-not (GOk -C $script:SourceRoot worktree prune)) { Die 'worktree prune failed' }
-    Out method recycle
-  } else {
-    if ($Force) { & git -C $script:SourceRoot worktree remove --force -- $wt } else { & git -C $script:SourceRoot worktree remove -- $wt }
-    if ($LASTEXITCODE -ne 0) { Die 'worktree remove failed' }
-    Out method git
+  $full = [IO.Path]::GetFullPath($wt)
+  $admin = $null; $gf = Join-Path $full '.git'
+  if (Test-Path -LiteralPath $gf -PathType Leaf) { $m = [regex]::Match([IO.File]::ReadAllText($gf), '^gitdir:\s*(.+?)\s*$', 'Multiline'); if ($m.Success) { $admin = $m.Groups[1].Value } }
+  # single attempt, no retries
+  if ($Force) { & git -C $script:SourceRoot worktree remove --force -- $full 2>&1 | ForEach-Object { [Console]::Error.WriteLine("$_") } }
+  else { & git -C $script:SourceRoot worktree remove -- $full 2>&1 | ForEach-Object { [Console]::Error.WriteLine("$_") } }
+  $null = GOk -C $script:SourceRoot worktree prune
+  if (-not (Test-Path -LiteralPath $full)) {
+    if (IsRegistered $script:SourceRoot $full) { Die "directory gone but still registered: $wt" }
+    Out status removed; Out worktree $wt; exit 0
   }
-  Out status removed; Out worktree $wt
+  if (IsRegistered $script:SourceRoot $full) {
+    if (-not $admin) { Die "remove failed and worktree still registered: $wt" }
+    if (-not (Canon $admin).StartsWith((Canon $script:SourceCommon) + '/worktrees/') -and -not (Canon $admin).StartsWith((Canon $script:SourceCommon) + '\worktrees\')) { Die "unexpected admin dir: $admin" }
+    Remove-Item -LiteralPath $admin -Recurse -Force -ErrorAction SilentlyContinue
+    $null = GOk -C $script:SourceRoot worktree prune
+    if (IsRegistered $script:SourceRoot $full) { Die "remove failed and worktree still registered: $wt" }
+  }
+  $r = $full; if ($IsWin) { $r = $r.Replace('\','/') }
+  Out status removed_with_residue; Out residue $r
+  Out note 'leftover files not handled; close programs holding them and delete manually later'
+  exit 3
 }
 
 switch ($Cmd) {

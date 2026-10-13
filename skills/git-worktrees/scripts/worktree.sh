@@ -6,7 +6,8 @@
 #   worktree.sh create <code-path> <branch> [--base <ref>] [--parent <dir>] [--no-fetch]
 #   worktree.sh verify <worktree> <code-path>
 #   worktree.sh remove <worktree> <code-path> [--force]
-# Output: key=value lines on stdout; errors as "error=<msg>" on stderr, exit != 0.
+# Output: key=value lines on stdout; errors as "error=<msg>" on stderr, exit 1.
+# Exit codes: 0 ok; 1 error; 3 remove: unregistered but leftover files (status=removed_with_residue).
 set -euo pipefail
 # Self-locate (no hard-coded paths): works via symlink/junction/copy.
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
@@ -111,20 +112,38 @@ create() {
   verify_wt "$target" "$code"
 }
 
+is_registered() { # repo path -> 0 if path still listed as worktree
+  local want; want=$(canon "$2")
+  git -C "$1" worktree list --porcelain | while IFS= read -r l; do
+    case $l in "worktree "*) [ "$(canon "${l#worktree }")" = "$want" ] && { echo y; break; };; esac
+  done | grep -q y
+}
+
+# remove: exit 0 = fully removed; exit 3 = unregistered but files left (residue), non-fatal.
 remove() {
   local wt=$1 code=$2 force=${3:-}
   verify_wt "$wt" "$code" >/dev/null
   local w; w=$(to_native "$wt")
   if [ "$force" != --force ] && [ -n "$(git -C "$w" status --porcelain)" ]; then die "worktree has uncommitted changes: $wt"; fi
-  local rec=${LITEPOWERS_RECYCLE:-}; [ -n "$rec" ] || rec=$(command -v rm_win.exe || command -v rm_win || true)
-  if [ -n "$rec" ]; then  # reversible delete via Recycle Bin, then drop registration
-    local wp=$w; [ "$IS_WIN" = 1 ] && wp=$(cygpath -w -- "$w")
-    "$rec" "$wp" || die "recycle failed: $wt"; [ ! -e "$w" ] || die "recycle failed: $wt"
-    git -C "$SOURCE_ROOT" worktree prune || die "worktree prune failed"; out method recycle
-  else
-    git -C "$SOURCE_ROOT" worktree remove ${force:+--force} -- "$w" || die "worktree remove failed"; out method git
+  local admin=""; [ -f "$w/.git" ] && admin=$(sed -n 's/^gitdir: //p' "$w/.git")
+  # single attempt, no retries
+  git -C "$SOURCE_ROOT" worktree remove ${force:+--force} -- "$w" >&2 || true
+  git -C "$SOURCE_ROOT" worktree prune >&2 || true
+  if [ ! -e "$w" ]; then
+    is_registered "$SOURCE_ROOT" "$w" && die "directory gone but still registered: $wt"
+    out status removed; out worktree "$wt"; return 0
   fi
-  out status removed; out worktree "$wt"
+  # residue: make sure git metadata is gone (only the admin dir under <common>/worktrees/)
+  if is_registered "$SOURCE_ROOT" "$w"; then
+    [ -n "$admin" ] || die "remove failed and worktree still registered: $wt"
+    case "$(canon "$admin")/" in "$(canon "$SOURCE_COMMON")/worktrees/"*) ;; *) die "unexpected admin dir: $admin";; esac
+    rm -rf -- "$admin"; git -C "$SOURCE_ROOT" worktree prune >&2 || true
+    is_registered "$SOURCE_ROOT" "$w" && die "remove failed and worktree still registered: $wt"
+  fi
+  local r=$w; [ "$IS_WIN" = 1 ] && r=$(cygpath -m -- "$w")
+  out status removed_with_residue; out residue "$r"
+  out note "leftover files not handled; close programs holding them and delete manually later"
+  exit 3
 }
 
 cmd=${1:-}; shift || true

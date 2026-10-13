@@ -23,7 +23,7 @@ description: "Use when worktrees, isolated branches/work directories, or project
 
 ## 输出约定
 
-输出为 `key=value` 行；失败时 stderr 输出 `error=...` 且退出码非 0。**任何非 0 退出都立即停止，向用户报告 error 原文，不要自行绕过或改用手写命令。**
+输出为 `key=value` 行；失败时 stderr 输出 `error=...` 且退出码为 1。退出码 3 仅用于 `remove` 留有残留文件的情况，见第 4 步。**任何非 0 退出都立即停止，向用户报告 error 原文，不要自行绕过或改用手写命令。**
 
 `<代码路径>` 传本次要修改的文件或目录（可以不存在，脚本会往上找已存在的祖先目录）。嵌套仓库（外层仓里有被忽略的独立子仓）时，务必传子仓里的路径，不要传外层根目录。
 
@@ -65,4 +65,6 @@ worktree verify <worktree路径> <代码路径>
 worktree remove <worktree路径> <代码路径> [--force]
 ```
 
-脚本会先校验归属；有未提交改动时拒绝删除（`--force` 需用户明确同意）。如果设置了 `LITEPOWERS_RECYCLE`（回收站工具路径，如 `rm_win.exe`），或 PATH 中有 `rm_win`，目录会先移入回收站再执行 `git worktree prune`，可以恢复；分支不会被删除。
+脚本会先校验归属；有未提交改动时拒绝删除（`--force` 需用户明确同意）。只用 `git worktree remove` 删除一次，不会重试；分支不会被删除。
+
+退出码 3、输出 `status=removed_with_residue` 表示 worktree 已从 Git 注销，但 `residue` 指向的目录还有文件残留（通常是 Windows 上文件被其他程序占用）。这时把 `residue` 路径告诉用户并停止：不要重试，不要手动删除，不要结束任何进程。

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # git-worktrees 脚本回归测试。用法: bash tests/git-worktrees/run.sh [bash|pwsh|powershell]
 # 环境变量: WT_SCRIPTS_DIR 指定被测 scripts 目录（默认仓内 skills/git-worktrees/scripts）;
-#           FIX 指定 fixture 目录（默认新建临时目录）; LITEPOWERS_RECYCLE 测回收站删除。
+#           FIX 指定 fixture 目录（默认新建临时目录）。
 set -uo pipefail
 HERE=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 REPO=$(cd -- "$HERE/../.." && pwd)
@@ -18,7 +18,7 @@ O=$(bash "$HERE/fixture.sh" "$B" | tail -1) || { echo "fixture failed" >&2; exit
 case "$(uname -s)" in MSYS*|MINGW*) O=$(cygpath -m "$O");; esac
 W=("${RUNNER[@]}"); pass=0; fail=0
 t() { local name=$1 expect=$2; shift 2; local o; o=$("$@" 2>&1); local rc=$?
-  if { [ "$expect" = ok ] && [ $rc -eq 0 ]; } || { [ "$expect" = err ] && [ $rc -ne 0 ]; }; then pass=$((pass+1)); echo "PASS $name"; else fail=$((fail+1)); echo "FAIL $name rc=$rc"; echo "$o"; fi; LAST=$o; }
+  if { [ "$expect" = ok ] && [ $rc -eq 0 ]; } || { [ "$expect" = err ] && [ $rc -ne 0 ]; } || [ "$expect" = "$rc" ]; then pass=$((pass+1)); echo "PASS $name"; else fail=$((fail+1)); echo "FAIL $name rc=$rc"; echo "$o"; fi; LAST=$o; }
 has() { if grep -qF -- "$2" <<<"$LAST"; then pass=$((pass+1)); echo "PASS   $1"; else fail=$((fail+1)); echo "FAIL   $1 (want '$2')"; echo "$LAST"; fi; }
 cd "$O"   # session sits in OUTER repo, like the bug
 t locate-fd ok "${W[@]}" locate "$O/fd-git-repo/src/main/App.java"; has root "source_root=$O/fd-git-repo"; has nomatch "session_matches=no"
@@ -40,5 +40,14 @@ t remove-force ok "${W[@]}" remove "$O/fd-git-repo/.claude/worktrees/feat/x" "$O
 t remove-clean ok "${W[@]}" remove "$O/sc-git-repo/.claude/worktrees/fix-1" "$O/sc-git-repo"
 t no-repo err "${W[@]}" locate "/"
 t no-remote-base err "${W[@]}" create "$O/fd-git-repo" y --base origin/nope
+# residue: a non-deletable subdir simulates a Windows file lock; expect exit 3, unregistered, files left
+RW="$O/fd-git-repo/.claude/worktrees/res-1"
+t create-res ok "${W[@]}" create "$O/fd-git-repo" res-1
+chmod 555 "$RW/src/main"
+t remove-residue 3 "${W[@]}" remove "$RW" "$O/fd-git-repo"; has residue-status "status=removed_with_residue"; has residue-path "residue=$RW"; has residue-note "note=leftover files"
+t residue-unregistered ok bash -c "! git -C '$O/fd-git-repo' worktree list --porcelain | grep -qF 'res-1'"
+t residue-left ok test -e "$RW/src/main/App.java"
+t residue-branch-kept ok git -C "$O/fd-git-repo" show-ref --verify --quiet refs/heads/res-1
+chmod 755 "$RW/src/main"; rm -rf -- "$RW"
 echo "TOTAL pass=$pass fail=$fail"
 [ "$fail" -eq 0 ]
