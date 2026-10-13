@@ -1,9 +1,22 @@
 #!/usr/bin/env bash
-# usage: run.sh <script-runner...>   e.g. run.sh bash scripts/worktree.sh
+# git-worktrees 脚本回归测试。用法: bash tests/git-worktrees/run.sh [bash|pwsh|powershell]
+# 环境变量: WT_SCRIPTS_DIR 指定被测 scripts 目录（默认仓内 skills/git-worktrees/scripts）;
+#           FIX 指定 fixture 目录（默认新建临时目录）; LITEPOWERS_RECYCLE 测回收站删除。
 set -uo pipefail
-B=${FIX:-/tmp/wtfix}; O=$(bash "$(dirname "$0")/fixture.sh" "$B" | tail -1)
+HERE=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+REPO=$(cd -- "$HERE/../.." && pwd)
+SCRIPTS=${WT_SCRIPTS_DIR:-$REPO/skills/git-worktrees/scripts}
+SCRIPTS=$(cd -- "$SCRIPTS" && pwd) || { echo "scripts dir not found: $SCRIPTS" >&2; exit 2; }
+SHELL_KIND=${1:-bash}
+case $SHELL_KIND in
+  bash) RUNNER=(bash "$SCRIPTS/worktree.sh");;
+  pwsh|powershell) RUNNER=(env PS="$SHELL_KIND" PS1_SCRIPT="$SCRIPTS/worktree.ps1" bash "$HERE/ps-shim.sh");;
+  *) echo "usage: run.sh [bash|pwsh|powershell]" >&2; exit 2;;
+esac
+B=${FIX:-$(mktemp -d "${TMPDIR:-/tmp}/wt-fixture.XXXXXX")}
+O=$(bash "$HERE/fixture.sh" "$B" | tail -1) || { echo "fixture failed" >&2; exit 2; }
 case "$(uname -s)" in MSYS*|MINGW*) O=$(cygpath -m "$O");; esac
-W=("$@"); pass=0; fail=0
+W=("${RUNNER[@]}"); pass=0; fail=0
 t() { local name=$1 expect=$2; shift 2; local o; o=$("$@" 2>&1); local rc=$?
   if { [ "$expect" = ok ] && [ $rc -eq 0 ]; } || { [ "$expect" = err ] && [ $rc -ne 0 ]; }; then pass=$((pass+1)); echo "PASS $name"; else fail=$((fail+1)); echo "FAIL $name rc=$rc"; echo "$o"; fi; LAST=$o; }
 has() { if grep -qF -- "$2" <<<"$LAST"; then pass=$((pass+1)); echo "PASS   $1"; else fail=$((fail+1)); echo "FAIL   $1 (want '$2')"; echo "$LAST"; fi; }
@@ -28,3 +41,4 @@ t remove-clean ok "${W[@]}" remove "$O/sc-git-repo/.claude/worktrees/fix-1" "$O/
 t no-repo err "${W[@]}" locate "/"
 t no-remote-base err "${W[@]}" create "$O/fd-git-repo" y --base origin/nope
 echo "TOTAL pass=$pass fail=$fail"
+[ "$fail" -eq 0 ]
