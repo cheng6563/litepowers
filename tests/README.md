@@ -60,6 +60,18 @@ for name, content in inputs.items():
 
 分别记录“静态校验通过”“真实行为断言通过／失败”和“未验证”。不可访问用例的行为断言可以通过，但其委派的完整评估任务仍受阻；不要混为同一结论。至少保留主线程委派调用、平台注入证据、子代理读文件及后续动作的有序记录和最终结果；无法观察的检查点标为未验证，不依据 Agent 自述补全。
 
+## git-worktrees 脚本回归测试
+
+`tests/git-worktrees/` 是确定性的 shell 测试，不涉及模型。它会在临时目录里搭一个仿嵌套仓库的 fixture：外层仓包含被忽略的独立子仓，分别用 master 和 main，路径带空格和中文，每个仓配一个本地裸仓库当 origin。然后逐项断言 `skills/git-worktrees/scripts` 下脚本的 locate/create/verify/remove 行为。
+
+```bash
+bash tests/git-worktrees/run.sh            # bash 版 worktree.sh
+bash tests/git-worktrees/run.sh pwsh       # PowerShell 7 版 worktree.ps1
+bash tests/git-worktrees/run.sh powershell # Windows PowerShell 5.1（需在 Git Bash 中运行）
+```
+
+可选环境变量：`WT_SCRIPTS_DIR` 指定其他被测脚本目录，用于验证复制或链接后的技能目录；`FIX` 指定 fixture 目录。退出码 0 表示全部通过。位置用例覆盖默认 `.worktrees`、`--parent`、`LITEPOWERS_WORKTREE_DIR`、`git config litepowers.worktreeDir` 四级优先级，以及 `.git/info/exclude` 只写入一次、不生成 `.gitignore`。残留场景通过把 worktree 内某个子目录设为只读（`chmod 555`）来模拟 Windows 文件占用，断言 `remove` 退出码为 3、worktree 已注销、文件仍在。
+
 ## 方法参考
 
 - [Agent Skills：创作最佳实践](https://agentskills.io/skill-creation/best-practices)
