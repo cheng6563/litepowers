@@ -82,14 +82,25 @@ create() {
   locate "$code" >/dev/null
   local R=$SOURCE_ROOT
   git -C "$R" show-ref --verify --quiet "refs/heads/$branch" && die "branch already exists: $branch"
-  [ -n "$parent" ] || parent="$R/.claude/worktrees"
+  # location precedence: --parent > $LITEPOWERS_WORKTREE_DIR > git config litepowers.worktreeDir (project) > .worktrees
+  local psrc=arg
+  if [ -z "$parent" ]; then
+    local cfg; cfg=$(git -C "$R" config --get litepowers.worktreeDir 2>/dev/null || true)
+    if [ -n "${LITEPOWERS_WORKTREE_DIR:-}" ]; then parent=$(to_native "$LITEPOWERS_WORKTREE_DIR"); psrc=env
+    elif [ -n "$cfg" ]; then parent=$(to_native "$cfg"); psrc=project
+    else parent=.worktrees; psrc=default; fi
+    case $parent in /*|[A-Za-z]:*) ;; *) parent="$R/$parent";; esac
+  else
+    case $parent in /*) ;; *) parent="$PWD/$parent";; esac
+  fi
+  parent=${parent%/}; parent=${parent%/.}
   local target="$parent/$branch"
   [ -e "$target" ] && die "target exists: $target"
   # ignore: only when target is inside the repo
   case "$(canon "$parent")/" in "$(canon "$R")/"*)
     if ! git -C "$R" check-ignore -q --no-index -- "$target/.probe"; then
       local ex rel; ex=$(git -C "$R" rev-parse --path-format=absolute --git-path info/exclude)
-      rel=${parent#"$R"}; rel="${rel%/}/"
+      rel=$(canon "$parent"); rel=${rel#"$(canon "$R")"}; rel="${rel%/}/"
       mkdir -p -- "$(dirname -- "$ex")"; printf '%s\n' "$rel" >> "$ex"; out exclude_added "$rel"
       git -C "$R" check-ignore -q --no-index -- "$target/.probe" || die "target still not ignored: $target"
     fi;; esac
@@ -108,7 +119,7 @@ create() {
   fi
   mkdir -p -- "$parent"
   git -C "$R" worktree add -q -b "$branch" -- "$target" "$base" >&2 || die "git worktree add failed"
-  out base "$base"
+  out base "$base"; out parent_source "$psrc"
   verify_wt "$target" "$code"
 }
 

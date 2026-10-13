@@ -70,7 +70,7 @@ bash tests/git-worktrees/run.sh pwsh       # PowerShell 7 版 worktree.ps1
 bash tests/git-worktrees/run.sh powershell # Windows PowerShell 5.1（需在 Git Bash 中运行）
 ```
 
-可选环境变量：`WT_SCRIPTS_DIR` 指定其他被测脚本目录，用于验证复制或链接后的技能目录；`FIX` 指定 fixture 目录。退出码 0 表示全部通过。残留场景通过把 worktree 内某个子目录设为只读（`chmod 555`）来模拟 Windows 文件占用，断言 `remove` 退出码为 3、worktree 已注销、文件仍在。
+可选环境变量：`WT_SCRIPTS_DIR` 指定其他被测脚本目录，用于验证复制或链接后的技能目录；`FIX` 指定 fixture 目录。退出码 0 表示全部通过。位置用例覆盖默认 `.worktrees`、`--parent`、`LITEPOWERS_WORKTREE_DIR`、`git config litepowers.worktreeDir` 四级优先级，以及 `.git/info/exclude` 只写入一次、不生成 `.gitignore`。残留场景通过把 worktree 内某个子目录设为只读（`chmod 555`）来模拟 Windows 文件占用，断言 `remove` 退出码为 3、worktree 已注销、文件仍在。
 
 ## 方法参考
 

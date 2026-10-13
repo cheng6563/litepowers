@@ -45,7 +45,16 @@ worktree create <代码路径> <分支名> [--base origin/xxx] [--parent <目录
 
 （PowerShell 参数写法为 `-Base` / `-Parent` / `-NoFetch`。）
 
-脚本会做这些事：在 `source_root/.claude/worktrees/<分支名>` 创建；必要时写入该仓的 `.git/info/exclude`；先 fetch，再基于 `origin/master`（没有就用 `origin/main`）切出新分支；创建后自动校验。用户或项目另有约定位置时才传 `--parent`。
+脚本会做这些事：先 fetch，再基于 `origin/master`（没有就用 `origin/main`）切出新分支；创建后自动校验。
+
+创建位置为 `<父目录>/<分支名>`，父目录按以下优先级确定（输出里的 `parent_source` 会标明用的是哪一级）：
+
+1. 参数 `--parent <目录>`：用户明确指定位置时才传；
+2. 环境变量 `LITEPOWERS_WORKTREE_DIR`；
+3. 项目约定：目标仓的 `git config litepowers.worktreeDir`；
+4. 默认：`source_root/.worktrees`。
+
+后两级的相对路径都相对于 `source_root`。父目录在仓内且尚未被忽略时，脚本会把它写入该仓的 `.git/info/exclude`，不会修改 `.gitignore`。`.claude/worktrees` 只是 Claude Code 自带工具的约定，脚本不使用它。
 
 创建成功后，后续所有读写和 Git 操作都以输出的 `worktree` 为根。
 

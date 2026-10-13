@@ -91,7 +91,17 @@ function Create([string]$code, [string]$branch) {
   Locate $code $false
   $R = $script:SourceRoot
   if (GOk -C $R show-ref --verify --quiet "refs/heads/$branch") { Die "branch already exists: $branch" }
-  if ($Parent) { $par = [IO.Path]::GetFullPath($Parent) } else { $par = Join-Path $R '.claude/worktrees' }
+  # location precedence: -Parent > $env:LITEPOWERS_WORKTREE_DIR > git config litepowers.worktreeDir (project) > .worktrees
+  if ($Parent) { $par = $Parent; if (-not [IO.Path]::IsPathRooted($par)) { $par = Join-Path (Get-Location).ProviderPath $par }; $par = [IO.Path]::GetFullPath($par); $psrc = 'arg' }
+  else {
+    $cfg = G -C $R config --get litepowers.worktreeDir
+    if ($env:LITEPOWERS_WORKTREE_DIR) { $par = $env:LITEPOWERS_WORKTREE_DIR; $psrc = 'env' }
+    elseif ($cfg) { $par = $cfg; $psrc = 'project' }
+    else { $par = '.worktrees'; $psrc = 'default' }
+    if (-not [IO.Path]::IsPathRooted($par)) { $par = Join-Path $R $par }
+    $par = [IO.Path]::GetFullPath($par)
+  }
+  $par = $par.TrimEnd('\','/')
   $target = [IO.Path]::GetFullPath((Join-Path $par $branch))
   if (Test-Path -LiteralPath $target) { Die "target exists: $target" }
   $cr = Canon $R; $cp = Canon $par
@@ -124,7 +134,7 @@ function Create([string]$code, [string]$branch) {
   $ErrorActionPreference = 'Continue'
   & git -C $R worktree add -q -b $branch -- $target $b 2>&1 | ForEach-Object { [Console]::Error.WriteLine("$_") }
   if ($LASTEXITCODE -ne 0) { Die 'git worktree add failed' }
-  Out base $b
+  Out base $b; Out parent_source $psrc
   VerifyWt $target $code
 }
 
