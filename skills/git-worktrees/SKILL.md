@@ -11,8 +11,12 @@ description: "Use when worktrees, isolated branches/work directories, or project
 
 `SKILL_DIR` = **你刚读取的这个 SKILL.md 所在的目录**（平台加载技能时给出的 base directory，或技能列表里 SKILL.md 路径的父目录）。脚本固定在 `SKILL_DIR/scripts/` 下。调用时一律拼成绝对路径；相对路径会按当前工作目录解析，不能用。
 
-- bash / Git Bash：`bash "$SKILL_DIR/scripts/worktree.sh" <子命令> ...`
-- PowerShell 5.1 / 7：`pwsh -NoProfile -File "$SKILL_DIR\scripts\worktree.ps1" <子命令> ...`（没有 pwsh 时用 `powershell -NoProfile -ExecutionPolicy Bypass -File ...`）
+按你当前所在的 shell 直接调用，**不要套一层新的 shell 进程**：
+
+- 当前是 PowerShell 7（pwsh）：用调用运算符直接执行：`& "$SKILL_DIR/scripts/worktree.ps1" <子命令> ...`
+- 当前是 bash / Git Bash：`bash "$SKILL_DIR/scripts/worktree.sh" <子命令> ...`
+
+禁止 `pwsh -File ...`、`powershell -File ...`，也禁止从 bash 再启动 pwsh 去调用 `.ps1`。只支持 PowerShell 7，不支持 Windows PowerShell 5.1。PowerShell 中的退出码看 `$LASTEXITCODE`。
 
 如果拿不到这个 SKILL.md 的路径，按以下顺序找，找到第一个即停：
 

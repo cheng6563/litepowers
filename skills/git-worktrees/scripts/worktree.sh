@@ -12,6 +12,7 @@ set -euo pipefail
 # Self-locate (no hard-coded paths): works via symlink/junction/copy.
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 SKILL_DIR=$(dirname -- "$SCRIPT_DIR")
+export GIT_TERMINAL_PROMPT=0 GCM_INTERACTIVE=never   # never prompt
 export LC_ALL=C.UTF-8 2>/dev/null || true
 
 die() { printf 'error=%s\n' "$*" >&2; exit 1; }
