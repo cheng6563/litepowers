@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# git-worktrees 脚本回归测试。用法: bash tests/git-worktrees/run.sh [bash|pwsh|powershell]
+# git-worktrees 脚本回归测试。用法: bash tests/git-worktrees/run.sh [bash|pwsh]
 # 环境变量: WT_SCRIPTS_DIR 指定被测 scripts 目录（默认仓内 skills/git-worktrees/scripts）;
 #           FIX 指定 fixture 目录（默认新建临时目录）。
 set -uo pipefail
@@ -10,8 +10,8 @@ SCRIPTS=$(cd -- "$SCRIPTS" && pwd) || { echo "scripts dir not found: $SCRIPTS" >
 SHELL_KIND=${1:-bash}
 case $SHELL_KIND in
   bash) RUNNER=(bash "$SCRIPTS/worktree.sh");;
-  pwsh|powershell) RUNNER=(env PS="$SHELL_KIND" PS1_SCRIPT="$SCRIPTS/worktree.ps1" bash "$HERE/ps-shim.sh");;
-  *) echo "usage: run.sh [bash|pwsh|powershell]" >&2; exit 2;;
+  pwsh) RUNNER=(env PS1_SCRIPT="$SCRIPTS/worktree.ps1" bash "$HERE/ps-shim.sh");;
+  *) echo "usage: run.sh [bash|pwsh]" >&2; exit 2;;
 esac
 B=${FIX:-$(mktemp -d "${TMPDIR:-/tmp}/wt-fixture.XXXXXX")}
 O=$(bash "$HERE/fixture.sh" "$B" | tail -1) || { echo "fixture failed" >&2; exit 2; }

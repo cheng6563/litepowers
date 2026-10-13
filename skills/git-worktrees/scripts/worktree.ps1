@@ -1,4 +1,7 @@
-﻿# litepowers git-worktrees helper (Windows PowerShell 5.1 / pwsh 7). UTF-8 with BOM for PS 5.1.
+#Requires -Version 7
+# litepowers git-worktrees helper (PowerShell 7+). Call directly from pwsh with the call operator:
+#   & "$SKILL_DIR/scripts/worktree.ps1" where
+# Do not nest it in another pwsh/powershell process.
 # Usage:
 #   worktree.ps1 where             (print own skill/script paths)
 #   worktree.ps1 locate <code-path>
@@ -14,17 +17,20 @@ param(
   [string]$Base, [string]$Parent, [switch]$NoFetch, [switch]$Force
 )
 $ErrorActionPreference = 'Stop'
-$utf8 = New-Object System.Text.UTF8Encoding($false)
+$utf8 = [System.Text.UTF8Encoding]::new($false)
+# Runs inside the caller's session: save and restore anything global we touch.
+$script:SavedConsoleEnc = [Console]::OutputEncoding
+$script:SavedPrompt = $env:GIT_TERMINAL_PROMPT; $script:SavedGcm = $env:GCM_INTERACTIVE
 [Console]::OutputEncoding = $utf8; $OutputEncoding = $utf8
+$env:GIT_TERMINAL_PROMPT = '0'; $env:GCM_INTERACTIVE = 'never'   # never let git prompt
 # Self-locate (no hard-coded paths): works via symlink/junction/copy.
 $ScriptDir = $PSScriptRoot
 $SkillDir = Split-Path -Parent $ScriptDir
 $IsWin = ($env:OS -eq 'Windows_NT')
 
 function Die([string]$m) { [Console]::Error.WriteLine("error=$m"); exit 1 }
-function Out([string]$k, [string]$v) { [Console]::Out.WriteLine("$k=$v") }
-# PS 5.1 quirk: with ErrorActionPreference=Stop, native stderr becomes a terminating
-# NativeCommandError even when redirected; relax it locally around git calls.
+function Out([string]$k, [string]$v) { Write-Output "$k=$v" }
+# Keep git failures non-terminating; callers check $LASTEXITCODE.
 function G { # run git, return trimmed stdout or $null on failure
   $ErrorActionPreference = 'Continue'
   $o = & git @args 2>$null
@@ -176,6 +182,7 @@ function Remove([string]$wt, [string]$code) {
   exit 3
 }
 
+try {
 switch ($Cmd) {
   'where'  { Out skill_dir $SkillDir; Out script_sh (Join-Path $ScriptDir 'worktree.sh'); Out script_ps1 (Join-Path $ScriptDir 'worktree.ps1') }
   'locate' { if (-not $A1) { Die 'usage: locate <code-path>' }; Locate $A1 }
@@ -183,5 +190,9 @@ switch ($Cmd) {
   'verify' { if (-not $A2) { Die 'usage: verify <worktree> <code-path>' }; VerifyWt $A1 $A2 }
   'remove' { if (-not $A2) { Die 'usage: remove <worktree> <code-path> [-Force]' }; Remove $A1 $A2 }
   default  { Die 'usage: worktree.ps1 {where|locate|create|verify|remove} ...' }
+}
+} finally {
+  [Console]::OutputEncoding = $script:SavedConsoleEnc
+  $env:GIT_TERMINAL_PROMPT = $script:SavedPrompt; $env:GCM_INTERACTIVE = $script:SavedGcm
 }
 exit 0
