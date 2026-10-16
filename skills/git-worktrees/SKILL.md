@@ -13,10 +13,10 @@ description: "Use when worktrees, isolated branches/work directories, or project
 
 按你当前所在的 shell 直接调用，**不要套一层新的 shell 进程**：
 
-- 当前是 PowerShell 7（pwsh）：用调用运算符直接执行：`& "$SKILL_DIR/scripts/worktree.ps1" <子命令> ...`
+- 当前是 PowerShell（Windows PowerShell 5.1 或 PowerShell 7）：用调用运算符直接执行：`& "$SKILL_DIR/scripts/worktree.ps1" <子命令> ...`
 - 当前是 bash / Git Bash：`bash "$SKILL_DIR/scripts/worktree.sh" <子命令> ...`
 
-禁止 `pwsh -File ...`、`powershell -File ...`，也禁止从 bash 再启动 pwsh 去调用 `.ps1`。只支持 PowerShell 7，不支持 Windows PowerShell 5.1。PowerShell 中的退出码看 `$LASTEXITCODE`。
+禁止 `pwsh -File ...`、`powershell -File ...`，也禁止从 bash 再启动 pwsh 去调用 `.ps1`。脚本兼容 Windows PowerShell 5.1 和 PowerShell 7。PowerShell 中的退出码看 `$LASTEXITCODE`。
 
 如果拿不到这个 SKILL.md 的路径，按以下顺序找，找到第一个即停：
 

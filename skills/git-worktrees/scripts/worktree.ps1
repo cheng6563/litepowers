@@ -1,5 +1,5 @@
-#Requires -Version 7
-# litepowers git-worktrees helper (PowerShell 7+). Call directly from pwsh with the call operator:
+#Requires -Version 5.1
+# litepowers git-worktrees helper (Windows PowerShell 5.1 / PowerShell 7+). Call directly with the call operator:
 #   & "$SKILL_DIR/scripts/worktree.ps1" where
 # Do not nest it in another pwsh/powershell process.
 # Usage:
