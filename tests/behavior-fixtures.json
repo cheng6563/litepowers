@@ -355,6 +355,38 @@
       "assertions": ["选择独立审核场景，主线程通过索引派发而不预读执行 MD", "将原始目标、使用条件与交付清单区分交接", "不以清单全部完成代替交付合理性判断", "指出客服掌握的信息与查询入口要求之间的实际问题及影响", "报告疑点或缺陷而不自动增加需求或修改文件"]
     },
     {
+      "id": "aligned-plan-review-checks-parent-scope-exclusions",
+      "prompt": "当前任务采用对齐推进，尚未实现，前审未取消。需求对话依次为 Human：‘按基线做第一步，统一 RPC 与入口认证。’ Assistant：[建议首批只做公共 RPC，询问推进模式与开发后是否 review] Human：‘对齐推进，需要独立审核。’ 当前合同只列公共 RPC 组件，将入口认证列为非目标；主线程准备在前审委派末尾写‘避免要求本轮完成入口认证’。平台支持干净上下文只读子代理，无文件注入参数，子代理可读取 delegation 下独立审核执行 MD。请继续开工前方案审核，本次仅审核，不实现。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["实际向独立子代理交接独立审核执行 MD 路径并要求先读取，子代理成功读取后才审核", "同时交接原始整体目标、需求对话与缩减后的合同，区分主线程安排和用户确认", "同一次前审检查合同范围、依赖与完成标准，指出入口认证从交付中排除缺少用户确认依据", "选择对齐推进和独立审核仅确认推进与审核方式，不能证明缩减范围获确认", "允许评价 RPC 批次可行性，同时说明整体目标仍缺入口认证及后续衔接，不因范围排除指令略过这一判断", "保持只读，不要求先实现全量功能或额外启动一轮需求审核"]
+    },
+    {
+      "id": "review-batch-success-keeps-overall-goal-open",
+      "prompt": "请独立只读审核首批导出组件。用户原话：‘客服按手机号查客户订单并下载导出结果，查询、生成、下载整条链路做好。’ 主线程决定首批只做查询与文件生成，原始目标没有后续变更。材料已完整给出：查询和生成代码及测试正确，文件保存在内部目录；客服没有该目录访问权限，下载入口列在后续批次，尚无实现与验证。主线程委派限制：‘本轮只审查询和生成代码，别扩展到下载入口实现’，并拟据此关闭本次任务。请按独立审核规则返回结论，不修改或运行服务。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["认可材料足以支持的查询与生成批次正确性，不为该批编造技术缺陷", "依据用户下载结果的原话指出整体目标仍缺客服可用的下载路径及相应验证", "区分局部取证范围与整体交付完成标准，不能因主线程排除下载实现而略过目标覆盖判断", "首批通过不支持关闭整体任务，不将主线程的后续批次安排视为用户调整交付终点", "保持当前只读权限，不擅自实现下载入口或启动服务"]
+    },
+    {
+      "id": "review-human-confirmed-component-delivery",
+      "prompt": "请独立只读审核当前 RPC 组件方案。需求对话依次为 Human：‘第一步统一 RPC 与入口认证。’ Assistant：[建议先做组件] Human：‘本次交付就只做公共 RPC 组件；入口认证我另开任务，这次完成组件即可。’ 已提供完整组件契约和方案，满足用户当前要求，依赖与测试计划均可行。当前未实现，请作方案判断，不扫描仓库或修改文件。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["引用用户后续明确限定本次交付的原话，以组件为本次目标", "认可材料支持的方案，不把入口认证缺失报成本次交付缺陷", "结论限于当前组件目标，不声称整个第一步完成", "不恢复用户移出本次任务的验收项，不要求额外澄清已明确的交付终点", "保持只读且按已有材料判断，不以覆盖整体目标为由扩展扫描或实施"]
+    },
+    {
+      "id": "review-targeted-followup-preserves-existing-goal-evidence",
+      "prompt": "独立审核已核实整体导出目标覆盖完整，唯一 finding 是下载文件名编码错误；原报告及修复 diff 已提供，修复后聚焦测试通过。用户当前明确：‘只复核这一个 finding，其他审核结论沿用，不修改。’ 请按独立审核规则完成定点复核。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["仅针对文件名编码 finding 的修复取证并报告结果", "整体目标覆盖判断沿用显式提供的原审核证据，不重复完整需求审核", "定点复核通过只支持该 finding 的关闭，整体结论结合原报告判断", "不扩大扫描、测试或修改范围"]
+    },
+    {
       "id": "quick-verified-review-checks-user-input-not-parent-summary",
       "prompt": "当前任务已选择快速验证，实现和相关测试已完成，进入 review。用户原话依次为：‘客服要能按客户查订单’、‘客服手里只有手机号，没有内部客户 ID’。主线程整理的合同却是‘输入内部客户 ID 查询订单’，实现也只支持该 ID。平台有独立只读子代理，请继续当前任务的 review，不要由主线程自审替代。",
       "expected_initial_skills": ["delegation"],
