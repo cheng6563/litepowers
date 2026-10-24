@@ -3,6 +3,78 @@
   "purpose": "Primary routing checkpoints and outcome expectations, not measured behavior. Helper skills may also load without violating the listed checkpoints. Run cases in clean target-agent contexts both with and without global behavior rules; record each context, actual traces, and outcomes separately. Assertions constrain results and genuine authorization boundaries, not one exact tool sequence.",
   "cases": [
     {
+      "id": "debug-business-effect-and-comparison",
+      "prompt": "只读排查：客户补完联系人资料，审核员没收到重新审核提醒；补图片时能收到。已提供两笔完整轨迹、发送器、权限目录和按钮与接口引用：两笔完成时都使用资料填写权限筛人，图片场景随后查询接口额外按现有风控通知权限发送另一类消息，两个入口各自记录发送状态；权限目录显示风控通知权限用于审核提醒。请定位并给最小修复方向。",
+      "expected_initial_skills": ["systematic-debugging"],
+      "forbidden_initial_skills": ["align", "tdd", "delegation"],
+      "expected_sequence": ["systematic-debugging"],
+      "assertions": ["先明确补件完成后应通知审核员重新审核的业务期望", "以权限目录及真实调用方核实资料填写和审核通知的职责，不能仅凭过滤记录断定缺授权", "结合两笔轨迹说明图片额外入口掩盖共同筛选缺陷并产生重复发送风险", "核对现有风控通知授权的语义，提出复用适用授权并统一发送入口的最小方向", "只读定位与建议，不直接修改权限或业务代码"]
+    },
+    {
+      "id": "debug-repair-reuses-existing-capability",
+      "prompt": "当前修复任务已按搞快点进入实施、本地验证后停：已确认补件审核提醒错误复用了资料填写权限，已有风控通知权限覆盖同一审核人员与商户范围。你刚建议为补件提醒新增独立权限节点、初始化授权 SQL 和配置项；用户只批准修好漏通知。继续处理原任务，相关源码、角色定义和测试入口已提供。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["align", "tdd", "delegation"],
+      "expected_sequence": [],
+      "assertions": ["重新核对修复范围与既有能力，复用已证实语义匹配的风控通知权限", "分别判断通知类型和授权粒度，不因类型独立就要求独立权限", "去除方案中缺少必要性依据的新增节点、初始化 SQL 和配置项", "沿用原模式和验证终点完成已授权修复及相关验证，不因诊断结束而停止", "不重问模式或新增未授权交付动作"]
+    },
+    {
+      "id": "debug-plan-approval-keeps-actual-provenance",
+      "prompt": "诊断后对话为：Assistant：‘保留补件审核通知，按风控审核通知授权筛选人员，统一完成时的发送入口。’ Human：‘那就修复，提交PR。’ 没有其他方案确认。当前已按搞快点进入实施，你准备复用现有风控通知权限；请说明当前修复方向并继续任务。相关代码与验证入口已提供。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["align", "tdd", "delegation"],
+      "expected_sequence": [],
+      "assertions": ["准确继承用户批准修复与提交 PR 的范围", "将复用权限等常规实现选择作为有依据的代理取舍说明", "提到已确认方案时须与真实对话对应，不添加用户未确认的独立权限或授权迁移决定", "继续已授权工作，不为普通实现取舍重新索要许可"]
+    },
+    {
+      "id": "debug-correct-permission-missing-assignment",
+      "prompt": "只读定位工单提醒遗漏并给最小建议。已提供实际记录：工单提交后只进入一个发送入口；客服甲未分配现有客服提醒权限，该权限目录及所有引用均用于客服提醒，组织范围正确；已分配该权限的客服乙收到同工单提醒。同一工单的查询和重试共用发送记录，运行轨迹无重复；现有角色授权管理可直接分配权限。",
+      "expected_initial_skills": ["systematic-debugging"],
+      "forbidden_initial_skills": ["align", "tdd", "delegation"],
+      "expected_sequence": ["systematic-debugging"],
+      "assertions": ["根据真实轨迹及权限语义确认本例确为授权缺失", "建议在现有角色管理中分配适用权限并验证提醒", "结论与重复风险判断服从当前证据，不套用其他案例的入口缺陷", "现有证据足以支持建议后结束诊断，不扩建权限或通知架构"]
+    },
+    {
+      "id": "debug-failed-query-uses-available-evidence",
+      "prompt": "只定位订单未入账原因。实时日志入口连接失败，但已提供可读的归档请求与响应、该版本源码和同批成功记录。源码有一个可疑币种分支；归档中失败订单实际币种走另一分支，外部接口返回额度不足，成功记录额度充足。不得修改或操作真实业务。",
+      "expected_initial_skills": ["systematic-debugging"],
+      "forbidden_initial_skills": ["align", "tdd", "delegation"],
+      "expected_sequence": ["systematic-debugging"],
+      "assertions": ["实时查询失败后继续读取可用归档与成功对照", "核实可疑源码分支未命中当前输入，不以源码疑点冒充本次根因", "根据实际请求响应及成功对照解释失败，并区分实时证据限制", "不因单入口失败而要求用户补交已可获得的材料，不修改业务"]
+    },
+    {
+      "id": "debug-reminder-continues-original-investigation",
+      "prompt": "当前只读排查任务中，你已发现正式通知按权限筛人，另一查询接口也发通知，但尚未读取已提供的权限目录和两个入口发送标记。用户现在只说：‘再看看原问题，修复方向对吗？’ 原诉求是资料补齐后通知审核员重新审核。所有既有材料仍可读。",
+      "expected_initial_skills": ["systematic-debugging"],
+      "forbidden_initial_skills": ["align", "tdd", "delegation"],
+      "expected_sequence": ["systematic-debugging"],
+      "assertions": ["将提醒作为同一调查的续接，恢复原业务目标", "继续核实尚未读取的权限真实用途与发送状态，完成会改变结论的已有取证路径", "依据新增读取结果更新根因和建议，不只解释上一条结论或要求用户提供新线索", "保留只读边界，说明实际仍缺的证据而非臆造结论"]
+    },
+    {
+      "id": "diagnosis-to-first-repair-enters-align",
+      "prompt": "此前只读排查提醒遗漏，已证实正式发送入口错误借用了资料填写权限，另一查询入口额外发消息；已有风控通知权限适用，但尚需收敛入口和发送状态的具体改法、测试范围。尚未实施，也没有选择过推进模式。用户现在说：‘那就修复，提交 PR。’ 已有诊断证据与相关源码可读。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["systematic-debugging", "tdd", "delegation"],
+      "expected_sequence": ["align"],
+      "assertions": ["识别从只读诊断进入首次修复，先执行 align 收敛合同", "继承已证实根因及相关证据，不重新开展完整根因调查", "尚未选模式时按既有规则询问三种推进模式并等待回答，选择前不开始实现", "保留用户批准修复和提交 PR 的授权，不把它写成已批准未提出的实现决定", "按语义匹配的既有能力确定最小方案，独立通知类型不自动推出独立权限"]
+    },
+    {
+      "id": "diagnosis-to-first-repair-retains-selected-mode",
+      "prompt": "此前只做导出故障诊断，已证实两个入口对同一状态解释不同；具体改法及回归范围尚需收敛。用户已明确后续修复采用搞快点，使用既有相关测试验证，本地修改后停。现在说：‘开始修复。’ 诊断记录、两个入口和测试可读，尚未开始实现。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["systematic-debugging", "tdd", "delegation"],
+      "expected_sequence": ["align"],
+      "assertions": ["进入 align 承接首次实施并形成最小合同", "直接沿用已选搞快点、相关测试和本地交付终点，不重问模式或验证方式", "复用已确认诊断证据，仅补齐会改变方案的缺口", "由主线程完成必要修改和既有相关测试，不主动增加独立审核或提交"]
+    },
+    {
+      "id": "diagnosis-to-first-repair-explicit-direct",
+      "prompt": "此前仅做只读诊断，已证实订单完成与查询入口重复通知，修法和测试覆盖还未收敛。用户现在说：‘直接修复，不用问推进方式，跑已有相关测试，提交 PR。’ 已有诊断证据与相关源码、测试可读。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["systematic-debugging", "tdd", "delegation"],
+      "expected_sequence": ["align"],
+      "assertions": ["通过 align 承接首次修复，依据免交互要求直接采用搞快点", "形成最小合同并收敛必要改动，不询问模式或重复取得修复与 PR 授权", "复用已有诊断，主线程完成已授权修改、相关测试及 PR 交付", "准确说明关键实现选择的依据，不冒称用户确认了未提出的方案"]
+    },
+    {
       "id": "align-ambiguous-feature-smart-contract",
       "prompt": "给结算系统加一个优惠功能，具体规则你帮我设计并实现。我选择对齐推进、不需要独立 review。spec 只描述本地业务行为，没有生产环境或发布内容；仓库已有单元测试入口。",
       "expected_initial_skills": ["align"],

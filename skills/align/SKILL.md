@@ -1,11 +1,11 @@
 ---
 name: align
-description: "Use for new non-trivial development or unresolved bug fixes; not read-only review, explicit small changes, or active-task continuation."
+description: "Use for new non-trivial development, unresolved bug fixes, or first repair after diagnosis with an open approach; not read-only review, explicit small changes, or active implementation continuation."
 ---
 
 # 执行前对齐
 
-用户提出新的、非简单开发需求或尚需定位修法的故障时先执行本 Skill；只读分析、review、用户明确限定的小改动，以及根因和执行方式均已确认的直接修复，直接进入相应任务。报错位置明确或已有修复猜测，不等于根因和执行方式已确认。当前请求与适用的全局、项目指令优先于本 Skill 的默认值；已确认的授权、验证和交付要求不因选择推进模式而清空。
+用户提出新的、非简单开发需求或尚需定位修法的故障时先执行本 Skill；只读分析、review、用户明确限定的小改动，以及根因明确、具体改动足够确定的直接修复，直接进入相应任务。报错位置明确或已有修复猜测，不等于根因和具体修法已明确。当前请求与适用的全局、项目指令优先于本 Skill 的默认值；已确认的授权、验证和交付要求不因选择推进模式而清空。
 
 当前任务推进中，以下情况沿用原模式，不重复询问推进模式：
 
@@ -13,6 +13,16 @@ description: "Use for new non-trivial development or unresolved bug fixes; not r
 - 对当前实现的局部修正、补漏或继续执行已授权的验证与交付动作。
 
 续接须能核实当前任务及其原模式；同一项目或相似报错不代表同一任务。当前任务产生的失败视为原任务的证据：继承其 Scope、Evidence 和 Delivery；根因未知时直接转 `skill:systematic-debugging`，定位后回到原合同继续修复。只有失败暴露出新的业务目标、明显扩大影响范围、需要更换实现路线，或要求未授权的外部动作时才停下询问。
+
+形成或恢复执行合同时，分别保留用户实际确认的要求、已核实的项目事实与代理自行选择的实现方式；将方案称为“已确认”须有对应对话依据。用户批准执行后，常规实现取舍在授权内自行处理，以满足目标所需的最小改动为准，并说明关键选择的实际依据。
+
+形成修复方案时，优先复用语义匹配的既有能力；新增权限、配置、状态或抽象，应有既有能力无法满足当前目标的依据。根据业务目标分别判断事件、入口和授权的关系，再确定必要改动。
+
+## 从诊断转入首次修复
+
+此前只做只读诊断，用户随后首次要求修复时，按上述入口判断是否适用本 Skill。根因已经定位，但实现路线、改动范围或验证仍需收敛的修复，先在这里形成执行合同；继承已有诊断的原诉求、根因证据、建议方向和待定事项，按需补齐会改变方案的证据。
+
+用户同意修复及指定交付终点后，保留这些授权；建议方向中的实现选择仍按其实际依据收敛。按下节选择推进模式，已有明确选择或免交互授权时直接沿用。当前已在实施合同内排查故障的，定位后回到原合同继续修复。
 
 ## 选择推进模式
 
