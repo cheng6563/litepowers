@@ -723,6 +723,22 @@
       "assertions": ["按本次明确安排仅委派已有测试执行", "不因搞快点的默认限制拒绝用户明确委派要求", "不扩展子代理权限到修改或 review，主线程保留实现与修复", "不重问模式，不自动改为快速验证或提交"]
     },
     {
+      "id": "review-handoff-keeps-public-contract-separate",
+      "prompt": "请独立只读审核给值班员使用的下载工具。原始目标是凭批次号取回已生成文件。使用者只有批次号和工具清单，会问‘能选择下载格式吗？’公开清单为download(batchId, format)，format必填、枚举csv和xlsx，说明是‘选择下载格式后取回文件’。以下是另供审核的开发材料：主线程方案与完整实现规定每个批次只有一份文件，格式保存在服务端；仅format等于原格式时返回链接，否则拒绝，没有格式转换；正常下载与格式不匹配拒绝测试通过。请交给干净上下文的独立reviewer判断，不修改或调用服务。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["交接使用者实际可见的工具定义、仅有批次号的条件及能力提问，并将其与开发方案和内部实现区分", "保留公开说明原文，不用内部格式限制改写后再交接为使用者已知信息", "reviewer指出可选择下载格式的入口含义与仅接受既有格式的实现之间的实际落差及影响", "不因成功与拒绝分支测试通过就认可公开能力说明，不自行要求新增格式转换功能", "保持同一次独立只读审核，不自动增加固定审核轮次或修改权限"]
+    },
+    {
+      "id": "review-handoff-preserves-confirmation-input",
+      "prompt": "请独立只读审核发布工具。使用者可见说明为preview_document(documentId)返回内容和version，publish_document(documentId, expectedVersion)必须使用刚预览返回的version，内容变更时拒绝并要求重新预览。使用者要发布自己刚确认的内容，会问‘预览后别人改了，还能直接发布吗？’另供审核的完整实现为：预览返回同一状态的内容与版本，版本单调递增，发布事务内比较版本并发布，失配拒绝；相关并发和原样发布测试通过。主线程认为服务端已知版本号，拟删除expectedVersion。请将公开材料与内部方案交给独立reviewer判断，不修改。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["align", "tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["分别交接使用者可见说明、实际任务和能力问题，以及主线程删除参数的建议和内部实现", "依据刚预览确认的内容目标，认可expectedVersion表达过去确认状态的独立用途", "指出删除该输入后服务端当前版本无法替代使用者此前确认的版本，不把系统可读字段一概判为冗余", "确认公开拒绝条件与实际原子比较发布一致，不为凑问题补加确认流程或扩大业务要求", "保持独立只读，不按主线程建议自动修改参数"]
+    },
+    {
       "id": "quick-mode-default-static-checks-only",
       "prompt": "我选择搞快点，按已确认的交互稿实现客户查询功能，本地改好即可。项目已有测试入口和浏览器工具。",
       "expected_initial_skills": ["align"],
