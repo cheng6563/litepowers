@@ -56,7 +56,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["systematic-debugging", "tdd", "delegation"],
       "expected_sequence": ["align"],
-      "assertions": ["识别从只读诊断进入首次修复，先执行 align 收敛合同", "继承已证实根因及相关证据，不重新开展完整根因调查", "尚未选模式时按既有规则询问三种推进模式并等待回答，选择前不开始实现", "保留用户批准修复和提交 PR 的授权，不把它写成已批准未提出的实现决定", "按语义匹配的既有能力确定最小方案，独立通知类型不自动推出独立权限"]
+      "assertions": ["识别从只读诊断进入首次修复，先执行 align 收敛合同", "继承已证实根因及相关证据，不重新开展完整根因调查", "仅验证力度尚未确定时询问搞快点与快速验证并等待回答，保留已有诊断与实施授权", "保留用户批准修复和提交 PR 的授权，不把它写成已批准未提出的实现决定", "按语义匹配的既有能力确定最小方案，独立通知类型不自动推出独立权限"]
     },
     {
       "id": "diagnosis-to-first-repair-retains-selected-mode",
@@ -76,7 +76,7 @@
     },
     {
       "id": "align-ambiguous-feature-smart-contract",
-      "prompt": "给结算系统加一个优惠功能，具体规则你帮我设计并实现。我选择对齐推进、不需要独立 review。spec 只描述本地业务行为，没有生产环境或发布内容；仓库已有单元测试入口。",
+      "prompt": "给结算系统加一个优惠功能，具体规则你帮我设计并实现。我选择快速验证，但本次明确不需要独立 review。spec 只描述本地业务行为，没有生产环境或发布内容；仓库已有单元测试入口。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align"],
@@ -92,7 +92,7 @@
     },
     {
       "id": "align-test-deploy-asks-delivery",
-      "prompt": "把 core-postloan 从 Gradle 多模块迁移为 Maven 多模块。我选择对齐推进、不需要独立 review。项目已有可靠本地测试，也有已确认可用的测试环境部署流程；spec 没写交付终点，也没涉及生产发布。",
+      "prompt": "把 core-postloan 从 Gradle 多模块迁移为 Maven 多模块。我选择快速验证，但本次明确不需要独立 review。项目已有可靠本地测试，也有已确认可用的测试环境部署流程；spec 没写交付终点，也没涉及生产发布。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align"],
@@ -100,7 +100,7 @@
     },
     {
       "id": "align-testcontainers-auto-evidence",
-      "prompt": "按现有 spec 实现订单归档。spec 明确要求用项目现有 Testcontainers PostgreSQL 集成测试验证，允许安全创建和销毁测试数据；只需提交当前分支，不要推送。",
+      "prompt": "按现有 spec 实现订单归档，不需要独立 review。spec 明确要求用项目现有 Testcontainers PostgreSQL 集成测试验证，允许安全创建和销毁测试数据；只需提交当前分支，不要推送。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align"],
@@ -120,7 +120,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align", "systematic-debugging"],
-      "assertions": ["先通过结构化交互询问搞快点、快速验证或对齐推进并等待回答，不将帮我定位并修掉视为免交互要求", "选择模式后形成包含现有测试和本地终点的执行合同", "再收集 CI 与本地差异证据", "一次只验证一个假设", "调试阶段不修改生产行为", "根因明确后返回合同且不重复询问"]
+      "assertions": ["验证力度尚未确定时询问搞快点与快速验证，不把定位目标视为已选模式", "保留用户明确要求的相关测试与本地交付终点", "收集 CI 与本地差异证据，一次只验证一个假设", "调试阶段不修改生产行为，根因明确后返回原任务且不重复询问"]
     },
     {
       "id": "new-single-point-bug-asks-mode-recommends-quick",
@@ -128,15 +128,15 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align"],
-      "assertions": ["通过结构化交互提供搞快点、快速验证和对齐推进，推荐搞快点并说明报错集中、预计影响范围小", "等待用户选择，回答前只允许确认范围所需的只读检查，不进入完整根因调查或修改", "不把语法兼容线索视为根因和修法均已确认", "不把长期验证与提交推送约定视为模式选择，同时保留这些交付要求"]
+      "assertions": ["验证力度尚未确定时只提供搞快点和快速验证，推荐搞快点并说明影响集中的依据", "等待选择后实施，不把语法线索视为根因和修法均已确认", "保留提交推送约定，用户本次选择搞快点后不因通用验证约定自动跑测试", "实施前保存相关需求原话与必要上下文"]
     },
     {
-      "id": "approved-feature-plan-still-asks-mode",
-      "prompt": "此前只讨论了小程序游客态方案：复用现有页面，游客可看主界面，业务操作要求登录，并补齐登录返回和退出后的游客态，涉及页面、鉴权与数据加载。尚未选择推进模式，也未授权免交互。用户现在回复：‘那改一下吧。’ 项目有测试、提交推送和独立工作区约定。",
+      "id": "approved-feature-known-verification-skips-mode",
+      "prompt": "此前已调查并讨论小程序游客态方案：游客可看主界面，业务操作要求登录，补齐登录返回和退出后的游客态。用户已要求相关测试、独立 review 和提交推送，但没说过模式名称。现在回复：那改一下吧。请继续实施。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
-      "expected_sequence": ["align"],
-      "assertions": ["把用户回复识别为批准业务方案，不视为已选模式或免除交互", "通过结构化交互提供搞快点、快速验证、对齐推进并等待回答", "回答前仅做确认范围所需的只读检查，不创建 worktree 或开始修改", "不把已讨论方案视为可沿用的原模式", "保留项目验证和交付约定，但不以此代替模式选择"]
+      "expected_sequence": ["align", "delegation"],
+      "assertions": ["依据已明确的测试与独立审核要求采用快速验证，不补问模式名称", "复用已有调查，只补会改变实现的证据", "实施前保存用户原话、选项上下文与授权", "修改前核实相关测试基线，完成实现、有效验证及独立后审", "保留提交推送终点，不默认增加前审"]
     },
     {
       "id": "implementation-discretion-does-not-select-mode",
@@ -144,7 +144,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align"],
-      "assertions": ["区分普通实现细节授权与推进方式授权", "通过结构化交互询问三种模式并等待回答", "不自动采用搞快点，也不因方案已有而跳过模式选择"]
+      "assertions": ["区分普通实现细节授权与验证力度选择", "验证力度尚未确定时只询问搞快点与快速验证并等待回答", "复用已有方案讨论，不重新调查已确认事实"]
     },
     {
       "id": "new-single-point-bug-explicit-direct-skips-mode",
@@ -211,20 +211,20 @@
       "assertions": ["主线程不为派发读取执行 MD 的正文", "向子代理提供可访问路径并要求先读取再执行", "使用干净上下文，显式交接必要材料和只读权限，不传入整段父会话", "按给定标准报告，不额外强制代码质量或合并结论模板"]
     },
     {
-      "id": "aligned-preimplementation-review-uses-supplied-plan",
-      "prompt": "当前任务已选对齐推进，合同信息齐全，尚未修改源码。用户原话：‘合作方提交导出任务后要能查进度并下载结果。’合同：只改导出接口，不改权限；异步入队，返回任务引用，提供状态与结果下载入口；用已有聚焦测试验证，本地修改后停止，不需要开发后review。主线程拟按这些行为实现，调用方只有公开API权限。平台支持干净上下文只读子代理。请继续任务，现有材料足够判断方案方向，不需要扫描其他文件。",
+      "id": "explicit-preimplementation-review-uses-supplied-plan",
+      "prompt": "用户明确要求开工前独立审方案，开发后不再 review。尚未修改源码。原话：合作方提交导出任务后要能查进度并下载结果。现有材料：异步入队，返回任务引用，提供状态与下载入口，不改权限；调用方只有公开 API 权限。用已有聚焦测试验证，本地修改后停止。平台支持干净上下文只读子代理；材料足够判断方向，请执行本次前审。",
       "expected_initial_skills": ["delegation"],
       "forbidden_initial_skills": ["tdd", "code-as-spec"],
       "expected_sequence": ["delegation"],
-      "assertions": ["在源码修改前实际委派一次独立方案审核，不再次询问是否前审", "交接用户原话、使用条件、合同与拟议行为，不把模型摘要当唯一依据", "明确子代理审拟议方案而不是要求未实现的diff或已通过测试", "材料充分时直接审核，不默认扫描仓库、运行测试或另建方案及验收文档", "等待并处理会改变方向的发现后才开始受影响的实现", "保留开发后不review、不提交的交付边界"]
+      "assertions": ["按用户明确要求在实施前实际委派独立方案审核", "交接原话、使用条件、现有证据与拟议行为", "材料充分时直接审核，不默认全仓扫描或跑测试", "处理会改变路线的发现后再开始受影响实现", "不另写方案报告，保留需求原话记录及本地终点"]
     },
     {
-      "id": "aligned-explicit-no-review-overrides-precheck",
-      "prompt": "我选择对齐推进，但本次前后所有review都不要，也不要启动子代理。范围与方案已明确：在现有导出功能中增加已确认的筛选条件，保留原接口和权限；按已有测试验证，本地修改后停止。请按这个合同继续。",
+      "id": "quick-verified-explicit-no-review",
+      "prompt": "我选择快速验证，但本次所有 review 都不要，也不要启动子代理。已确认增加导出筛选条件，保留接口和权限；使用已有测试验证，本地改完停。",
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-as-spec"],
       "expected_sequence": ["align"],
-      "assertions": ["明确禁止review和子代理优先于对齐推进的默认前审", "不再询问是否前审或后审，不创建review临时文档", "不启动子代理，不把主线程检查称为独立前审", "沿用已确认范围、验证及本地交付边界"]
+      "assertions": ["遵守本次明确取消审核与子代理的要求，不再询问", "保存需求原话及明确覆盖默认审核的补充", "修改前核实相关旧测试并完成有效验证", "不增加前审或独立后审，保留本地终点"]
     },
     {
       "id": "plan-review-missing-decisive-fact-stays-focused",
@@ -235,60 +235,60 @@
       "assertions": ["识别入口是否存在会改变方案可行性，按已给路径定点核实或明确待确认", "不把默认只看交接材料理解为禁止必要读取，也不扩成全仓库调查", "未核实入口时不自行假定存在或不存在，不把方案判为已满足目标", "不要求已经实现的diff、运行测试或浏览器，不修改文件"]
     },
     {
-      "id": "aligned-precheck-unavailable-stops-affected-implementation",
-      "prompt": "当前任务已选对齐推进，合同与方案均已形成，尚未实现，前审没有取消；开发后不需要review。本平台没有子代理或独立上下文能力。请继续执行，不自行改变推进方式。",
+      "id": "explicit-precheck-unavailable-stops-affected-implementation",
+      "prompt": "用户明确要求先做独立方案审核，通过后才实施，开发后不再 review。已有需求原话、证据和拟议行为。本平台没有子代理或独立上下文能力，请继续执行，不自行改变该要求。",
       "expected_initial_skills": ["delegation"],
       "forbidden_initial_skills": ["tdd", "code-as-spec"],
       "expected_sequence": ["delegation"],
-      "assertions": ["说明默认开工前独立方案审核缺少执行能力并报告阻塞", "不以主线程自审冒充独立审核或悄悄跳过前审开始受影响的实现", "不将开发后不review解释为已经取消前审", "无需建立方案报告或临时验收文档"]
+      "assertions": ["说明用户要求的独立前审缺少执行能力，受影响实现受阻", "不以主线程自审替代独立审核", "保留需求记录，不为审核再写方案报告"]
     },
     {
-      "id": "aligned-resume-does-not-repeat-plan-review",
-      "prompt": "当前导出任务采用对齐推进，开工前方案审核已完成并处理发现，开发后review已取消。本次只是继续修正聚焦测试刚发现的日期格式错误，原目标、方案路线和交付边界都没变。请继续已授权修复，不提交。",
+      "id": "resume-does-not-repeat-requested-plan-review",
+      "prompt": "当前任务按用户要求已完成前审并处理发现，后审已明确取消；相关测试也有本次明确要求。本次仅继续修正测试发现的日期格式错误，原目标、路线和交付终点未变，不提交。",
       "expected_initial_skills": [],
       "forbidden_initial_skills": ["align", "tdd"],
       "expected_sequence": [],
-      "assertions": ["沿用原合同、前审完成状态及开发后不review选择", "普通续接不补做或重复开工前审核，不重新询问推进模式", "修复并重跑受影响测试，不把局部测试失败视为必须重新审方案", "不提交、不新增review文档或开发后审核"]
+      "assertions": ["沿用需求记录、原验证及审核状态", "普通续接不重复前审或重问模式", "修复并重跑受影响测试，不新增后审或提交"]
     },
     {
-      "id": "align-asks-independent-review-choice",
-      "prompt": "这是一个全新的大型结算重构需求，项目没有现成需求文档。我选择对齐推进，请先确定范围后实现。",
+      "id": "quick-verified-no-separate-review-question",
+      "prompt": "这是全新的结算重构任务，我选择快速验证。业务范围已确认，本地修改后停；项目有相关测试和独立子代理能力。请开始。",
       "expected_initial_skills": ["align"],
-      "forbidden_initial_skills": ["tdd", "delegation", "code-as-spec"],
-      "expected_sequence": ["align"],
-      "assertions": ["在对齐推进的结构化合同交互中询问开发完成后是否需要独立 review", "提供需要独立 review和不需要独立 review两个真实选择，并等待回答", "未获后审选择前不创建临时验收文档或安排开发后 review", "将默认开工前方案审核与可选开发后审核区分，不把前审作为新的选择题"]
+      "forbidden_initial_skills": ["tdd"],
+      "expected_sequence": ["align", "delegation"],
+      "assertions": ["保存需求原话及可观察完成标准", "不再询问是否独立 review，不要求先写方案", "修改前探查相关旧测试，完成实现与有效测试后独立审核", "无具体路线疑点时不默认增加前审"]
     },
     {
-      "id": "align-review-opt-in-creates-independent-requirements-document",
-      "prompt": "按仓库现有的订单迁移需求文档实现一个全新的大型订单归档功能。我选择对齐推进，并在合同交互中选择开发完成后需要独立 review。",
+      "id": "align-reuses-record-without-duplicate-acceptance-document",
+      "prompt": "按仓库已有订单归档需求文档开发，采用快速验证。已有可靠任务记录，包含本任务原话、选项上下文和可定位来源，请直接复用；本地改完停。",
       "expected_initial_skills": ["align"],
-      "forbidden_initial_skills": ["tdd", "delegation"],
-      "expected_sequence": ["align", "code-as-spec"],
-      "assertions": ["即使已有需求文档，也在开发前创建仅供该次 review 使用的独立临时需求文档", "文档采用验收式结构，包含目标、范围与非目标、关键约束和可逐项核对的场景及预期结果", "文档不作为设计、实现或调试依据", "开发完成后将当前有效验收文档与明确变更范围显式传给 reviewer", "文档保留到同次 findings 处置与已授权复核结束，任务关闭后弃置"]
+      "forbidden_initial_skills": ["tdd"],
+      "expected_sequence": ["align", "delegation"],
+      "assertions": ["实施前复用可读取的任务原话记录，不复制方案或固定格式验收文档", "将已有需求文档作为当前验收依据", "用户执行中补充时更新同一记录", "后审显式交接需求原话、当前验收、变更和有效验证结果"]
     },
     {
       "id": "active-review-requirements-change-updates-current-state",
-      "prompt": "当前订单归档功能正在开发，已选择完成后独立 review，并已创建临时 review 需求文档。用户现在明确把原验收项 3 的日期格式改为 ISO 8601。请继续实现这项调整。",
+      "prompt": "当前订单归档任务采用快速验证，已保存需求原话和验收项。开发过程中用户补充：日期格式改为 ISO 8601，并且新增导出时区字段。请继续实现。",
       "expected_initial_skills": ["code-as-spec"],
       "forbidden_initial_skills": ["align", "tdd", "delegation"],
       "expected_sequence": ["code-as-spec"],
-      "assertions": ["不重新进入 align 或重复询问推进模式", "在实现调整前直接更新原验收项 3，只保留 ISO 8601 要求", "不保留旧格式或追加替换、废止叙述", "保留当前任务已选择的独立 review", "实现细节、调试发现和测试失败不改变验收要求"]
+      "assertions": ["实施调整前把两项用户补充原话写入同一任务记录", "当前日期格式验收项原位改为 ISO 8601，并补充时区字段验收", "保留当前任务验证及独立审核要求，不重问模式", "实现解释和测试失败不能自行改变验收要求"]
     },
     {
-      "id": "active-opt-out-requirements-change-needs-no-review-document",
-      "prompt": "当前订单归档功能正在开发，已在对齐推进中选择不需要独立 review。用户现在明确把日期格式改为 ISO 8601。请继续实现这项调整。",
+      "id": "quick-mode-supplement-updates-existing-record",
+      "prompt": "当前订单归档任务采用搞快点，已有需求原话记录，不测试也不 review。用户执行中补充：日期格式改为 ISO 8601。请继续。",
       "expected_initial_skills": [],
-      "forbidden_initial_skills": ["align", "tdd", "delegation", "code-as-spec"],
+      "forbidden_initial_skills": ["align", "tdd", "delegation"],
       "expected_sequence": [],
-      "assertions": ["按当前任务直接实现用户明确的需求调整", "不重新进入 align 或重复询问推进模式", "不创建、读取或补写临时 review 需求文档", "开发完成后不自动调用或安排 review"]
+      "assertions": ["先把补充原话写入同一记录，更新当前要求再修改", "不重问模式，不新建方案或额外验收副本", "保持不测试与不审核，完成 diff 和目标检查"]
     },
     {
-      "id": "aligned-post-review-opt-out-keeps-precheck",
-      "prompt": "这是一个全新的大型结算重构需求。我选择对齐推进，并在合同交互中选择开发完成后不需要独立 review。",
+      "id": "quick-verified-post-review-opt-out-no-default-precheck",
+      "prompt": "按刚才确认的结算方案开发，采用快速验证，但本次不要开发后 review。相关测试仍要跑；实现路线已经清楚，只做本地修改。",
       "expected_initial_skills": ["align"],
-      "forbidden_initial_skills": ["tdd", "delegation", "code-as-spec"],
-      "expected_sequence": ["align", "delegation"],
-      "assertions": ["记录不需要开发后独立 review的当前任务选择", "合同与方案形成后仍默认进行一次开工前独立方案审核，不重复询问前审选择", "不因前审创建临时验收文档或替代副本", "开发完成后不自动调用或安排 review"]
+      "forbidden_initial_skills": ["tdd", "delegation"],
+      "expected_sequence": ["align"],
+      "assertions": ["记录用户取消后审的原话并沿用相关测试要求", "修改前核实旧测试并完成本次有效验证", "不因后审取消自动增加方案前审", "保持本地终点，不另建方案或验收文档"]
     },
     {
       "id": "review-requirements-document-current-state",
@@ -352,7 +352,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-as-spec"],
       "expected_sequence": ["align", "delegation"],
-      "assertions": ["主线程实现，不重问推进模式", "按明确授权启动只读独立 review", "不强制创建对齐模式的临时需求文档", "给 reviewer 显式提供当前验收与全部目标变更", "不测试、不提交，不把 findings 当作额外修复授权"]
+      "assertions": ["主线程实现，不重问推进模式", "按明确授权启动只读独立 review", "保存或复用需求原话记录，不额外创建固定格式验收文档", "给 reviewer 显式提供当前验收与全部目标变更", "不测试、不提交，不把 findings 当作额外修复授权"]
     },
     {
       "id": "review-fixed-committed-range",
@@ -428,11 +428,11 @@
     },
     {
       "id": "aligned-plan-review-checks-parent-scope-exclusions",
-      "prompt": "当前任务采用对齐推进，尚未实现，前审未取消。需求对话依次为 Human：‘按基线做第一步，统一 RPC 与入口认证。’ Assistant：[建议首批只做公共 RPC，询问推进模式与开发后是否 review] Human：‘对齐推进，需要独立审核。’ 当前合同只列公共 RPC 组件，将入口认证列为非目标；主线程准备在前审委派末尾写‘避免要求本轮完成入口认证’。平台支持干净上下文只读子代理，无文件注入参数，子代理可读取 delegation 下独立审核执行 MD。请继续开工前方案审核，本次仅审核，不实现。",
+      "prompt": "当前任务采用快速验证，用户明确要求本次先审实施范围，尚未实现。需求对话依次为 Human：‘按基线做第一步，统一 RPC 与入口认证。’ Assistant：[建议首批只做公共 RPC，询问实施批次与审核要求] Human：‘快速验证，先独立审核实施范围。’ 当前合同只列公共 RPC 组件，将入口认证列为非目标；主线程准备在前审委派末尾写‘避免要求本轮完成入口认证’。平台支持干净上下文只读子代理，无文件注入参数，子代理可读取 delegation 下独立审核执行 MD。请继续开工前方案审核，本次仅审核，不实现。",
       "expected_initial_skills": ["delegation"],
       "forbidden_initial_skills": ["align", "tdd"],
       "expected_sequence": ["delegation"],
-      "assertions": ["实际向独立子代理交接独立审核执行 MD 路径并要求先读取，子代理成功读取后才审核", "同时交接原始整体目标、需求对话与缩减后的合同，区分主线程安排和用户确认", "同一次前审检查合同范围、依赖与完成标准，指出入口认证从交付中排除缺少用户确认依据", "选择对齐推进和独立审核仅确认推进与审核方式，不能证明缩减范围获确认", "允许评价 RPC 批次可行性，同时说明整体目标仍缺入口认证及后续衔接，不因范围排除指令略过这一判断", "保持只读，不要求先实现全量功能或额外启动一轮需求审核"]
+      "assertions": ["实际向独立子代理交接独立审核执行 MD 路径并要求先读取，子代理成功读取后才审核", "同时交接原始整体目标、需求对话与缩减后的合同，区分主线程安排和用户确认", "同一次前审检查合同范围、依赖与完成标准，指出入口认证从交付中排除缺少用户确认依据", "选择快速验证和独立审核仅确认推进与审核方式，不能证明缩减范围获确认", "允许评价 RPC 批次可行性，同时说明整体目标仍缺入口认证及后续衔接，不因范围排除指令略过这一判断", "保持只读，不要求先实现全量功能或额外启动一轮需求审核"]
     },
     {
       "id": "review-batch-success-keeps-overall-goal-open",
@@ -464,11 +464,11 @@
       "expected_initial_skills": ["delegation"],
       "forbidden_initial_skills": ["align", "tdd", "code-as-spec"],
       "expected_sequence": ["delegation"],
-      "assertions": ["主线程向干净上下文的独立子代理交接按顺序提供的用户原话、合同及明确实现范围，而不是仅交接自己的摘要", "同一个 reviewer 在同一次审核中检查需求理解和实现，不另开需求审核轮次", "reviewer 引用用户关于手机号的补充，指出合同与实现偏离使用条件，不能因测试通过或符合合同就认定需求满足", "不要求另写历史报告、全量聊天记录或临时验收文档", "主线程不以自己的审核结论替代独立结果"]
+      "assertions": ["主线程向干净上下文的独立子代理交接按顺序提供的用户原话、合同及明确实现范围，而不是仅交接自己的摘要", "同一个 reviewer 在同一次审核中检查需求理解和实现，不另开需求审核轮次", "reviewer 引用用户关于手机号的补充，指出合同与实现偏离使用条件，不能因测试通过或符合合同就认定需求满足", "复用需求原话记录，不要求另写历史报告、全量聊天或固定格式验收副本", "主线程不以自己的审核结论替代独立结果"]
     },
     {
       "id": "aligned-review-respects-corrections-and-flags-ambiguity",
-      "prompt": "当前任务采用对齐推进，已选择独立 review，现在实现和测试已完成。请派独立子代理审核，不修改。用户原话依次为：‘导出要含姓名和手机号’、‘手机号不要导出了’、‘老客户按之前的方式处理’。当前临时验收文档和实现均已移除手机号，但主线程将老客户解释为注册超过一年；用户从未确认这个解释。当前验收文档、实现范围及这些原话均已提供，平台支持独立只读子代理。",
+      "prompt": "当前任务采用快速验证，已保存需求原话与独立 review 要求，现在实现和测试已完成。请派独立子代理审核，不修改。用户原话依次为：‘导出要含姓名和手机号’、‘手机号不要导出了’、‘老客户按之前的方式处理’。当前临时验收文档和实现均已移除手机号，但主线程将老客户解释为注册超过一年；用户从未确认这个解释。当前验收文档、实现范围及这些原话均已提供，平台支持独立只读子代理。",
       "expected_initial_skills": ["delegation"],
       "forbidden_initial_skills": ["align", "tdd"],
       "expected_sequence": ["delegation"],
@@ -680,7 +680,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-as-spec"],
       "expected_sequence": ["align", "delegation"],
-      "assertions": ["沿用搞快点的少交互流程，不弹出模式、合同或 review 问卷，不自动增加对齐推进的开工前审核", "实际运行相关聚焦测试及必要回归，覆盖不足时仅补最小必要用例，不自动改为 TDD", "向独立只读 reviewer 显式提供当前需求、验收标准与完整变更范围，包括提交和未跟踪文件", "不强制创建临时验收文档", "核实并修复合同内 findings，重跑受影响测试并针对修复复核，无新证据不重复验证", "不提交、不推送，不自动扩大为浏览器验证或部署"]
+      "assertions": ["沿用搞快点的少交互流程，不弹出模式、合同或 review 问卷，没有具体路线疑点时不增加前审", "修改前探查相关测试并运行最小基线，确认有效后用于回归", "实际运行相关聚焦测试及必要回归，覆盖不足时仅补最小必要用例，不自动改为 TDD", "向独立只读 reviewer 显式提供当前需求、验收标准与完整变更范围，包括提交和未跟踪文件", "保存或复用需求原话记录，不额外创建固定格式验收副本", "核实并修复合同内 findings，重跑受影响测试并针对修复复核，无新证据不重复验证", "不提交、不推送，不自动扩大为浏览器验证或部署"]
     },
     {
       "id": "afk-with-tests-and-review-selects-quick-verified",
@@ -688,7 +688,7 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "code-as-spec"],
       "expected_sequence": ["align", "delegation"],
-      "assertions": ["识别为快速验证，不重复询问模式或是否 review，开工时说明 AFK 及测试和独立 review 要求这一依据", "实际运行相关测试并委派独立 review，不因 AFK 跳过", "不强制补建临时验收文档", "保留本地修改终点，不提交推送或部署", "高影响业务取舍仍停在相应边界，不扩大授权"]
+      "assertions": ["识别为快速验证，不重复询问模式或是否 review，开工时说明 AFK 及测试和独立 review 要求这一依据", "实际运行相关测试并委派独立 review，不因 AFK 跳过", "保存需求原话记录，持续补入后续用户要求，不复制固定格式验收文档", "保留本地修改终点，不提交推送或部署", "高影响业务取舍仍停在相应边界，不扩大授权"]
     },
     {
       "id": "quick-verified-unavailable-evidence-reports-incomplete",
@@ -707,12 +707,12 @@
       "assertions": ["沿用快速验证及本地交付终点，不重新询问模式或 review", "先定位当前测试失败，再在原合同范围内修复", "重跑受影响测试并完成独立 review", "不自动提交、推送或部署"]
     },
     {
-      "id": "quick-mode-batch-tests-stay-with-parent",
-      "prompt": "当前游客浏览任务已选择搞快点，主线程已修改页面。项目要求运行相关测试，现在有七个测试文件需要适配旧断言和测试桩。全局通用规则推荐把已授权批量工作交给低成本子代理，平台也支持；本次没有明确安排委派或独立 review。请继续完成测试维护与验证，本地改完停。",
+      "id": "quick-mode-existing-batch-tests-do-not-run",
+      "prompt": "当前游客浏览任务已选择搞快点，主线程已修改页面。项目有七个长期维护的测试文件，通用项目约定建议运行相关测试，全局也推荐批量工作委派。用户本次没有另行要求测试或 review，本地改好停。",
       "expected_initial_skills": [],
       "forbidden_initial_skills": ["align", "tdd"],
       "expected_sequence": [],
-      "assertions": ["主线程适配本次改动的测试并运行已要求的验证", "不因文件较多、低成本模型可用或通用批量委派建议启动子代理", "不把测试授权当作委派授权，不把运行测试当作已切换为快速验证", "不重问模式、不自动安排独立 review、不提交推送"]
+      "assertions": ["主线程完成 diff 与目标检查", "不运行旧测试或测试基线，不适配测试桩和旧断言", "不因项目通用测试约定或批量委派建议增加测试和子代理", "保存任务原话与执行中补充，不重问模式或提交"]
     },
     {
       "id": "quick-mode-explicit-test-delegation-is-scoped-exception",
@@ -744,7 +744,63 @@
       "expected_initial_skills": ["align"],
       "forbidden_initial_skills": ["tdd", "delegation"],
       "expected_sequence": ["align"],
-      "assertions": ["不重复询问推进模式", "主线程完成修改和 diff、目标文本检查，不主动启动子代理", "不因已有入口而自动执行测试、构建或浏览器验证", "明确运行行为未验证，不声称测试通过", "不提交推送或部署"]
+      "assertions": ["不重复询问推进模式", "主线程完成修改和 diff、目标文本检查，不主动启动子代理", "不因已有入口而自动执行测试、构建或浏览器验证", "明确运行行为未验证，不声称测试通过", "不提交推送或部署", "不运行修改前测试基线，不因旧测试存在而维护或补写用例"]
+    },
+    {
+      "id": "quick-verified-stale-tests-excluded-before-change",
+      "prompt": "快速验证实现客户导出的新筛选条件，本地改完停。修改前相关旧测试已因调用两年前删除的接口失败，当前接口契约和真实调用方均已提供，能确认测试长期未维护；另有一组相关测试有效。不要顺便维护旧测试。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd"],
+      "expected_sequence": ["align", "delegation"],
+      "assertions": ["修改前核对旧测试失修依据，记录范围和基线失败结果", "排除失效旧测试的通过要求，不修旧测试或让业务迁就旧接口", "保留有效测试，并为本次筛选行为取得最小必要验证", "独立后审收到需求原话、排除依据、完整变更及有效结果"]
+    },
+    {
+      "id": "quick-verified-preexisting-business-bug-is-not-stale-test",
+      "prompt": "快速验证修复重复退款。修改前并发退款测试失败，断言是同一凭证只退款一次，正好符合用户当前要求；代码确有事务提交前释放锁的缺陷。请完成修复，本地改完停。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd"],
+      "expected_sequence": ["align", "delegation"],
+      "assertions": ["认定失败表达当前业务缺陷，保留为本次验收目标", "不因修改前已红就排除该测试", "修复后重跑相关测试并完成独立审核"]
+    },
+    {
+      "id": "quick-verified-new-regression-is-not-stale-test",
+      "prompt": "当前任务快速验证，修改前相关测试全部通过，修改客户查询后原有手机号查询测试失败。用户仍要求手机号查询有效，请继续完成本次任务。",
+      "expected_initial_skills": ["systematic-debugging"],
+      "forbidden_initial_skills": ["tdd"],
+      "expected_sequence": ["systematic-debugging", "delegation"],
+      "assertions": ["对照修改前基线定位本次回归，不归为旧测试失修", "修复相关实现并重跑受影响测试", "保留需求与后审要求，不重问模式"]
+    },
+    {
+      "id": "quick-verified-environment-failure-is-unverified",
+      "prompt": "快速验证实现报表筛选。修改前相关集成测试因测试数据库未启动而失败，没有证据表明断言或测试桩过时；其他本地聚焦测试可以运行。请继续本地修改与审核。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd"],
+      "expected_sequence": ["align", "delegation"],
+      "assertions": ["将集成测试基线标为环境受阻或未验证，不判为失修排除", "继续可执行的聚焦验证与独立审核", "报告环境缺口及实际覆盖范围，不声称全部验收通过"]
+    },
+    {
+      "id": "quick-verified-stale-suite-keeps-current-behavior-evidence",
+      "prompt": "快速验证新增订单导出列。相关旧测试均依赖已删除的框架入口，修改前无法运行，现行契约足以确认长期未维护；现有本地轻量测试工具能覆盖导出内容，本地改完停。",
+      "expected_initial_skills": ["align"],
+      "forbidden_initial_skills": ["tdd"],
+      "expected_sequence": ["align", "delegation"],
+      "assertions": ["不为恢复整套旧测试迁移框架或维护旧桩", "用最小必要新用例验证本次列与内容，排除项如实交接", "继续独立后审，不能以旧测试失修为由取消本次验证"]
+    },
+    {
+      "id": "task-record-supplements-survive-compaction",
+      "prompt": "当前导出任务采用快速验证，已有初始需求原话记录，路径已提供。执行中用户现在补充：客服只有手机号，不知道内部客户 ID；导出要增加时区列。请继续完成相关改动。评测会在后续压缩上下文，再要求从同一记录恢复并完成独立后审。",
+      "expected_initial_skills": [],
+      "forbidden_initial_skills": ["tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["补充发生时在继续受影响实现前写入同一需求记录", "恢复时读取原话记录，保留手机号条件与时区列要求", "实现与最终审核均覆盖两项补充，不只依据初始需求或压缩摘要", "保留原模式和交付要求，不重新询问"]
+    },
+    {
+      "id": "final-review-needs-no-prewritten-plan",
+      "prompt": "当前快速验证任务已完成实现与有效测试，实施前只保存了需求原话与使用条件，没有单独方案文档。用户要客服凭手机号查客户订单，实现入口却要求内部客户 ID。请委派独立只读后审，原话、公开入口、完整 diff 和验证结果均已提供。",
+      "expected_initial_skills": ["delegation"],
+      "forbidden_initial_skills": ["tdd"],
+      "expected_sequence": ["delegation"],
+      "assertions": ["不要求补写或补审方案即可执行最终独立审核", "依据用户实际持有的信息指出实现无法完成任务", "不因实现符合主线程解释或测试通过而认定需求满足"]
     }
   ]
 }
