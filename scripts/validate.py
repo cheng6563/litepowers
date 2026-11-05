@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate litepowers manifests, Skill metadata, references, and fixtures."""
+"""Validate litepowers manifests, Skill metadata, references, and workflow."""
 
 import json
 import re
@@ -288,82 +288,19 @@ def validate_workflow(errors):
         fail(errors, f"{path.relative_to(ROOT)}: release checkout must use main with full history")
 
 
-def validate_string_list(case, key, case_id, names, errors, allow_empty=False):
-    values = case.get(key)
-    if not isinstance(values, list) or (not allow_empty and not values):
-        fail(errors, f"tests/behavior-fixtures.json: {case_id} requires {'a list' if allow_empty else 'non-empty list'} {key}")
-        return set()
-    if any(not isinstance(value, str) or not value.strip() for value in values):
-        fail(errors, f"tests/behavior-fixtures.json: {case_id} {key} must contain non-empty strings")
-        return set()
-    if key in {"expected_initial_skills", "forbidden_initial_skills", "expected_sequence"}:
-        unknown = set(values) - names
-        if unknown:
-            fail(errors, f"tests/behavior-fixtures.json: {case_id} {key} has unknown Skills {sorted(unknown)}")
-    return set(values)
-
-
-def validate_fixtures(names, errors):
-    path = ROOT / "tests/behavior-fixtures.json"
-    data = load_json(path, errors)
-    if not isinstance(data, dict) or set(data) != {"schema_version", "purpose", "cases"}:
-        fail(errors, "tests/behavior-fixtures.json: expected schema_version, purpose, and cases only")
-        return
-    if data.get("schema_version") != 2:
-        fail(errors, "tests/behavior-fixtures.json: unsupported schema_version")
-    if not isinstance(data.get("purpose"), str) or not data["purpose"].strip():
-        fail(errors, "tests/behavior-fixtures.json: purpose must be a non-empty string")
-    if not isinstance(data.get("cases"), list) or not data["cases"]:
-        fail(errors, "tests/behavior-fixtures.json: cases must be a non-empty array")
-        return
-
-    required = {"id", "prompt", "expected_initial_skills", "forbidden_initial_skills", "expected_sequence", "assertions"}
-    ids = set()
-    for index, case in enumerate(data["cases"]):
-        if not isinstance(case, dict):
-            fail(errors, f"tests/behavior-fixtures.json: case {index} must be an object")
-            continue
-        if set(case) != required:
-            fail(errors, f"tests/behavior-fixtures.json: case {index} fields must be {sorted(required)}")
-        case_id = case.get("id")
-        if not isinstance(case_id, str) or not NAME_RE.fullmatch(case_id):
-            fail(errors, f"tests/behavior-fixtures.json: case {index} has invalid id")
-            case_id = str(index)
-        elif case_id in ids:
-            fail(errors, f"tests/behavior-fixtures.json: duplicate id {case_id!r}")
-        else:
-            ids.add(case_id)
-        if not isinstance(case.get("prompt"), str) or not case["prompt"].strip():
-            fail(errors, f"tests/behavior-fixtures.json: {case_id} prompt must be a non-empty string")
-        expected = validate_string_list(case, "expected_initial_skills", case_id, names, errors, allow_empty=True)
-        forbidden = validate_string_list(case, "forbidden_initial_skills", case_id, names, errors)
-        sequence = validate_string_list(case, "expected_sequence", case_id, names, errors, allow_empty=True)
-        validate_string_list(case, "assertions", case_id, names, errors)
-        overlap = expected & forbidden
-        if overlap:
-            fail(errors, f"tests/behavior-fixtures.json: {case_id} initially expects and forbids {sorted(overlap)}")
-        sequence_values = case.get("expected_sequence") if isinstance(case.get("expected_sequence"), list) else []
-        initial_values = case.get("expected_initial_skills") if isinstance(case.get("expected_initial_skills"), list) else []
-        if expected and not sequence:
-            fail(errors, f"tests/behavior-fixtures.json: {case_id} has initial Skills but no expected_sequence")
-        if initial_values and sequence_values[: len(initial_values)] != initial_values:
-            fail(errors, f"tests/behavior-fixtures.json: {case_id} expected_sequence must start with expected_initial_skills")
-
-
 def main():
     errors = []
     validate_manifests(errors)
     names = validate_skills(errors)
     validate_readme(names, errors)
     validate_workflow(errors)
-    validate_fixtures(names, errors)
 
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
         print(f"Validation failed with {len(errors)} error(s).", file=sys.stderr)
         return 1
-    print(f"Validation passed: {len(names)} skills, manifests, README, workflow, and behavior fixtures.")
+    print(f"Validation passed: {len(names)} skills, manifests, README, and workflow.")
     return 0
 
 

@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install validator dependencies
         run: python3 -m pip install --disable-pip-version-check --quiet PyYAML==6.0.2
-      - name: Validate manifests, skills, README, and fixtures
+      - name: Validate manifests, skills, README, and workflow
         run: python3 scripts/validate.py
 
   release:

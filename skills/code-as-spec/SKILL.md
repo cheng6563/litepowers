@@ -1,6 +1,6 @@
 ---
 name: code-as-spec
-description: "Use to maintain internal business docs, place project rules, or maintain task requirement records and acceptance input; not wording-only edits."
+description: "Use to maintain internal business docs or place durable project rules; not wording-only edits."
 ---
 
 # 代码即核心业务文档
@@ -14,16 +14,6 @@ description: "Use to maintain internal business docs, place project rules, or ma
 如果一篇文档只剩业务概念或流程到代码入口的引用、没有独立业务价值，则不保留它。项目没有文档体系时，不要为记录业务信息新建持久文档目录、模板或治理体系；直接让代码和必要的就近注释承载信息。
 
 稳定项目约定、面向外部读者的使用说明、集成协议、运维手册或合规记录按其用途保留，不把它们误当成内部业务文档清理。
-
-## 任务需求记录与验收输入
-
-开发任务按 `skill:align` 在实施前保存相关用户原话、理解选项和指代所需的 Assistant 极简上下文及会话来源；执行中的补充、纠正和交付调整持续写入同一记录，供实施、压缩恢复和独立审核使用。
-
-优先复用已有可靠任务记录；否则放在运行环境约定的临时目录，不提交、不发布。保留到本次 findings 处置、复核和交付结束，之后的新任务依据本次请求重新确定有效需求。
-
-当前目标、关键约束、可观察的完成标准与交付要求保持精简；已有需求文档可直接引用，不为 review 额外复制一份固定格式文档。用户调整要求时，当前验收项原位更新，取消项及其引用移除；相关原话保留必要的生效上下文。实现选择和测试结果与用户要求分开，不能自行改变验收标准。
-
-分批任务保留整体目标、本批覆盖和剩余工作。开发完成后，将需求记录、当前验收依据及完整变更范围显式交给 reviewer，审核以用户目标和实际使用条件为依据；reviewer 不自行扫描临时目录或修改需求记录。
 
 ## 项目规则的极简承载
 
