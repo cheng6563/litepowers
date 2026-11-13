@@ -7,23 +7,14 @@ description: "Use when worktrees, isolated branches/work directories, or project
 
 **从目标代码定位所属仓库 → 工作分支基于最新远端主干 → 创建后校验 common dir。定位、创建、校验、清理一律调用配套脚本，禁止手写 `git worktree add/remove`。**
 
-## 0. 找到配套脚本
+## 脚本调用
 
-`SKILL_DIR` = **你刚读取的这个 SKILL.md 所在的目录**（平台加载技能时给出的 base directory，或技能列表里 SKILL.md 路径的父目录）。脚本固定在 `SKILL_DIR/scripts/` 下。调用时一律拼成绝对路径；相对路径会按当前工作目录解析，不能用。
+`SKILL_DIR` 表示本技能目录。使用脚本的绝对路径，在当前 shell 直接调用：
 
-按你当前所在的 shell 直接调用，**不要套一层新的 shell 进程**：
+- PowerShell 5.1 / 7：`& "$SKILL_DIR/scripts/worktree.ps1" <子命令> ...`
+- bash / Git Bash：`bash "$SKILL_DIR/scripts/worktree.sh" <子命令> ...`
 
-- 当前是 PowerShell（Windows PowerShell 5.1 或 PowerShell 7）：用调用运算符直接执行：`& "$SKILL_DIR/scripts/worktree.ps1" <子命令> ...`
-- 当前是 bash / Git Bash：`bash "$SKILL_DIR/scripts/worktree.sh" <子命令> ...`
-
-禁止 `pwsh -File ...`、`powershell -File ...`，也禁止从 bash 再启动 pwsh 去调用 `.ps1`。脚本兼容 Windows PowerShell 5.1 和 PowerShell 7。PowerShell 中的退出码看 `$LASTEXITCODE`。
-
-如果拿不到这个 SKILL.md 的路径，按以下顺序找，找到第一个即停：
-
-1. 环境变量 `LITEPOWERS_SKILL_DIR`（指向本技能目录）；
-2. 在已知技能根目录下找 `git-worktrees/scripts/worktree.sh`：项目内 `.agents/skills`、`.claude/skills`、`.cursor/skills`；用户目录下 `~/.agents/skills`、`~/.claude/skills`、`~/.claude/plugins`、`~/.codex/skills`、`~/.pi/agent/skills`、`~/.cursor/skills`。
-
-确认用的是哪一份：执行 `worktree where`，看输出的 `skill_dir`。仍然找不到就停止并告知用户，不要退回手写命令。
+PowerShell 中通过 `$LASTEXITCODE` 检查退出码。
 
 ## 输出约定
 
