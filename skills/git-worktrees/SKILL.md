@@ -5,70 +5,31 @@ description: "Use when worktrees, isolated branches/work directories, or project
 
 # 使用 Git Worktrees
 
-**从目标代码定位所属仓库 → 工作分支基于最新远端主干 → 创建后校验 common dir。定位、创建、校验、清理一律调用配套脚本，禁止手写 `git worktree add/remove`。**
+按目标代码定位仓库，默认基于最新远端主干创建工作分支，再校验和清理。定位与校验使用配套脚本；创建、清理可选平台原生工具，其余使用脚本。禁止手写 `git worktree add/remove`。
 
-## 脚本调用
+## 调用
 
-`SKILL_DIR` 表示本技能目录。使用脚本的绝对路径，在当前 shell 直接调用：
+`SKILL_DIR` 为本技能绝对路径；在当前 shell 直接调用：
 
-- PowerShell 5.1 / 7：`& "$SKILL_DIR/scripts/worktree.ps1" <子命令> ...`
-- bash / Git Bash：`bash "$SKILL_DIR/scripts/worktree.sh" <子命令> ...`
+- PowerShell 5.1 / 7：`& "$SKILL_DIR/scripts/worktree.ps1" <子命令与参数>`，检查 `$LASTEXITCODE`。
+- bash / Git Bash：`bash "$SKILL_DIR/scripts/worktree.sh" <子命令与参数>`。
 
-PowerShell 中通过 `$LASTEXITCODE` 检查退出码。
+下表使用 PowerShell 参数；bash 对应为 `--base`、`--parent`、`--no-fetch`、`--force`。
 
-## 输出约定
+| 步骤 | 子命令与参数 | 判断与后续 |
+|---|---|---|
+| 定位 | `locate <代码路径>` | 核对 `source_root` 是否为目标仓主检出根；不符时停止并纠正路径 |
+| 创建 | `create <代码路径> <分支名> [-Base <ref>] [-Parent <目录>] [-NoFetch]` | 默认 fetch 后基于 `origin/master`（无则 `origin/main`）创建并自动校验；后续读写与 Git 操作以输出的 `worktree` 为根 |
+| 校验 | `verify <worktree路径> <代码路径>` | 原生工具创建后必做，确认 common dir 归属且返回 `status=ok` 才继续 |
+| 清理 | `remove <worktree路径> <代码路径> [-Force]` | 原生工具创建的优先原生清理；脚本先校验归属，有未提交改动时拒绝删除，Force 须用户明确同意；只删除一次，保留分支 |
 
-输出为 `key=value` 行；失败时 stderr 输出 `error=...` 且退出码为 1。退出码 3 仅用于 `remove` 留有残留文件的情况，见第 4 步。**任何非 0 退出都立即停止，向用户报告 error 原文，不要自行绕过或改用手写命令。**
+`<代码路径>` 传本次要修改的文件或目录，可尚不存在；嵌套仓库必须传子仓内路径。原生工具的目标仓不随 `git -C` 改变，仍需上述校验。归属校验失败时停止修改，报告目标仓、实际路径及 common dir；有未提交改动时先请用户确认清理。
 
-`<代码路径>` 传本次要修改的文件或目录（可以不存在，脚本会往上找已存在的祖先目录）。嵌套仓库（外层仓里有被忽略的独立子仓）时，务必传子仓里的路径，不要传外层根目录。
+创建目录优先级为显式 Parent、`LITEPOWERS_WORKTREE_DIR`、目标仓配置 `litepowers.worktreeDir`、`source_root/.worktrees`。Parent 仅在用户指定位置时传；环境变量和项目配置的相对目录基于 `source_root`。仓内父目录由脚本写入本地忽略配置。
 
-## 1. 定位
+## 结果与失败
 
-```
-worktree locate <代码路径>
-```
+输出为 `key=value`。非 0 退出立即停止，不绕过脚本：
 
-关键字段：`source_root`（目标仓主检出根）、`session_matches`（当前会话目录是否就在该仓）、`outer_repo`（有值说明是嵌套子仓）。`source_root` 与预期项目不符时停止，换正确的代码路径。
-
-## 2. 创建
-
-平台若提供原生 worktree 工具，可以使用，但它不一定以 `source_root` 为目标仓（`git -C` 不会改变它的上下文）。用完必须执行第 3 步校验。其余情况用脚本创建：
-
-```
-worktree create <代码路径> <分支名> [--base origin/xxx] [--parent <目录>]
-```
-
-（PowerShell 参数写法为 `-Base` / `-Parent` / `-NoFetch`。）
-
-脚本会做这些事：先 fetch，再基于 `origin/master`（没有就用 `origin/main`）切出新分支；创建后自动校验。
-
-创建位置为 `<父目录>/<分支名>`，父目录按以下优先级确定（输出里的 `parent_source` 会标明用的是哪一级）：
-
-1. 参数 `--parent <目录>`：用户明确指定位置时才传；
-2. 环境变量 `LITEPOWERS_WORKTREE_DIR`；
-3. 项目约定：目标仓的 `git config litepowers.worktreeDir`；
-4. 默认：`source_root/.worktrees`。
-
-后两级的相对路径都相对于 `source_root`。父目录在仓内且尚未被忽略时，脚本会把它写入该仓的 `.git/info/exclude`，不会修改 `.gitignore`。`.claude/worktrees` 只是 Claude Code 自带工具的约定，脚本不使用它。
-
-创建成功后，后续所有读写和 Git 操作都以输出的 `worktree` 为根。
-
-## 3. 校验（原生工具创建后必做）
-
-```
-worktree verify <worktree路径> <代码路径>
-```
-
-输出 `status=ok` 才能继续。校验失败说明建到了错误的仓：不要在里面改代码；报告目标仓、实际路径和 common dir；有未提交改动时先和用户确认，不要自动删除。
-
-## 4. 清理
-
-原生工具创建的，优先用原生工具清理。其他情况：
-
-```
-worktree remove <worktree路径> <代码路径> [--force]
-```
-
-脚本会先校验归属；有未提交改动时拒绝删除（`--force` 需用户明确同意）。只用 `git worktree remove` 删除一次，不会重试；分支不会被删除。
-
-退出码 3、输出 `status=removed_with_residue` 表示 worktree 已从 Git 注销，但 `residue` 指向的目录还有文件残留（通常是 Windows 上文件被其他程序占用）。这时把 `residue` 路径告诉用户并停止：不要重试，不要手动删除，不要结束任何进程。
+- 退出码 1：转述 stderr 的 `error` 原文。
+- 清理退出码 3、`status=removed_with_residue`：Git 已注销 worktree，但目录尚有文件；报告 `residue` 路径，不重试、不手动删除、不结束进程。
