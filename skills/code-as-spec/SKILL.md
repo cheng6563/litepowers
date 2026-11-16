@@ -5,7 +5,7 @@ description: "Use to maintain internal business docs or place durable project ru
 
 # 代码即核心业务文档
 
-已实现的业务以代码、SQL、schema、配置、测试及日志为准；就近注释补充业务语义，日志不得包含敏感数据。
+已实现的业务以代码、SQL、schema、配置、测试及日志为准；就近注释补充业务语义。
 
 ## 内容取舍
 
