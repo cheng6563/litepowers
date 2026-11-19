@@ -43,8 +43,17 @@ existing_dir() {
 }
 toplevel()  { git -C "$1" rev-parse --show-toplevel 2>/dev/null; }
 commondir() { git -C "$1" rev-parse --path-format=absolute --git-common-dir 2>/dev/null; }
-# main checkout root of the repo owning dir (works from inside a worktree)
-main_root() { local c; c=$(commondir "$1") || return 1; git -C "$c/.." rev-parse --show-toplevel 2>/dev/null || dirname -- "$c"; }
+# Resolve a configured checkout through Git; otherwise Git lists the main checkout first.
+main_root() {
+  local common entry
+  if git -C "$1" config --local --get core.worktree >/dev/null 2>&1; then
+    common=$(commondir "$1") || return 1
+    git -C "$common" --git-dir="$common" rev-parse --show-toplevel 2>/dev/null
+    return
+  fi
+  IFS= read -r -d '' entry < <(git -C "$1" worktree list --porcelain -z 2>/dev/null) || return 1
+  case $entry in "worktree "*) printf '%s\n' "${entry#worktree }";; *) return 1;; esac
+}
 
 locate() {
   local start top common root outer=""

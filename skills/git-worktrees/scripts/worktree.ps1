@@ -46,7 +46,7 @@ function Canon([string]$p) {
   return $full
 }
 function ExistingDir([string]$p) {
-  $s = [IO.Path]::GetFullPath($p)
+  $s = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($p)
   while (-not (Test-Path -LiteralPath $s -PathType Container)) {
     $n = [IO.Path]::GetDirectoryName($s)
     if ([string]::IsNullOrEmpty($n) -or $n -eq $s) { Die "no existing ancestor for: $p" }
@@ -55,11 +55,16 @@ function ExistingDir([string]$p) {
   return $s
 }
 function CommonDir([string]$d) { G -C $d rev-parse --path-format=absolute --git-common-dir }
+# Ask Git to resolve core.worktree relative to the common Git directory.
 function MainRoot([string]$d) {
-  $c = CommonDir $d; if ($null -eq $c) { return $null }
-  $r = G -C (Join-Path $c '..') rev-parse --show-toplevel
-  if ($r) { return $r }
-  return [IO.Path]::GetDirectoryName($c.TrimEnd('/','\'))
+  if (GOk -C $d config --local --get core.worktree) {
+    $common = CommonDir $d
+    return (G -C $common "--git-dir=$common" rev-parse --show-toplevel)
+  }
+  $list = G -C $d worktree list --porcelain -z
+  if ($list -and $list.StartsWith('worktree ')) {
+    return ($list -split [string][char]0, 2)[0].Substring(9)
+  }
 }
 
 $script:SourceRoot = $null; $script:SourceCommon = $null
@@ -80,6 +85,7 @@ function Locate([string]$p, [bool]$print = $true) {
 }
 
 function VerifyWt([string]$wt, [string]$code, [bool]$print = $true) {
+  $wt = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($wt)
   if (-not (Test-Path -LiteralPath $wt -PathType Container)) { Die "worktree path missing: $wt" }
   Locate $code $false
   $a = CommonDir $wt; if (-not $a) { Die "not a git dir: $wt" }
@@ -154,11 +160,11 @@ function IsRegistered([string]$repo, [string]$path) {
 
 # remove: exit 0 = fully removed; exit 3 = unregistered but files left (residue), non-fatal.
 function Remove([string]$wt, [string]$code) {
+  $full = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($wt)
   VerifyWt $wt $code $false
-  $dirty = G -C $wt status --porcelain
+  $dirty = G -C $full status --porcelain
   if ($dirty -and -not $Force) { Die "worktree has uncommitted changes: $wt" }
   $ErrorActionPreference = 'Continue'
-  $full = [IO.Path]::GetFullPath($wt)
   $admin = $null; $gf = Join-Path $full '.git'
   if (Test-Path -LiteralPath $gf -PathType Leaf) { $m = [regex]::Match([IO.File]::ReadAllText($gf), '^gitdir:\s*(.+?)\s*$', 'Multiline'); if ($m.Success) { $admin = $m.Groups[1].Value } }
   # single attempt, no retries

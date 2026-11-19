@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # git-worktrees 脚本回归测试。用法: bash tests/git-worktrees/run.sh [bash|pwsh|powershell]
 # 环境变量: WT_SCRIPTS_DIR 指定被测 scripts 目录（默认仓内 skills/git-worktrees/scripts）;
-#           FIX 指定 fixture 目录（默认新建临时目录）。
+#           FIX 指定尚不存在的 fixture 目录（默认新建临时目录）。
 set -uo pipefail
 HERE=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 REPO=$(cd -- "$HERE/../.." && pwd)
@@ -13,8 +13,7 @@ case $SHELL_KIND in
   pwsh|powershell) RUNNER=(env WT_POWERSHELL="$SHELL_KIND" PS1_SCRIPT="$SCRIPTS/worktree.ps1" bash "$HERE/ps-shim.sh");;
   *) echo "usage: run.sh [bash|pwsh|powershell]" >&2; exit 2;;
 esac
-B=${FIX:-$(mktemp -d "${TMPDIR:-/tmp}/wt-fixture.XXXXXX")}
-O=$(bash "$HERE/fixture.sh" "$B" | tail -1) || { echo "fixture failed" >&2; exit 2; }
+O=$(bash "$HERE/fixture.sh" "${FIX:-}" | tail -1) || { echo "fixture failed" >&2; exit 2; }
 case "$(uname -s)" in MSYS*|MINGW*) O=$(cygpath -m "$O");; esac
 W=("${RUNNER[@]}"); pass=0; fail=0
 t() { local name=$1 expect=$2; shift 2; local o; o=$("$@" 2>&1); local rc=$?
@@ -24,6 +23,7 @@ cd "$O"   # session sits in OUTER repo, like the bug
 t locate-fd ok "${W[@]}" locate "$O/fd-git-repo/src/main/App.java"; has root "source_root=$O/fd-git-repo"; has nomatch "session_matches=no"
 t locate-newfile ok "${W[@]}" locate "$O/sc-git-repo/src/new/dir/New.java"; has root2 "source_root=$O/sc-git-repo"
 t locate-outer ok "${W[@]}" locate "$O/a.txt"; has outer "session_matches=yes"
+t locate-submodule ok "${W[@]}" locate "$O/nested/child/a.txt"; has submodule-root "source_root=$O/nested/child"; has submodule-main "in_worktree=no"
 t create-fd ok "${W[@]}" create "$O/fd-git-repo/src" feat/x; has wt "worktree=$O/fd-git-repo/.worktrees/feat/x"; has base "base=origin/master"; has psrc-default "parent_source=default"; has excl-fd "exclude_added=/.worktrees/"
 t excl-file ok grep -qxF "/.worktrees/" "$O/fd-git-repo/.git/info/exclude"
 t no-gitignore ok test ! -e "$O/fd-git-repo/.gitignore"

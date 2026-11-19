@@ -1,6 +1,6 @@
 ---
 name: code-as-spec
-description: "Use to maintain internal business docs or place durable project rules; not wording-only edits."
+description: "Use when deciding whether to add, update, or remove project documentation, including documentation changes within implementation tasks, or where to place durable project rules. Skip wording-only edits."
 ---
 
 # 代码即核心业务文档
@@ -9,11 +9,11 @@ description: "Use to maintain internal business docs or place durable project ru
 
 ## 内容取舍
 
-持久内部业务文档只保留代码、测试和少量注释无法充分表达的关键跨模块规则、边界或协作关系，简述并指向相关代码。
+增补文档前，先明确谁会读、读完要做什么。新旧内容都只留完成这个用途所需的信息。使用入口写清用途和如何开始；运维、集成和合规文档保留完成相应操作或满足要求所需的信息。
 
-授权维护后，删除可由代码还原的字段、调用顺序和局部规则；局部业务原因下沉到相邻注释。只剩入口引用且无独立业务价值的文档删除；可能损失无法恢复的知识时先指出疑点。只读检查返回判断和建议。
+内部细节以代码、测试和就近注释承载。跨模块规则、边界或协作关系确需长期说明时，简述并指向源码。命令入口、帮助或源码已能满足读者用途时，直接指向入口。
 
-稳定项目约定、外部使用说明、集成协议、运维手册及合规记录按原用途保留。整理限于授权文档范围。
+整理限于授权文档范围。整份文档无独立用途时可删除；可能损失无法恢复的知识时先指出疑点。只读检查返回判断和建议。
 
 ## 放在哪里
 

@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
-# build scprod-like fixture in $1
+# Build a fixture at a new path, or choose a temporary directory.
 set -euo pipefail
-B=$1; rm -rf "$B"; mkdir -p "$B"
+if [ -n "${1:-}" ]; then
+  B=$1
+  mkdir -- "$B"
+else
+  B=$(mktemp -d "${TMPDIR:-/tmp}/wt-fixture.XXXXXX")
+fi
 g() { git -c user.name=t -c user.email=t@t -c init.defaultBranch="$1" "${@:2}"; }
 mkrepo() { # dir defaultbranch
   local d=$1 br=$2
@@ -17,4 +22,6 @@ git -C "$O" add .gitignore; git -c user.name=t -c user.email=t@t -C "$O" commit 
 mkrepo "$O/fd-git-repo" master
 mkrepo "$O/sc-git-repo" main
 git -C "$O/sc-git-repo" checkout -qb stale-local   # local non-trunk branch checked out
+git -c protocol.file.allow=always -C "$O" submodule add -q "$B/remotes/sc-git-repo.git" nested/child
+git -c user.name=t -c user.email=t@t -C "$O" commit -qm submodule
 echo "$O"
