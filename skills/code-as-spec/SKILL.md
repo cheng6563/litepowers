@@ -1,27 +1,37 @@
 ---
 name: code-as-spec
-description: "Use when deciding whether to add, update, or remove project documentation, including documentation changes within implementation tasks, or where to place durable project rules. Skip wording-only edits."
+description: "Use when adding, updating, or removing docs, after code changes that may invalidate existing docs, when existing docs conflict with code, or when placing durable project rules. Skip wording-only edits."
 ---
 
 # 代码即核心业务文档
 
 已实现的业务以代码、SQL、schema、配置、测试及日志为准；就近注释补充业务语义。
 
+## 读写与防漂移
+
+默认不新建、不扩写文档。仅在用户明确要求，或变更影响使用入口、运维、集成、合规及已有文档准确性时才动文档。
+
+方案、调研、排查和计划类内容留在对话或临时目录，不落盘进仓库。
+
+已有文档只作线索与入口；与代码、测试或配置冲突时，以实现为准，并在当前任务范围内顺手修正或删除漂移内容，超出范围则直接指出。
+
 ## 内容取舍
 
-增补文档前，先明确谁会读、读完要做什么。新旧内容都只留完成这个用途所需的信息。使用入口写清用途和如何开始；运维、集成和合规文档保留完成相应操作或满足要求所需的信息。
+增补或修改文档前，先明确谁会读、读完要做什么；新旧内容只留该读者完成目标所需的信息，按读者视角裁剪技术细节。
 
-内部细节以代码、测试和就近注释承载。跨模块规则、边界或协作关系确需长期说明时，简述并指向源码。命令入口、帮助或源码已能满足读者用途时，直接指向入口。
+文档只描述当前有效状态。删掉的功能或规则直接删净，变更原因留给 git；仅外部破坏性变更确需迁移指引时保留简短提示。
 
-整理限于授权文档范围。整份文档无独立用途时可删除；可能损失无法恢复的知识时先指出疑点。只读检查返回判断和建议。
+内部细节以代码、测试和就近注释承载；命令入口、帮助或源码已能满足读者用途时，直接指向入口。
+
+整理限于授权范围。无独立用途的整份文档直接删除；涉及代码无法反推的历史权衡或外部约束时先指出疑点。只读检查只返回判断和建议。
 
 ## 放在哪里
 
-优先使用已有位置；项目没有文档体系时，由代码和必要注释承载，不新建持久文档目录、模板或治理体系。
+优先用已有位置；项目无文档体系时由代码和注释承载，不新建持久文档目录或模板。
 
-- Agent 高频遵守的稳定项目约定：`CLAUDE.md` / `AGENTS.md`。
-- 需长期保留且无法由代码表达的跨模块决定或关系：已有 spec / 项目文档。
+- Agent 高频遵守的稳定约定：`AGENTS.md`。
+- 代码无法表达的跨模块决策或外部约束：已有 spec / 项目文档。
 - 可机械判断的约束：test、lint、type 或 CI。
-- 须在特定生命周期自动发生或即时反馈的动作：hook。
+- 须在特定时机自动执行或反馈的动作：hook。
 
 说明层与执行层各自提供独立价值，避免重复维护。
